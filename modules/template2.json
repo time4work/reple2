@@ -1,0 +1,106 @@
+{
+	"start":[
+		"<who>, <condition>, <consequent>"
+	],
+
+	"who": [
+		"<adjective> <bodyPart> <nationality> <type> <name>",
+		"<adjective> <nationality> <type> <name>, with <adjective> <bodyPart>"
+	],
+
+	"condition": [
+		"<verb> <adjective3> <how> <compound> <verb2> <event>"
+	],
+
+	"consequent": [
+		""
+	],
+
+	"adjective":[
+		"beautiful",
+		"gorgeous",
+		"sweet",
+		"awesome"
+	],
+
+	"bodyPart": [
+		"tits",
+		"ass",
+		"lips"
+	],
+
+	"nationality": [
+		"asian",
+		"japanese",
+		"latin",
+		"white",
+		"black",
+		"e-bony",
+		""
+	],
+
+	"type": [
+		"teen",
+		"house wife",
+		"maid",
+		"nun",
+		"lady",
+		"schoolgirl",
+		"teacher",
+		"lesbian",
+		"baby",
+		"cutie",
+		"mom",
+		"mother",
+		"girl friend",
+		"girl",
+		"bitch",
+		"girl"
+	],
+
+	"name": [
+		"Sasha Grey",
+		""
+	],
+
+	"verb": [
+		"feels"
+	],
+
+	"adjective3": [
+		"a bit",
+		"preaty",
+		"a little",
+		""
+	],
+
+	"how":[
+		"lonely",
+		"horny"
+	],
+
+	"compound": [
+		"and",
+		"so she"
+	],
+
+	"verb2": [
+		"needs",
+		"wants",
+		"wants to try"
+	],
+
+	"event":[
+		"foreplay",
+		"something new",
+		"anal",
+		"oral",
+		"adventure",
+		"new experience"
+	],
+
+	"result":[
+		"her needs needs to be satisfied"
+	],
+	"":[]
+}

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <% include ../partials/header.ejs %>
+  </head>
+  <body np-app="Reple">
+
+    <% include ../partials/topnav.ejs %> 
+
+    <section id="rewrite-page">
+      <div class="container">
+
+        <form id='rewrite-form'>
+          <div class="rewrite-title">
+            <h1>Rewriter</h1>
+            <h3>Choose project</h3>
+            <div class="project-input">
+              <p>
+                <select list="project" name='project'>
+                  <% array.forEach(function(r, iter) { %>
+
+                  <option proj-id='<%= r.id %>'>
+                    <%= r.name %>
+                  </option>
+
+                  <% }); %>
+                </select>
+              </p>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="main-butt-third">
+              <input class="button" type="submit" value="PULL">
+            </div>
+          </div>
+        </form>
+
+      </div>
+    </section>
+  </body>
+</html>

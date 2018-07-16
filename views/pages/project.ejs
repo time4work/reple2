@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <% include ../partials/header.ejs %>
+    <link rel="stylesheet" type="text/css" href="/stylesheets/bootstrap-tagsinput.css">
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script> -->
+    <script src="http://bootstrap-tagsinput.github.io/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js"></script>
+  </head>
+  <body class='side-pad'>
+
+    <% include ../partials/topnav.ejs %>
+    <% include ../partials/leftnav.ejs %>
+
+    <section id="navigator" class='hide'>
+      <div class="wrapper">
+        <div class="top-bar">
+          <div class="title">
+            <i class="fa fa-folder-open"></i>
+            <span class='path'>screens</span>
+          </div>
+          <div class="close">
+            <button onclick='closeNavigator()'>
+              <i class="fa fa-times"></i>
+            </button>
+          </div>
+        </div>
+        <div class="navigation">
+<!--           <ul>
+            <li>
+              <a href="">
+                <i class="fa fa-folder"></i>
+                <span>
+                  ..
+                </span>
+              </a>
+            </li>
+            <li>
+              <a href="">
+                <i class="fa fa-folder"></i>
+                <span>
+                  folder1
+                </span>
+              </a>
+            </li>
+            <li>
+              <a href="">
+                <i class="fa fa-folder"></i>
+                <span>
+                  folder2
+                </span>
+              </a>
+            </li>
+          </ul> -->
+        </div>
+        <div class="bot-bar">
+          <!-- <button class="select" onclick="saveDir">   
+            <span>
+              select curent folder
+            </span>
+          </button> -->
+        </div>
+                                    
+      </div>
+    </section>
+
+    <section id="project-details"  class="col-md-offset-2 col-md-10">
+      <div class="col-md-10">
+        <div class="details-body">
+
+          <section>
+            <form id='project-form' proj-id='<%= scope.project.id %>'>
+              <h1>Project details</h1>
+              <p class="name input">
+                <span class="label-title">name</span>
+                <input type="text"  id='name-input' value="<%= scope.project.name %>">
+              </p>
+              <p class="info input">
+                <span class="label-title">meta description</span>
+                <textarea id="description-textarea"><%= scope.project.description %></textarea>
+              </p>
+              <p class="size input">
+                <span class="label-title">Size</span>
+                <input type="text"  id='size-input' value="<%= scope.size %> objects" readonly>
+                  <a href="/project/<%=scope.project.id%>/objects/" class='p-top-link'>object list</a>
+              </p>
+              
+              <h1>Templates</h1>
+              <div class="tmpls select ">
+                <p class="tmpls input">
+                  <span class="label-title">title</span>
+                  <select multiple id='t-tmpls'>
+                  </select>
+                </p>
+                <p>
+                  <select>
+                    <% scope.tmpls.forEach(function(tmpl, iter){ %>
+                    <option tmpl-id='<%= tmpl.id %>'>
+                      <%= tmpl.title %>
+                    </option>
+                    <% }); %>
+                  </select>
+                  <button class="btn btn-success add-more t-tmpls"  select-id='t-tmpls' type="button"><i class="glyphicon glyphicon-plus"></i> Add</button>
+                </p>
+                <p class="tmpls input">
+                  <span class="label-title">description</span>
+                  <select multiple id='d-tmpls'>
+                  </select>
+                </p>
+                <p >
+                  <select>
+                    <% scope.tmpls.forEach(function(tmpl, iter){ %>
+                    <option tmpl-id='<%= tmpl.id %>'>
+                      <%= tmpl.title %>
+                    </option>
+                    <% }); %>
+                  </select>
+                  <button class="btn btn-success add-more d-tmpls"  select-id='d-tmpls' type="button"><i class="glyphicon glyphicon-plus"></i> Add</button>
+                </p>
+              </div> 
+
+              <h1>Thumbs</h1>
+              <div class="thumbs select">
+                <p class="thumbs input">
+                  <span class="label-title">folder</span>
+                  <i class="fa fa-folder"></i>
+                  <button type='button'
+                          class='btn' 
+                          id='thumb-navigator'>
+                    <span>screens</span>
+                  </button>
+                </p>
+              </div>
+
+              <div class="main-butt-forth">
+                <input class="btn btn-danger" id='delete-btn' type="button" value="DELETE">
+                <input class="btn btn-success" type="submit" value="SAVE">
+              </div>
+            </form>
+          </section>
+          <hr>
+
+        </div>
+      </div>
+    </section>
+    <script type="text/javascript">
+      function closeNavigator(){
+        // console.log('close');
+        $('#navigator .wrapper .bot-bar').empty();
+        $('#navigator .wrapper .navigation').empty();
+        $('#navigator').addClass('hide');
+      }
+      function saveDir(path){
+        $('#navigator .wrapper .bot-bar').empty();
+        var data = {};
+        data.type = 'project.dir.save';
+        data.path = path;
+        ajax('/project/'+<%=scope.project.id%>, data, (_data, textStatus)=>{
+          console.log(_data);
+          if(_data.result == "ok"){
+            $('#navigator').addClass('hide');
+          }
+        });
+      }
+      function navigation(way,path){
+        $('#navigator .wrapper .bot-bar').empty();
+        var data = {};
+        data.type = 'project.navigate';
+        data.way = way;
+        data.path = path;
+        ajax('/project/'+<%=scope.project.id%>, data, (_data, textStatus)=>{
+          console.log(_data);
+          var _list = _data.list;
+          var _path = _data.path;
+          if(_list && _path){
+            $('#navigator .wrapper .navigation').empty();
+            var list = document.createElement('ul')
+            for(var i=0; i<_list.length; i++){
+              var li = document.createElement('li');
+              li.innerHTML = `
+                <a onclick="navigation('${_list[i]}','${_path}')">
+                  <i class="fa fa-folder"></i>
+                  <span>
+                    ${_list[i]}
+                  </span>
+                </a>
+              `;
+              list.appendChild(li);
+            }
+            $('#navigator .wrapper .navigation').append(list);
+            $('#navigator .wrapper span.path').text(_path);
+
+            var btn = document.createElement('button');
+            btn.setAttribute("class","select");
+            btn.setAttribute("onclick","saveDir('"+ _path +"')");
+            btn.innerHTML = `
+              <span>
+                select curent folder
+              </span>
+            `;
+            $('#navigator .wrapper .bot-bar').append(btn); 
+          }else console.log("navigation() bar response");
+
+        });
+      }
+
+    $(function(){
+      // $('#stop-tag').tagsinput({
+      //   allowDuplicates: false,
+      //   itemValue: 'id',
+      //   itemText: 'label'
+      // });
+
+      // $('#assoc-tag').tagsinput({
+      //   allowDuplicates: false,
+      //   itemValue: 'id',
+      //   itemText: 'label'
+      // });
+
+      $('#t-tmpls').tagsinput({
+        allowDuplicates: false,
+        itemValue: 'id',
+        itemText: 'label'
+      });
+      $('#d-tmpls').tagsinput({
+        allowDuplicates: false,
+        itemValue: 'id',
+        itemText: 'label'
+      });
+
+      $(".bootstrap-tagsinput input").attr("readonly", true);
+
+      <% scope.tmplRelation.forEach(function(tmpl, iter){ %>
+        <% if (tmpl.type == 'description'){%>
+          $('#d-tmpls').tagsinput('add', {"id":<%= tmpl.id %>, "label": "<%= tmpl.title %>"} );
+        <%}%>
+      <% }); %>
+      <% scope.tmplRelation.forEach(function(tmpl, iter){ %>
+        <% if (tmpl.type == 'title'){%>
+          $('#t-tmpls').tagsinput('add', {"id":<%= tmpl.id %>, "label": "<%= tmpl.title %>"} );
+        <%}%>
+      <% }); %>
+      
+      // $('div.tags button.add-more.assoc-tag').on('click', (e)=>{
+      //   // console.log('click');
+      //   var btn = e.target;
+      //   var neighbour = btn.previousElementSibling;
+      //   var tag_name = neighbour.options[neighbour.selectedIndex].value;
+      //   var tag_id = neighbour.options[neighbour.selectedIndex].getAttribute('tag-id');
+
+      //   $('#assoc-tag').tagsinput('add', {"id":tag_id, "label":tag_name} );
+      // });
+      
+      // $('div.tags button.add-more.stop-tag').on('click', (e)=>{
+      //   // console.log('click');
+      //   var btn = e.target;
+      //   var neighbour = btn.previousElementSibling;
+      //   var tag_name = neighbour.options[neighbour.selectedIndex].value;
+      //   var tag_id = neighbour.options[neighbour.selectedIndex].getAttribute('tag-id');
+      //   $('#stop-tag').tagsinput('add', {"id":tag_id, "label":tag_name} );
+      // });
+      $('div.tmpls button.add-more.t-tmpls').on('click', (e)=>{
+        // console.log('click');
+        var btn = e.target;
+        var neighbour = btn.previousElementSibling;
+        var tag_name = neighbour.options[neighbour.selectedIndex].value;
+        var tag_id = neighbour.options[neighbour.selectedIndex].getAttribute('tmpl-id');
+        $('#t-tmpls').tagsinput('add', {"id":tag_id, "label":tag_name} );
+      });
+      $('div.tmpls button.add-more.d-tmpls').on('click', (e)=>{
+        // console.log('click');
+        var btn = e.target;
+        var neighbour = btn.previousElementSibling;
+        var tag_name = neighbour.options[neighbour.selectedIndex].value;
+        var tag_id = neighbour.options[neighbour.selectedIndex].getAttribute('tmpl-id');
+        $('#d-tmpls').tagsinput('add', {"id":tag_id, "label":tag_name} );
+      });
+
+      $('#thumb-navigator').on('click', e => {
+        // console.log('nav');
+        if (e.preventDefault) e.preventDefault();
+        $('#navigator').removeClass("hide");
+        
+        var data = {};
+        data.type = 'project.showDir';
+        ajax('/project/'+<%=scope.project.id%>, data, (_data, textStatus)=>{
+          console.log(_data);
+          var _list = _data.list;
+          var _path = _data.path
+          if(_list && _path){
+            $('#navigator .wrapper .navigation').empty();
+            var list = document.createElement('ul')
+            for(var i=0; i<_list.length; i++){
+              var li = document.createElement('li');
+              li.innerHTML = `
+                <a onclick="navigation('${_list[i]}','${_path}')">
+                  <i class="fa fa-folder"></i>
+                  <span>
+                    ${_list[i]}
+                  </span>
+                </a>
+              `;
+              list.appendChild(li);
+            }
+            $('#navigator .wrapper .navigation').append(list);
+
+            $('#navigator .wrapper span.path').text(_path);
+
+            var btn = document.createElement('button');
+            btn.setAttribute("class","select");
+            btn.setAttribute("onclick","saveDir('"+ _path +"')");
+            btn.innerHTML = `
+              <span>
+                select curent folder
+              </span>
+            `;
+            $('#navigator .wrapper .bot-bar').append(btn); 
+
+            // console.log(textStatus);            
+          }else console.log("navigation() bar response");
+
+        });
+      });
+
+
+      $('#delete-btn').on('click', function(e){
+        if(!confirm("are you sure? It can break a lot of conditions"))
+          return;
+        
+        var data = {};
+        data.type = 'project.delete';
+          ajax('/project/'+<%=scope.project.id%>, data, (_data, textStatus)=>{
+            console.log(_data);
+              if (_data.redirect) {
+                  window.location.href = _data.redirect;
+              }
+              else {
+                  console.log('oops');
+              }
+            });
+        });
+    });
+
+    </script>
+  </body>
+</html>

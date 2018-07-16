@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html class="ng-scope" np-app="Reple">
+  <head>
+    <script src="https://unpkg.com/vue"></script>
+    <% include ../partials/header.ejs %>
+  </head>
+  <body >
+    <% include ../partials/topnav.ejs %>
+
+    <section id='login-page'>
+      <div class="container">
+        <div class="row">
+          <h1>hallo</h1>
+          <div class="form-group">
+            <form id='p-login-form'>
+              <label for='p-login'>Login</label>
+              <input name='login' id='p-login' class="login-input form-control" type='text' required></input><br>
+              <label for='p-password'>Password</label>
+              <input name='password' id='p-password' class="password-input form-control" type='password' required></input><br>
+              <input class="submit-button form-control" type='submit' value='Log In'></input>
+              <p class="error-msg"></p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script>
+      $(()=>{
+        $('#p-login-form').on('submit', (e)=>{
+          if (e.preventDefault) e.preventDefault();
+          $('p.error-msg')[0].innerHTML = '';
+          let data = {
+            login : e.target.login.value,
+            password : e.target.password.value,
+          }
+          ajax('/login', data, (result)=>{
+
+              console.log(result);
+              if(result.error) {
+                snackbox('xyi', 77);
+                $('p.error-msg').append(result.error);
+              }
+              if (result.redirect) {
+                window.location.href = result.redirect;
+              }
+          });
+        });
+      });
+    </script>
+
+    </body>
+  </html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html class="ng-scope" np-app="Reple">
+<head>
+  <% include ../partials/header.ejs %>
+</head>
+<body class='side-pad'>
+  <% include ../partials/topnav.ejs %>
+  <% include ../partials/leftnav.ejs %>
+
+  <div class="container">
+  	<h1>Export Page</h1>
+  	<hr>
+  </div>
+
+  <% if( scope.db ){ %>
+  <section id="export-body" class='col-md-offset-1 col-md-10'>
+  	<div class="action-board col-md-8">
+
+  		<div class="export-field row">
+        <div  class="col-md-6">
+          <div>
+            <h4><span class='unmmaped objs'><%=scope.objs.length%></span> new objects </h4>
+            <button class='btn btn-warning push' id='export-push'>push</button>
+            
+          </div>
+        </div>
+        <div  class="col-md-6">
+          <div id='sad-spinner'>
+              <% include ../partials/spinner.ejs %>
+          </div>
+          <style>
+            #sad-spinner{
+              display: block;
+              position: relative;
+              width: 100%;
+              height: 100%;
+              z-index: 2;
+            }
+            #sad-spinner.hide{
+              display: none;
+            }
+          </style>
+        </div>
+  		</div>
+
+  		<hr>
+  		<h3>Export history:</h3>
+  		<ul class='export-history'>
+  			<% scope.exportlogs.reverse().forEach(function(elog, iter) { %>
+  				<li>
+  					<a href="<%=elog.id%>/"> <%=elog.date%> </a>
+  				</li>
+  			<% }); %>
+  		</ul>
+  	</div>
+
+  	<div class="info-table col-md-4">
+  		<h3>Time Line</h3>
+  		<div class="overflow-wrapper">
+	  		<table>
+	  			<tbody>
+	  				<% scope.logs.reverse().forEach(function(log, iter) { %>
+						<tr>
+							<td>
+								<h5><%=log.type%></h5>
+								<p class='items'><%=log.length%></p>
+								<p class='date'><%=log.date%></p>
+								<hr>
+							</td>
+						</tr>
+	  				<% }); %>
+	  			</tbody>
+	  		</table>
+  		</div>
+
+  	</div>
+  </section>
+  <% }else{ %>
+  	<div class="container">
+  		<span class='error'>no database credentials</span>
+  	</div>  	
+  <% } %>
+</body>
+<script>
+var project_id = <%=scope.project.id%>;
+var unmmaped_objs_size = <%=scope.objs.length%>;
+var url = '/project/'+project_id+'/export/';
+  function checkStatus(){
+  // console.log('checkMakeThumbs click');
+    var data = {};
+    data.type = "project.export.check";
+
+    ajax(url, data, (result)=>{
+      // console.log(result);
+      if(!result.status){
+        $('#sad-spinner').addClass('hide');
+      }
+      else{
+        $('#sad-spinner').removeClass('hide');
+      }
+    });
+  }
+  $(function(){
+
+  });
+
+	$(function(){
+    var timerId = setInterval(function() { 
+      checkStatus();
+    }, 1000);
+
+		$("#export-push").on('click', ()=>{
+			console.log("push click");
+			if(unmmaped_objs_size == 0){
+				alert("There is no unmmaped objects");
+				return;
+			}
+
+      if( confirm("are you sure?") ){ 
+        var data = {type: "project.export.push"};
+
+        ajax(url, {
+          type: "project.export.push"
+        }, (resp)=>{
+          if( resp.process ){
+            console.log('in progress');
+            // ... popup msg
+          }else{
+            console.log(resp);
+            location.reload();
+          }
+        });
+      }
+		});
+
+	});
+
+</script>
+</html>

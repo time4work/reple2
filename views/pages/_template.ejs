@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<% include ../partials/header.ejs %>
+	    <link rel="stylesheet" type="text/css" href="/stylesheets/bootstrap-tagsinput.css">
+	    <script src="http://bootstrap-tagsinput.github.io/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js"></script>
+	    <script type="text/javascript" src='/javascripts/tmpl.js'></script>
+	</head>
+	<body>
+
+		<% include ../partials/topnav.ejs %>
+
+		<section class="p-console bot">
+			<ul class='output'>
+			</ul>
+		</section>
+
+		<section class='key-library-window'>
+			<div class="side-btn"></div>
+			<div class="key-library-window-body">
+				<h4>Key Library</h4>
+				<hr>
+				<section class="description-box">
+					<h4>Library Usage:</h4>
+					<p>The usage is the same as with simple &#60;key&#62;</p>
+					<p>But instead of using &#60;&#62; arrow symbol</p>
+					<p>Library key uses the [ ] square brackets</p>
+					<p>The library keys are global </p>
+					<p>So they can be used in any text-template</p>
+				</section>
+				<hr>
+
+				<% scope.library.forEach(function(lib_item, lib_iter){ %>
+					<div class="key-library-window-box">
+						<h5>[ <%=lib_item.key%> ]</h5>
+						<ul>
+							<% lib_item.values.forEach(function(lib_value, lib_iter){ %>
+								<li><%=lib_value.value%></li>
+							<% }) %>
+						</ul>
+					</div>
+				<% }) %>
+
+			</div>
+		</section>
+
+		<section id="template-details" class="container-fluid" tmpl-id='<%=scope.tmpl.id%>'>
+
+			<div class="details-body row">
+
+				<section class="p-console">
+					<input type="text">
+				</section>
+
+				
+				<div class='block col-md-4' >
+					<form id='template-form'>
+						<h1>Template details</h1>
+						<p class='export-tmpl'>
+							<a id='template-export-btn'>
+								<span>export</span>
+								<i class="fa fa-arrow-circle-o-down"></i>
+							</a>
+						</p>
+						<p class="name input">
+							<span class="p-label">Name</span>
+							<input type="text"  id='name-input' value="<%= scope.tmpl.name %>">
+						</p>
+						<p class="id input">
+							<span class="p-label">id</span>
+							<input type="text"  id='id-input' value="<%= scope.tmpl.id %>" readonly>
+						</p>
+
+						<div class="main-butt-forth">
+							<input class="btn btn-danger" type="button" value="DELETE" onclick='removeCurTmpl(this,event)' >
+							<input class="btn btn-success" type="submit" value="SAVE">
+						</div>
+					</form>
+					<hr>
+					<div class="description-box">
+						<h4>Key Usage :</h4>
+						<p>use &#60; key &#62; syntax to generate value by the key</p>
+						<p>key must have no spaces</p>
+						<h4>Value Restrictions :</h4>
+						<p>255 symbols</p>
+						<h4>Dont Use ... in key names :</h4>
+						<p>punctuation mark symbols</p>
+						<p> . , - = / | \ ? ! " '</p>
+						<p>and space symbol too</p>
+						<h4>You can Use :</h4>
+						<p>simple letters and " _ " sybol</p>
+						<h4>Example :</h4>
+						<p>&#60;adj&#62; = "super"</p>
+						<p>&#60;test&#62; = "&#60;adj&#62; value example"</p>
+						<p>generates:</p>
+						<p>&#60;test&#62; = "super value example"</p>
+						<h4>Beware Of Recursion:</h4>
+						<p>&#60;test&#62; = "... &#60;test&#62; ..."</p>
+					</div>
+					<hr>
+
+					<hr>
+
+				</div>
+
+				<div class='block col-md-4' >
+					<div class="templates_mng">
+							<p class="templates input">
+								<span class="p-label">templates</span>
+							<p>
+							<div class="shadow-wrapper">
+								<p class='input-line'>
+									<label>Key</label>
+									<input type="text" name="" id='tmpl-key' placeholder="new_key">
+								</p>
+								<script>
+								/*
+								<p class='input-line'>
+									<label>Value</label>
+									<input type="text" name="" id='tmpl-val' placeholder="text with <other_keys>">
+								</p>
+								*/
+								</script>
+							</div>
+							<!-- tag-condition -->
+							<div class="">
+
+								<script>
+								/*
+								<p class='input-line txt-cent'>
+									<span>Tags Condition</span>
+								</p>
+								<hr>
+								<div class="tags select syns">
+									<p class="tags">
+										<p>positive Conditions</p>
+										<select multiple id='assocs-tag'>
+										</select>
+									</p>
+									<p>
+										<select id='syn-tag-select' onchange="tagSelectFunc();">
+										<% scope.tags.forEach(function(tag, iter){ %>
+													<option tag-id='<%= tag.id %>'><%= tag.name %></option>
+										<% }); %>
+										</select>
+										<button class="btn btn-success add-more assocs-tag" select-id='assocs-tag' type="button">
+											<i class="glyphicon glyphicon-plus full-width"></i> 
+										</button>
+									</p>
+								</div>
+								<hr>
+								<div class="tags select stop">
+									<p class="tags">
+										<p>negative Condition</p>
+										<select multiple id='stop-tag'>
+										</select>
+									</p>
+									<p>
+										<select id='stop-tag-select' onchange="tagSelectFunc();">
+										<% scope.tags.forEach(function(tag, iter){ %>
+													<option tag-id='<%= tag.id %>'><%= tag.name %></option>
+										<% }); %>
+										</select>
+										<button class="btn btn-success add-more stop-tag" select-id='stop-tag' type="button">
+											<i class="glyphicon glyphicon-plus full-width"></i> 
+										</button>
+									</p>
+								</div>
+								*/
+								</script>
+
+								<!-- <hr> -->
+
+								<p>
+									<button class="btn btn-success add-tmpl full-width" select-id='template-text' type="button">
+										<!-- <i class="glyphicon glyphicon-plus full-width"></i> -->
+										<span>Add New Key</span> 
+									</button>
+								</p>
+
+							</div> 
+							<!-- tag-condition -->
+						</p>
+					</div>	
+					
+					<hr>
+
+					<div class='p-tag-tmpls'>
+						<ul>
+							<% scope.templates_f.forEach(function(tmpl, iter){ %>
+							<li>
+								
+							</li>
+							<% } %>
+						</ul>
+					</div>
+					<script>
+						/*
+					<div class='tag-tmpls'>
+						<ul>
+						<% scope.templates.forEach(function(tmpl, iter){ %>
+							<li>
+								<div class="remove" tmpl-id='<%=tmpl.id%>' onClick='removeTmpl(this);'>
+									<i class="fa fa-times" aria-hidden="true"></i>
+								</div>
+								<span><%=tmpl.keyword%></span>
+								<p><%=tmpl.val%></p>
+								<div class="assoc-tag-list">
+									<ul>
+									<% tmpl.tags.assocs.forEach(function(tag, iter){ %>
+										<li tag-id='<%=tag.id%>'>
+											<%=tag.name%>
+										</li>
+									<% }); %>
+									</ul>
+								</div>
+								<div class="stops-tag-list">
+									<ul>
+									<% tmpl.tags.stops.forEach(function(tag, iter){ %>
+										<li tag-id='<%=tag.id%>'>
+											<%=tag.name%>
+										</li>
+									<% }); %>
+									</ul>
+								</div>
+							</li>
+						<% }); %>
+						</ul>
+					</div>
+						*/
+					</script>
+				</div>
+
+			</div>
+		</section>
+	<script>
+		var url = '/template/'+'<%=scope.tmpl.id%>';
+		var tmpl_pack = <%-JSON.stringify(scope.templates)%>;
+		var tmpl_f_pack = <%-JSON.stringify(scope.templates_f)%>;
+		var lib_pack = <%-JSON.stringify(scope.library)%>;
+		var tmpl = parseTmplObj(tmpl_pack);
+		var lib = parseLibObj(lib_pack);
+		var tmpl_name = '<%= scope.tmpl.name %>';
+		function removeCurTmpl(el, event){
+			console.log(el);
+			console.log(event);
+			if( confirm("Are you sure?") ){
+				ajax(url, {type:'delTCur'}, (res)=>{
+					console.log('del');
+					console.log(res);
+				});
+				window.location.replace('/templates');
+			}
+		}	
+		function removeTmpl(e){
+			console.log(e);
+			var id = e.getAttribute('tmpl-id');
+			console.log(id);
+			ajax(url, {type:'delTTmpl',id:id}, (resp)=>{
+				console.log(resp);
+			});
+			location.reload();
+		}	
+		function tagSelectFunc(){
+			console.log('oops');
+		}
+  	// 	function throwJsonFile(json, name){
+			// var jsonse = JSON.stringify(json, null, 4);
+			// var blob = new Blob([jsonse], {type: "application/json"});
+			// // var blob = new Blob([json], {type: "application/json"});
+			// var downloadLink = document.createElement("a");
+			// downloadLink.href = window.URL.createObjectURL(blob);
+			// downloadLink.download = `${name}.json`;
+
+			// document.body.appendChild(downloadLink);
+			// downloadLink.click();
+			// document.body.removeChild(downloadLink);
+  	// 	}
+		$(function(){
+
+			$('#assocs-tag').tagsinput({
+				allowDuplicates: false,
+				itemValue: 'id',
+				itemText: 'label'
+			});
+			$('#stop-tag').tagsinput({
+				allowDuplicates: false,
+				itemValue: 'id',
+				itemText: 'label'
+			});
+			$(".bootstrap-tagsinput input").attr("readonly", true);
+
+			$('#template-export-btn').on('click', (e)=>{
+				throwJsonFile(tmpl,tmpl_name);
+			});
+			$('section.key-library-window div.side-btn').on('click', (e)=>{
+				$('section.key-library-window').toggleClass('show');
+			});
+
+			$('div.tags button.add-more.assocs-tag').on('click', (e)=>{
+				var btn = e.target;
+				var select = document.getElementById("syn-tag-select");
+				var tag_name = select.options[select.selectedIndex].value;
+				var tag_id = select.options[select.selectedIndex].getAttribute('tag-id');
+
+				console.log(select);
+				console.log(tag_name);
+				console.log(tag_id);
+				console.log( {"id":tag_id, "label":tag_name} );
+
+				$('#assocs-tag').tagsinput('add', {"id":tag_id, "label":tag_name} );
+			});
+			$('div.tags button.add-more.stop-tag').on('click', (e)=>{
+				var btn = e.target;
+				var select = document.getElementById("stop-tag-select");
+				var tag_name = select.options[select.selectedIndex].value;
+				var tag_id = select.options[select.selectedIndex].getAttribute('tag-id');
+
+				console.log(select);
+				console.log(tag_name);
+				console.log(tag_id);
+				console.log( {"id":tag_id, "label":tag_name} );
+
+				$('#stop-tag').tagsinput('add', {"id":tag_id, "label":tag_name} );
+			});
+			$('div.templates_mng button.add-tmpl').on('click', (e)=>{
+				console.log('click');
+				var btn = e.target;
+				var key = $('input#tmpl-key').val(),
+					val = $('input#tmpl-val').val();
+				if( !key )
+					return
+
+				var syn_arr = $('#assocs-tag').val();
+				var stop_arr = $('#stop-tag').val();
+
+				var data = {
+					type:'newTTmpl', 
+					key:key, 
+					val:val,
+					// syntags:syn_arr, stoptags:stop_arr
+				};
+
+					data['assoctags'] = JSON.stringify(syn_arr);
+					data['stoptags'] = JSON.stringify(stop_arr);
+
+				console.log(data);
+				ajax(url, data, (resp)=>{
+					console.log(resp);
+				});
+				// location.reload();
+			});
+		});
+	</script>
+	</body>
+</html>	

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<% include ../partials/header.ejs %>
+	    <link rel="stylesheet" href="http://bootstrap-tagsinput.github.io/bootstrap-tagsinput/dist/bootstrap-tagsinput.css">
+	    <script src="http://bootstrap-tagsinput.github.io/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js"></script>
+	</head>
+	<body>
+
+		<% include ../partials/topnav.ejs %>
+		<section id="tag-details" class="col-md-12" tag-id='<%=scope.tag.id%>'>
+			<div class="details-body col-md-4">
+				<div class='block'>
+					<form id='tag-info-form'>
+						<h1>Tag details</h1>
+						<p class="name input">
+							<span class="label-title">Name</span>
+							<input type="text"  id='name-input' value="<%= scope.tag.name %>">
+						</p>
+						<p class="id input">
+							<span class="label-title">id</span>
+							<input type="text"  id='id-input' value="<%= scope.tag.id %>" readonly>
+						</p>
+
+						<p class='full-btn'>
+							<button type="button" class='btn btn-danger delete'>
+								delete
+							</button>
+							<button type='submit' class='btn btn-success'>
+								save
+							</button>
+						</p>
+					</form>
+				</div>
+			</div>
+
+			<div class="tag-holder col-md-4">
+				<div class="tags select syns">
+					<p class="tags input">
+						<span class="label-title">Synonym tags</span>
+						<select multiple id='syns-tag'>
+						</select>
+					</p>
+				</div>
+			</div>
+
+			<div class="tag-list col-md-4">
+				<div class="psearch">
+					<input id="search" placeholder="SEARCH BY NAME" type="text">
+					<img class="find noselect" src="/img/s-icon.svg">
+				</div>
+				<ul>
+					<% scope.tags.forEach(function(tag, iter){ %>
+						<% if (tag.id != scope.tag.id) { %>
+							<% if (tag.flag) { %>
+								<li tag-id='<%= tag.id %>'
+									class='hasflag tag-list-item'>
+									<i class="glyphicon glyphicon-plus "></i>
+									<span><%= tag.name %></span>
+								</li>
+							<% } else { %>
+								<li tag-id='<%= tag.id %>'  
+									class="tag-list-item">
+									<i class="glyphicon glyphicon-plus "></i>
+									<span><%= tag.name %></span>
+								</li>
+							<% } %>
+						<% } %>
+					<% }); %>
+				</ul>
+			</div>
+		</section>
+<script type="text/javascript">
+
+	function tagSelectFunc() {
+		var selectBox = document.getElementById("syn-tag-select");
+		console.log(selectBox);
+		if ( selectBox.options[selectBox.selectedIndex].classList.contains('hasflag') )
+			alert("This tag has flag! If you add it to synonym tags, you may rewrite some text templates of this tag.");
+	}
+
+	$(function(){
+		$('#syns-tag').tagsinput({
+			allowDuplicates: false,
+			itemValue: 'id',
+			itemText: 'label'
+		});
+		$('#template-text').tagsinput({
+			allowDuplicates: false,
+			// itemValue: 'key',
+			// itemText: 'script'
+		});
+
+		$(".bootstrap-tagsinput input").attr("readonly", true);
+
+		<% scope.syns.forEach(function(syn, iter){ %>
+			<% if(syn.id != scope.tag.id) { %>
+	  			$('#syns-tag').tagsinput('add', {"id":<%= syn.id %>, "label": "<%= syn.name %>"} );
+	  		<% } %>
+		<% }); %>
+
+
+		// $('div.tags button.add-more').on('click', (e)=>{
+		// 	console.log(e);
+		// 	console.log('click');
+		// 	var btn = e.target;
+
+		// 	var select = document.getElementById("syn-tag-select");
+		// 	var tag_name = select.options[select.selectedIndex].value;
+		// 	var tag_id = select.options[select.selectedIndex].getAttribute('tag-id');
+
+		// 	console.log(select);
+		// 	console.log(tag_name);
+		// 	console.log(tag_id);
+
+		// 	// var select_id = btn.getAttribute('select-id');
+		// 	// var select = document.getElementById(select_id);
+		// 	// var select_name = '#'+select_id;
+		// 	console.log( {"id":tag_id, "label":tag_name} );
+		// 	$('#syns-tag').tagsinput('add', {"id":tag_id, "label":tag_name} );
+		// });
+		$('div.tag-list .tag-list-item').on('click', (e)=>{
+			console.log(e);
+			console.log('click');
+			var item = e.currentTarget;
+			console.log(item);
+
+			// var select = document.getElementById("syn-tag-select");
+			var tag_name = item.querySelector('span').innerText;
+			var tag_id = item.getAttribute('tag-id');
+
+			console.log(tag_name);
+			console.log(tag_id);
+
+			// var select_id = btn.getAttribute('select-id');
+			// var select = document.getElementById(select_id);
+			// var select_name = '#'+select_id;
+			console.log( {"id":tag_id, "label":tag_name} );
+			$('#syns-tag').tagsinput('add', {"id":tag_id, "label":tag_name} );
+		});
+		$('button.delete').on('click', (e)=>{
+			console.log(e);
+			console.log('click');
+			var btn = e.target;
+
+			if(!confirm("are you sure? It can break a lot of conditions"))
+				return;
+			var data = {};
+			data.type = 'tag.del';
+		    ajax('/tag/'+<%=scope.tag.id%>, data, (_data, textStatus)=>{
+		    	console.log(_data);
+		        if (_data.redirect) {
+		            window.location.href = _data.redirect;
+		        }
+		        else {
+		            console.log('oops');
+		        }
+	        });
+		});
+	});
+</script>
+	</body>
+</html>	

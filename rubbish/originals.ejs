@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html class="ng-scope" np-app="Reple">
+<head>
+  <% include ../partials/header.ejs %>
+</head>
+<body>
+  <% include ../partials/topnav.ejs %>
+	<section id="originals-top-page" class="col-md-offset-2 col-md-8">
+		<div class="">
+		    <h1>Originals</h1>
+		</div>
+	</section>
+  	<hr>
+	<section id="originals-page" >
+		<div class="col-md-offset-1 col-md-10">
+			<h3>Data length: <%=scope.size%></h3>
+			<div class="psearch">
+				<input type="text" id="search" placeholder="SEARCH BY NAME" >
+				<img class="find noselect" src="img/s-icon.svg">
+			</div>
+		</div>
+	</section>
+</body>
+</html>

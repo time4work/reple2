@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <% include ../partials/header.ejs %>
+    </head>
+<body np-app="Reple">
+
+  <% include ../partials/nav.ejs %>
+
+  <section id="keys-page">
+    <div class="container">
+      <div class="keys-title">
+        <h1>Keywords</h1>
+      </div>
+      <div class="add-input">
+        <form id='key-form'>
+          <div class="input-group">
+              <input type="text" name="name" class="form-control"  placeholder="Add new keyword">
+              <div class="input-group-btn">
+                <button class="btn btn-success add-more" type="submit"><i class="glyphicon glyphicon-plus"></i> Add</button>
+              </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+  <section id="table-second">
+    <div class="table-body">
+    <h3>Tottal length: <%= array.length %></h3>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>№</th>
+            <th>Name</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <% array.forEach(function(r, iter) { %>
+
+          <tr>
+            <td class="number"> <%= iter %> </td>
+
+            <td> <%= r.name %></td>
+
+            <td><a href=""><i class="fa fa-times" aria-hidden="true"></i></a></td>
+          </tr>
+
+          <% }); %>
+
+        </tbody>
+      </table>
+    </div>
+  </section>
+</body>
+</html>

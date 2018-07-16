@@ -1,0 +1,16 @@
+#apt dependencies
+sudo apt install libgtk2.0-0:i386, libxss-dev, ffmpeg, xvfb, libgconf-2-4
+
+#npm dependencies
+npm i -g nightmare --force --allow-root
+
+#other dependencies
+mysql nodeJs+npm 
+
+#run
+DB_HOST=localhost DB_USER=root DB_PASSWORD=*** DB_DATABASE=replecon node app.js
+
+#debug
+DEBUG=* node app.js
+DEBUG=nightmare:* node app.js
+DEBUG=express:* node app.js

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<% include ../partials/header.ejs %>
+	    <link rel="stylesheet" href="http://bootstrap-tagsinput.github.io/bootstrap-tagsinput/dist/bootstrap-tagsinput.css">
+	    <script src="http://bootstrap-tagsinput.github.io/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js"></script>
+	</head>
+	<body>
+
+		<% include ../partials/topnav.ejs %>
+		<section class="p-console bot">
+			<ul class='output'>
+			</ul>
+		</section>
+		<section id="tag-details" class="col-md-12" tag-id='<%=scope.tag.id%>'>
+			<div class="details-body">
+
+				<section class="p-console">
+					<input type="text">
+				</section>
+				<div class='block'>
+					<form id='tag-info-form'>
+						<h1>Tag details</h1>
+						<p class="name input">
+							<span class="label-title">Name</span>
+							<input type="text"  id='name-input' value="<%= scope.tag.name %>">
+						</p>
+						<p class="id input">
+							<span class="label-title">id</span>
+							<input type="text"  id='name-input' value="<%= scope.tag.id %>" readonly>
+						</p>
+						<div class="tags select syns">
+							<p class="tags input">
+								<span class="label-title">Synonym tags</span>
+								<select multiple id='syns-tag'>
+								</select>
+							</p>
+							<p>
+								<select id='syn-tag-select' onchange="tagSelectFunc();">
+								<% scope.tags.forEach(function(tag, iter){ %>
+									<% if (tag.id != scope.tag.id) { %>
+										<% if (tag.flag) { %>
+											<option class='hasflag' tag-id='<%= tag.id %>'><%= tag.name %></option>
+										<% } else { %>
+											<option tag-id='<%= tag.id %>'><%= tag.name %></option>
+										<% } %>
+									<% } %>
+								<% }); %>
+								</select>
+								<button class="btn btn-success add-more" select-id='syns-tag' type="button">
+									<i class="glyphicon glyphicon-plus full-width"></i> 
+								</button>
+							</p>
+						</div>
+						<p><button type='submit' class='btn'>save</button></p>
+					</form>
+					<div class="templates_mng">
+							<p class="templates input">
+								<span class="label-title">templates</span>
+							<p>
+							<p class='input-line'>
+								<label>Key</label>
+								<input type="text" name="" id='tmpl-key'>
+							</p>
+							<p class='input-line'>
+								<label>Value</label>
+								<input type="text" name="" id='tmpl-val'>
+							</p>
+							<p>
+								<button class="btn btn-success add-tmpl full-width" select-id='template-text' type="button"><i class="glyphicon glyphicon-plus full-width"></i></button>
+							</p>	
+							<div class='tag-tmpls'>
+								<ul>
+								<% scope.templates.forEach(function(tmpl, iter){ %>
+									<li>
+										<div class="remove" tmpl-id='<%=tmpl.id%>' onClick='removeTmpl(this);'>
+											<i class="fa fa-times" aria-hidden="true"></i>
+										</div>
+										<span><%=tmpl.keyword%></span>
+										<p><%=tmpl.val%></p>
+									</li>
+								<% }); %>
+								</ul>
+							</div>
+						</p>
+					</div>
+				</div>
+			</div>
+		</section>
+	<script>
+		
+	</script>
+	</body>
+</html>	

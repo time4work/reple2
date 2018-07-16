@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <% include ../partials/header.ejs %>
+    </head>
+<body>
+
+  <% include ../partials/topnav.ejs %>
+
+  <section id="tags-page" class="col-md-offset-2 col-md-8">
+    <div class="">
+        <h1>Tags</h1>
+
+    </div>
+  </section>
+  <hr>
+  <section id="table-second"  class="col-md-offset-1 col-md-10">
+    <div class="table-body">
+      <h3>length: <%= array.length %></h3>
+      <div class="head-menu">
+        <ul>
+          <li><a href="#" onclick='createTag(this,event)'>Create New Tag</a></li>
+        </ul>
+      </div>
+      <div class="psearch">
+        <input type="text" id="search" placeholder="SEARCH BY NAME" >
+        <img class="find noselect" src="/img/s-icon.svg">
+      </div>
+
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>syn size</th>
+            <!-- <th>tmpl size</th> -->
+          </tr>
+        </thead>
+
+        <tbody id='search-tbody'>
+        </tbody>
+
+        <tbody id='list-tbody'>
+          <% array.forEach(function(r, iter) { %>
+          <tr>
+            <td class="number"> <%= r.id %> </td>
+            <td> 
+              <a href="/tag/<%= r.id %>/">
+                <%= r.name %>
+              </a>
+            </td>
+            <td><%= r.syns>0 ? r.syns-1 : 0 %></td>
+          </tr>
+          <% }); %>
+        </tbody>
+
+      </table>
+    </div>
+  </section>
+</body>
+<script>
+  $(function(){
+    mysearch('/tags');
+  });
+
+  function mysearch(url){
+    console.log('search engine');
+    if( $('#search') ){
+        $('#search').on('keyup', ()=>{
+          console.log('search typing...');
+
+          var val = $('#search').val();
+          if( val.length > 0 ){
+              $("#list-tbody").hide();
+              ajax(url, {type:'search',name:val}, (tags)=>{
+                  console.log(tags);
+                  var html = '';
+                  for(var i in tags){
+                      console.log(tags[i]);
+                      html += ''
+                      + "<tr>"
+                      + "<td class='number'>" 
+                      + tags[i].id 
+                      + "</td>"
+                      + "<td><a href='/tag/"+tags[i].id+"'>"
+                      + tags[i].name
+                      + "</a></td>"
+                      + "<td></td>"
+                      + "<td></td>"
+                      + "</tr>";
+                  }  
+                  $("#search-tbody").empty().append(html).show();        
+              });
+          }else{
+              $("#list-tbody").show();
+              $("#search-tbody").hide();
+          }
+      });
+    }
+  }
+
+  function createTag(el,event){
+    if (event.preventDefault) event.preventDefault();
+        console.log(el);
+        console.log(event);
+        var name = prompt('new tag name');
+        if(!name)
+          return;
+        console.log("new tag: "+name);
+        
+        var body = 'name=' + encodeURIComponent(name)
+            +'&type=add';
+        var xhr = new XMLHttpRequest();
+
+        xhr.open("POST", '/tags', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onreadystatechange = function (){
+            console.log(xhr);
+            if(xhr.readyState == 4)
+                window.location.replace(xhr.responseURL);
+        };
+        xhr.send(body);
+        return false;
+  }
+</script>
+</html>

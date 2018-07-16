@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html class="ng-scope" np-app="Reple">
+<head>
+	<% include ../partials/header.ejs %>
+</head>
+<body>
+	<% include ../partials/topnav.ejs %>
+
+<!-- pop-up -->
+	<section id="import-section" class='hide'>
+		<div class="window">
+			<div class="top-bar">
+				<div class="title">
+					<i class="fa fa-cloud-upload"></i>
+					<span class='path'>import template</span>
+				</div>
+				<div class="close">
+					<button onclick='closeWindow()'>
+					<i class="fa fa-times"></i>
+					</button>
+				</div>
+			</div>
+			<div class="body">
+			<form id='template-import-form' onsubmit='importTemplate(event)'>
+				<div class="form-group">
+					<input type="text" class="form-control" placeholder="Template name" name='name'>
+				</div>
+				<div class="form-group">
+					<input type="file" class="form-control" id="exampleInputPassword1" name='file'>
+					<small class="form-text text-muted">Put your template json file.</small>
+				</div>
+				<button type="submit" class="submit">Submit</button>
+			</form>
+			</div>
+		</div>
+	</section>
+
+<!-- main body -->
+	<section id="originals-top-page" class="col-md-offset-2 col-md-8">
+		<div class="">
+		    <h1>Templates</h1>
+		</div>
+	</section>
+  	<hr>
+	<section id="table-second"  class="col-md-offset-1 col-md-10">
+		<div class="table-body">
+			<h3>length: <%=array.length%></h3>
+			<div class="head-menu">
+				<ul>
+					<li><a href="#" onclick='createTemplate(this,event);'>Create New Template</a></li>
+					<li><a onclick='showWindow()'>Import Template</a></li>
+				</ul>
+			</div>
+			<div class="psearch">
+				<input type="text" id="search" placeholder="SEARCH BY NAME" >
+				<img class="find noselect" src="/img/s-icon.svg">
+			</div>
+
+			<table class="table table-bordered">
+				<thead>
+					<tr>
+						<th>Id</th>
+						<th>Name</th>
+					</tr>
+				</thead>
+				<tbody id='search-tbody'>
+				</tbody>
+
+				<tbody id='list-tbody'>
+ 				<% array.forEach(function(r, iter) { %>
+					<tr>
+						<td class="number"> <%= r.id %> </td>
+						<td> 
+							<a href="/template/<%= r.id %>/">
+								<%= r.title %>
+							</a>
+						</td>
+					</tr>
+				<% }); %> 
+				</tbody>
+
+			</table>
+		</div>
+	</section>
+</body>
+<script>
+	$(function(){
+		mysearch('/templates');
+	});
+	function showWindow(){
+		$('#import-section').removeClass('hide');
+	}
+	function closeWindow(){
+		$('#import-section').addClass('hide');
+	}
+	function mysearch(url){
+	    console.log('search engine');
+	    if( $('#search') ){
+	        $('#search').on('keyup', ()=>{
+	          console.log('search typing...');
+
+	          var val = $('#search').val();
+	          if( val.length > 0 ){
+	              $("#list-tbody").hide();
+	              ajax(url, {type:'search',name:val}, (tags)=>{
+	                  console.log(tags);
+	                  var html = '';
+	                  for(var i in tags){
+	                      console.log(tags[i]);
+	                      html += ''
+	                      + "<tr>"
+	                      + "<td class='number'>" 
+	                      + tags[i].id 
+	                      + "</td>"
+	                      + "<td><a href='tag/"+tags[i].id+"'>"
+	                      + tags[i].name
+	                      + "</a></td>"
+	                      + "</tr>";
+	                  }  
+	                  $("#search-tbody").empty().append(html).show();        
+	              });
+	          }else{
+	              $("#list-tbody").show();
+	              $("#search-tbody").hide();
+	          }
+	      });
+	    }
+	}
+	function createTemplate(el,event){
+	    if (event.preventDefault) event.preventDefault();
+	    console.log(el);
+	    console.log(event);
+	    var name = prompt('new template name');
+        if(!name)
+			return;
+	    console.log("new template: "+name);
+	    
+	    var body = 'name=' + encodeURIComponent(name)
+	        +'&type=add';
+	    var xhr = new XMLHttpRequest();
+
+	    xhr.open("POST", '/templates', true);
+	    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	    xhr.onreadystatechange = function (){
+	        console.log(xhr);
+	        if(xhr.readyState == 4)
+	            window.location.replace(xhr.responseURL);
+	    };
+	    xhr.send(body);
+	    return false;
+	}	
+
+	function importTemplate(e){
+	    if(e.preventDefault) e.preventDefault();
+
+	    blockTheKraken("");
+
+	    var file = e.target.querySelector("input[name=file]").files[0];
+	    var name = e.target.querySelector("input[name=name]").value;
+	    console.log(name);
+	    console.log(file.name);
+
+	    var reader = new FileReader();
+	    var xhr = new XMLHttpRequest();
+	    var response;
+	    if (file.type == "application/json" ) {
+	        reader.readAsText(file);
+	        reader.onload = (e) => {
+                var body = 'data=' + encodeURIComponent(e.target.result);
+                body += '&type=import.template';
+                body += '&name='+name;
+                xhr.open("POST", '/templates', true);
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                xhr.onprogress = function (e) {
+                    if (e.lengthComputable) {
+                        console.log(e.loaded+  " / " + e.total)
+                    }
+                }
+                xhr.onloadstart = function (e) {
+                    console.log("start");
+                }
+                xhr.onloadend = function (e) {
+                    console.log("end");
+                    releaseTheKraken();
+                    alert('finish');
+                    closeWindow();
+                }
+                xhr.onreadystatechange = function (){
+                    console.log(xhr);
+                    if(xhr.readyState == 4){
+                    	response = xhr.response;
+                    	console.log(response);
+                    	alert(response);
+                    }
+                };
+                xhr.send(body); 
+	        };
+	    }else {
+	        console.log('file.type error'); 
+	        alert('file.type error'); 
+	        releaseTheKraken();
+	    }
+	    return false;
+	}
+</script>
+</html>

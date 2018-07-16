@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<% include ../partials/header.ejs %>
+	    <link rel="stylesheet" type="text/css" href="/stylesheets/bootstrap-tagsinput.css">
+	    <script src="http://bootstrap-tagsinput.github.io/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js"></script>
+	    <script type="text/javascript" src='/javascripts/tmpl.js'></script>
+	</head>
+	<body>
+
+		<% include ../partials/topnav.ejs %>
+
+		<section class="p-console bot" id='p-console-id'>
+			<div class="b-screen" onclick="closeConsole();"></div>
+			<div class="f-output">
+				<ul class='output'></ul>
+			</div>
+		</section>
+
+		<section class='key-library-window'>
+			<div class="side-btn"></div>
+			<div class="key-library-window-body">
+				<h4>Key Library</h4>
+				<hr>
+				<section class="description-box">
+					<h4>Library Usage:</h4>
+					<p>The usage is the same as with simple &#60;key&#62;</p>
+					<p>But instead of using &#60;&#62; arrow symbol</p>
+					<p>Library key uses the [ ] square brackets</p>
+					<p>The library keys are global </p>
+					<p>So they can be used in any text-template</p>
+				</section>
+				<hr>
+
+				<% scope.library.forEach(function(lib_item, lib_iter){ %>
+					<div class="key-library-window-box">
+						<h5>[ <%=lib_item.key%> ]</h5>
+						<ul>
+							<% lib_item.values.forEach(function(lib_value, lib_iter){ %>
+								<li><%=lib_value.value%></li>
+							<% }) %>
+						</ul>
+					</div>
+				<% }) %>
+
+			</div>
+		</section>
+
+		<section id="template-details" class="container-fluid" tmpl-id='<%=scope.tmpl.id%>'>
+
+			<div class="details-body row">
+				<section class="p-console">
+					<input type="text" onfocus="openConsole()">
+				</section>
+
+				<div class='block col-md-4' >
+					<form id='template-form' class="shadow-wrapper">
+						<h1>Template details</h1>
+						<p class='tmpl-menu'>
+							<a onclick='exportTmpl();'>
+								<span>export</span>
+								<i class="fa fa-arrow-circle-o-down"></i>
+							</a>
+							<a onclick='showHelp();'>
+								<span>help</span>
+							</a>
+						</p>
+						<p class="name input">
+							<span class="p-label">Name</span>
+							<input type="text"  id='name-input' value="<%= scope.tmpl.title %>">
+						</p>
+						<p class="id input">
+							<span class="p-label">id</span>
+							<input type="text"  id='id-input' value="<%= scope.tmpl.id %>" readonly>
+						</p>
+
+						<div class="main-butt-forth">
+							<input class="btn btn-danger" type="button" value="DELETE" onclick='removeTmpl();' >
+							<input class="btn btn-success" type="submit" value="SAVE">
+						</div>
+					</form>
+
+					<hr>
+					<div class="templates_mng shadow-wrapper">
+							<p class="templates input">
+								<span class="p-label">template keywords</span>
+							</p>
+							<div class="tmpl-new-key-input">
+								<p class='input-line'>
+									<label for='tmpl-key'>Key</label>
+									<input type="text" name="" id='tmpl-key' placeholder="new_key">
+								</p>
+							</div>
+
+							<div class="tmpl-new-key-submit">
+								<p>
+									<button class="btn btn-success add-tmpl full-width" select-id='template-text' type="button" onclick='addKey(this);'>
+										<span>Add New Key</span> 
+									</button>
+								</p>
+							</div> 
+
+					</div>	
+					<hr>
+
+				</div>
+
+				<div class='block col-md-4' >
+					<div class='p-tmpl-list shadow-wrapper' >
+						<ul>
+							<% Object.keys(scope.template).forEach( function(key, iter, keys){ %>
+
+		                    <li id='p-item-key-<%= scope.template[key].id %>'
+		                        class='p-tmpl-item'>
+		                        <form onsubmit="addValueToKey(this,event)"
+		                            key-id='<%= scope.template[key].id %>'>
+		                            <div class="p-tmpl-item-delete">
+		                                <button class="btn btn-danger" 
+		                                    key-id='<%=scope.template[key].id %>' 
+		                                    type="button" 
+		                                    onclick='deleteKey(this,event)'>
+		                                    <i class="fa fa-trash" aria-hidden="true"></i> 
+		                                </button>
+		                            </div>
+		                            <div class="p-tmpl-key">
+		                                <p>
+		                                    <span>Key: </span><%= key %>
+		                                </p>
+		                            </div>
+		                            <div class="p-tmpl-value-list">
+		                                <ul class='p-tmpl-value-ul'>
+		                                    <% scope.template[key].values.forEach(function(val, iter) { %>
+		                                        <li class='p-tmpl-value-item'
+		                                            id='p-tmpl-value-<%=val.id%>'>
+		                                            <span>
+		                                                <%=val.value%>
+		                                            </span>
+		                                            <button class="btn" 
+		                                                key-id='<%=scope.template[key].id%>' 
+		                                                value-id='<%=val.id%>'
+		                                                type="button" 
+		                                                onclick='deleteKeyValue(this,event)'>
+		                                                <i class="fa fa-times" aria-hidden="true"></i> 
+		                                            </button>
+		                                        </li>
+		                                    <% }); %>
+		                                </ul>
+		                                
+		                                <p class='p-tmpl-value-foot'>
+		                                    <input type="text"
+		                                        class='p-tmpl-new-value form-control' 
+		                                        placeholder="new value">
+		                                    <button type='submit'
+		                                        class="btn btn-success"> 
+		                                        <i class="glyphicon glyphicon-plus full-width"></i> 
+		                                    </button>
+		                                </p>
+		                            </div>
+		                        </form>
+		                    </li>
+							<% }); %>
+						</ul>
+					</div>
+					<script>
+					</script>
+				</div>
+
+			</div>
+		</section>
+
+		<section id="help-pop-up" >
+			<div class="b-screen" onclick="hideHelp();"></div>
+			<div class="f-body">
+				<div class="description-box">
+					<h4>Key Usage :</h4>
+					<p>use &#60; key &#62; syntax to generate value by the key</p>
+					<p>key must have no spaces</p>
+					<h4>Value Restrictions :</h4>
+					<p>255 symbols</p>
+					<h4>Dont Use ... in key names :</h4>
+					<p>punctuation mark symbols</p>
+					<p> . , - = / | \ ? ! " '</p>
+					<p>and space symbol too</p>
+					<h4>You can Use :</h4>
+					<p>simple letters and " _ " sybol</p>
+					<h4>Example :</h4>
+					<p>&#60;adj&#62; = "super"</p>
+					<p>&#60;test&#62; = "&#60;adj&#62; value example"</p>
+					<p>generates:</p>
+					<p>&#60;test&#62; = "super value example"</p>
+					<h4>Beware Of Recursion:</h4>
+					<p>&#60;test&#62; = "... &#60;test&#62; ..."</p>
+				</div> 
+			</div>
+		</section>
+	<script>
+		var url = '/template/'+'<%=scope.tmpl.id%>';
+		var tmpl_pack = <%-JSON.stringify(scope.template)%>;
+		var lib_pack = <%-JSON.stringify(scope.library)%>;
+		var tmpl = parseTmplObj(tmpl_pack);
+		var lib = parseLibObj(lib_pack);
+		var tmpl_name = '<%= scope.tmpl.name %>';
+
+		function removeTmpl(){
+			if( confirm("Are you sure?") ){
+				ajax('', {type:'delTmpl'}, (resp)=>{
+					console.log(resp);
+					if(resp.answer) 
+						window.location.replace('/templates');
+				});
+				
+			}
+		}	
+		function addKey(e){
+			console.log('click');
+			var btn = e.target;
+			var key = $('input#tmpl-key').val();
+			if( !key )
+				return
+
+			var data = {
+				type: 'newKey', 
+				key: key,
+			};
+			// var syn_arr = $('#assocs-tag').val();
+			// var stop_arr = $('#stop-tag').val();
+			// data['assoctags'] = JSON.stringify(syn_arr);
+			// data['stoptags'] = JSON.stringify(stop_arr);
+
+			console.log(data);
+			ajax('', data, (resp)=>{
+				console.log(resp);
+				if(resp.answer)
+					location.reload();
+			});
+		}
+	    function deleteKey(el,event){
+	        if (event.preventDefault) event.preventDefault();
+	        // console.log(event);
+
+	        if(!confirm('are you shure?'))return;
+	        let id = el.getAttribute('key-id');
+
+	        let data = {
+	            type: "delKey",
+	            id: id
+	        };
+	        console.log(data);
+	        ajax('', data, (resp)=>{
+	            console.log(resp);
+	            if(resp.answer){
+	                let node = document.getElementById('item-key-'+id);
+	                node.parentNode.removeChild(node);
+	                // el.remove();
+	            }
+	        });
+	    }
+	    function addValueToKey(el,event){
+	        if (event.preventDefault) event.preventDefault();
+	        console.log(el);
+
+	        let input = el.querySelector('input.p-tmpl-new-value');
+	        let keyID = el.getAttribute('key-id');
+			console.log(input);
+			console.log(keyID);
+
+	        if(!input.value)return;
+
+	        let data = {
+	            type: "newVal",
+	            keyID: keyID,
+	            value: input.value,
+	        };
+	        ajax('', data, (resp)=>{
+	            console.log(resp);
+	            if(resp.answer){
+	                let list = el.querySelector('ul.p-tmpl-value-ul');
+	                var _li = document.createElement('li');
+	                // div.className = "alert alert-success";
+	                _li.setAttribute('class', "p-tmpl-value-list-item");
+	                _li.setAttribute('id', `p-tmpl-value-value-${resp.id}`);
+	                _li.innerHTML = `
+                        <span>
+                            ${escapeHtml(input.value)}
+                        </span>
+                        <button class="btn" 
+                            key-id='${keyID}' 
+                            value-id='${resp.id}'
+                            type="button" 
+                            onclick='deleteKeyValue(this,event)'>
+                            <i class="fa fa-times" aria-hidden="true"></i> 
+                        </button>
+	                `;
+	                list.appendChild(_li);
+
+	                input.value = '';
+	            }
+	        });
+	    }
+	    function deleteKeyValue(el,event){
+	        if (event.preventDefault) event.preventDefault();
+	        console.log(el);
+
+	        let value_id = el.getAttribute('value-id');
+	        // let key_id = el.getAttribute('key-id');
+	        if(!value_id)return;
+	        let data = {
+	            type: "delVal",
+	            valID: value_id,
+	        };
+	        ajax('', data, (resp)=>{
+	            console.log(resp);
+	            if(resp.answer){
+	                let node = document.getElementById('p-tmpl-value-'+value_id);
+	                node.parentNode.removeChild(node);
+	                // el.remove();
+	            }
+	        });
+	    }
+		function showHelp(){
+			$('#help-pop-up').addClass('show-me');
+		}
+		function hideHelp(){
+			$('#help-pop-up').removeClass('show-me');
+		}
+// _------------------
+    // function createKey(el,event){
+    //     if (event.preventDefault) event.preventDefault();
+    //     console.log(el);
+    //     console.log(event);
+
+    //     var name = prompt('new key name');
+    //     if(!name)return;
+    //     console.log("new key: "+name);
+
+    //     let data = {
+    //         type: "library.key.create",
+    //         name: name
+    //     };
+    //     ajax('/library/', data, (result)=>{
+    //         console.log(result);
+    //         if(result.status == 'ok')
+    //             location.reload();
+    //     });
+    // }
+    // function deleteKey(el,event){
+    //     if (event.preventDefault) event.preventDefault();
+    //     // console.log(event);
+
+    //     if(!confirm('are you shure?'))return;
+    //     let id = el.getAttribute('key-id');
+
+    //     let data = {
+    //         type: "library.key.delete",
+    //         id: id
+    //     };
+    //     console.log(data);
+    //     ajax('/library/', data, (result)=>{
+    //         console.log(result);
+    //         if(result.status == 'ok'){
+    //             let node = document.getElementById('item-key-'+id);
+    //             node.parentNode.removeChild(node);
+    //             // el.remove();
+    //         }
+    //     });
+    // }
+
+//_-----------------
+		function tagSelectFunc(){
+			console.log('oops');
+		}
+		function exportTmpl(){
+			throwJsonFile(tmpl,tmpl_name);
+		}
+
+		$(function(){
+
+			// $('#assocs-tag').tagsinput({
+			// 	allowDuplicates: false,
+			// 	itemValue: 'id',
+			// 	itemText: 'label'
+			// });
+			// $('#stop-tag').tagsinput({
+			// 	allowDuplicates: false,
+			// 	itemValue: 'id',
+			// 	itemText: 'label'
+			// });
+			// $(".bootstrap-tagsinput input").attr("readonly", true);
+
+			$('section.key-library-window div.side-btn').on('click', (e)=>{
+				$('section.key-library-window').toggleClass('show');
+			});
+
+			// $('div.tags button.add-more.assocs-tag').on('click', (e)=>{
+			// 	var btn = e.target;
+			// 	var select = document.getElementById("syn-tag-select");
+			// 	var tag_name = select.options[select.selectedIndex].value;
+			// 	var tag_id = select.options[select.selectedIndex].getAttribute('tag-id');
+			// 	$('#assocs-tag').tagsinput('add', {"id":tag_id, "label":tag_name} );
+			// });
+
+			// $('div.tags button.add-more.stop-tag').on('click', (e)=>{
+			// 	var btn = e.target;
+			// 	var select = document.getElementById("stop-tag-select");
+			// 	var tag_name = select.options[select.selectedIndex].value;
+			// 	var tag_id = select.options[select.selectedIndex].getAttribute('tag-id');
+			// 	$('#stop-tag').tagsinput('add', {"id":tag_id, "label":tag_name} );
+			// });
+
+			// $('div.templates_mng button.add-tmpl').on('click', (e)=>{
+			// 	console.log('click');
+			// 	var btn = e.target;
+			// 	var key = $('input#tmpl-key').val();
+			// 		// val = $('input#tmpl-val').val();
+			// 	if( !key )
+			// 		return
+
+			// 	// var syn_arr = $('#assocs-tag').val();
+			// 	// var stop_arr = $('#stop-tag').val();
+
+			// 	var data = {
+			// 		type: 'newKey', 
+			// 		key: key,
+			// 		// syntags:syn_arr, stoptags:stop_arr
+			// 	};
+
+			// 		data['assoctags'] = JSON.stringify(syn_arr);
+			// 		data['stoptags'] = JSON.stringify(stop_arr);
+
+			// 	console.log(data);
+			// 	ajax(url, data, (resp)=>{
+			// 		// console.log(resp);
+			// 		location.reload();
+			// 	});
+			// });
+		});
+	</script>
+	</body>
+</html>	

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <% include ../partials/header.ejs %>
+    </head>
+<body np-app="Reple">
+
+  <% include ../partials/topnav.ejs %>
+
+  <section id="query-page" class="">
+    <h1>Query Test Page</h1>
+    <form id='query-form' style="overflow: hidden;">
+<!-- ssh -->
+    <div class="col-sm-6 input-block">
+      <label>ssh - tunnel</label>
+      <p class="host input">
+        <span class="label-title">host</span>
+        <input type="text"  id='host-ssh-input' name='query-ssh-host'>
+      </p>
+      <p class="port input">
+        <span class="label-title">port</span>
+        <input type="text"  id='port-ssh-input' name='query-ssh-port'>
+      </p>
+      <p class="user input">
+        <span class="label-title">user</span>
+        <input type="text"  id='user-ssh-input' name='query-ssh-user'>
+      </p>
+      <p class="password input">
+        <span class="label-title">password</span>
+        <input type="text"  id='password-ssh-input' name='query-ssh-password'>
+      </p>
+      <br> 
+    </div>
+<!-- db -->
+    <div class="col-sm-6 input-block">
+      <label>db - tunnel</label>
+      <p class="host input">
+        <span class="label-title">host</span>
+        <input type="text"  id='host-db-input' name='query-host'>
+      </p>
+      <p class="port input">
+        <span class="label-title">port</span>
+        <input type="text"  id='port-db-input' name='query-host'>
+      </p>
+      <p class="user input">
+        <span class="label-title">user</span>
+        <input type="text"  id='user-db-input' name='query-user'>
+      </p>
+      <p class="password input">
+        <span class="label-title">password</span>
+        <input type="text"  id='password-db-input' name='query-password'>
+      </p>
+      <p class="name input">
+        <span class="label-title">db name</span>
+        <input type="text"  id='name-db-input' name='query-name'>
+      </p>
+    </div>
+
+    <div class="col-sm-12 textarea-block">
+      <p class="query input" >
+        <span class="label-title">query</span>
+        <textarea id='query-db-textarea' name='query-script'></textarea>
+      </p>
+      <input type="submit" class='btn btn-link' value="send">
+    </div>
+
+    </form>
+    <br>
+
+    <div class="col-sm-12 textarea-block">
+    <p class="response input">
+      <span class="label-title">response</span>
+      <textarea id='response-textarea' readonly></textarea>
+    </p>
+    <br>
+    <p class="tmp input">
+      <span class="label-title">tmp</span>
+      <textarea id='tmp-textarea' ></textarea>
+    </p>
+    </div>
+
+  </section>
+
+</body>
+</html>

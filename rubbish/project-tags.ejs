@@ -1,0 +1,108 @@
+
+<% scope.tags.all.forEach(function(tag, iter){ %>
+  <li tag-id='<%= tag.id %>'  
+    class="tag-list-item">
+    <span><%= tag.name %></span>
+    <div class="list-options">
+      <a onclick="console.log('<%= tag.name %>')">P</a>
+      <a onclick="console.log('<%= tag.name %>')">N</a>
+      <a onclick="console.log('<%= tag.name %>')">H</a>
+      <a onclick="console.log('<%= tag.name %>')">C</a>
+    </div>
+  </li>
+<% }); %>
+<!-- --------------------------------- -->
+<li tag-id="2594" class="tag-list-item">
+    <span>18 fuck</span>
+    <div class="list-options">
+      <a onclick="console.log('18 fuck')">P</a>
+      <a onclick="console.log('18 fuck')">N</a>
+      <a onclick="console.log('18 fuck')">H</a>
+      <a onclick="console.log('18 fuck')">C</a>
+    </div>
+  </li>
+<!-- --------------------------------- -->
+
+  <% scope.tags.all.forEach(function(tag, iter){ %>
+    <li tag-id='<%= tag.id %>'  
+        class="tag-list-item-li">
+        <span><%= tag.name %></span>
+      <i class="glyphicon glyphicon-plus "></i>
+      <i class="glyphicon glyphicon-plus "></i>
+      <i class="glyphicon glyphicon-plus "></i>
+      <i class="glyphicon glyphicon-plus "></i>
+      <i class="glyphicon glyphicon-plus "></i>
+    </li>
+  <% }); %>
+
+
+<!-- --------------------------------- -->
+
+<div class="tag-list col-md-6">
+  <div class="psearch">
+    <input id="search" placeholder="SEARCH BY NAME" type="text">
+    <img class="find noselect" src="/img/s-icon.svg">
+  </div>
+  <ul>
+    <% scope.tags.all.forEach(function(tag, iter){ %>
+          <li tag-id='<%= tag.id %>'  
+            class="tag-list-item">
+            <i class="glyphicon glyphicon-plus full-width"></i>
+            <span><%= tag.name %></span>
+          </li>
+    <% }); %>
+  </ul>
+</div>
+
+<!-- --------------------------------- -->
+
+        <table>
+          <thead>
+            <tr>
+              <th>Tags</th>
+              <th>P</th>
+              <th>N</th>
+              <th>H</th>
+              <th>C</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <span>test tag 1</span>
+              </td>
+              <td>
+                <input type="radio" name="p-radio">
+              </td>
+              <td>
+                <input type="radio" name="p-radio">
+              </td>
+              <td>
+                <input type="checkbox" name="p-h-checkbox">
+              </td>
+              <td>
+                <input type="checkbox" name="p-c-checkbox">
+              </td>
+            </tr>
+          <% scope.tags.all.forEach(function(tag, iter){ %>
+            <tr tag-id='<%= tag.id %>'  
+                class="tag-list-item-tr">
+              <form tag-id='<%= tag.id %>'  
+                  class="tag-list-item-form">
+              <td><span><%= tag.name %></span></td>
+              <td><input type="radio" name="p-radio"></td>
+              <td><input type="radio" name="p-radio"></td>
+              <td><input type="checkbox" name="p-h-checkbox"></td>
+              <td><input type="checkbox" name="p-c-checkbox"></td>
+              </form>
+            </tr>
+          <% }); %>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="5">
+                00000END000000
+              </td>
+            </tr>
+          </tfoot>
+        </table>

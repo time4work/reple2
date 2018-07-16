@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <% include ../partials/header.ejs %>
+        <link rel="stylesheet" href="http://bootstrap-tagsinput.github.io/bootstrap-tagsinput/dist/bootstrap-tagsinput.css">
+        <script src="http://bootstrap-tagsinput.github.io/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js"></script>
+    </head>
+    <body np-app="Reple">
+        <% include ../partials/topnav.ejs %>
+
+<!-- pop-up -->
+        <section id="import-section" class='hide'>
+            <div class="window">
+                <div class="top-bar">
+                    <div class="title">
+                        <i class="fa fa-cloud-upload"></i>
+                        <span class='path'>import library</span>
+                    </div>
+                    <div class="close">
+                        <button onclick='closeWindow()'>
+                        <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="body">
+                <form id='template-import-form' onsubmit='importLib(event)'>
+                    <div class="form-group">
+                        <input type="file" class="form-control" id="exampleInputPassword1" name='file'>
+                        <small class="form-text text-muted">Put your library json file.</small>
+                    </div>
+                    <button type="submit" class="submit">Submit</button>
+                </form>
+                </div>
+            </div>
+        </section>
+
+<!-- main body -->
+        <div class="col-md-offset-2 col-md-8">
+            <h1 class='page-title'>template key library</h1>
+        </div>
+        <hr>
+        <section id="library" class='col-md-offset-1 col-md-10'>
+            <div class="head-menu">
+                <ul>
+                    <li><a href="#" onclick='createKey(this,event)'>Create New Key</a></li>
+                    <li><a href="#" onclick='showWindow(this,event)'>Import Lib</a></li>
+                    <li><a href="#" onclick='exportLib(this,event)'>Export Lib</a></li>
+                </ul>
+            </div>
+            <div class="library-wrapper">
+<!--                 <div class="library-titles">
+                    <p><span class="label-title">key</span></p>
+                    <p><span class="label-title">value-list</span></p>
+                </div> -->
+                <ul id='library-list'>
+                    <% scope.library.forEach(function(item) { %>
+                    <li id='item-key-<%=item.id%>'
+                        class='library-item'
+                        key-id='<%=item.id%>'>
+                        <form onsubmit="addValueToKey(this,event)"
+                            key-id='<%=item.id%>'>
+                            <div class="library-item-delete">
+                                <button class="btn btn-danger" 
+                                    key-id='<%=item.id%>' 
+                                    type="button" 
+                                    onclick='deleteKey(this,event)'>
+                                    <i class="fa fa-trash" aria-hidden="true"></i> 
+                                </button>
+                            </div>
+                            <div class="library-key">
+                                <p>
+                                    <span>Key: </span><%= item.key %>
+                                </p>
+                            </div>
+                            <hr>
+                            <div class="library-value-list">
+                                <ul class='library-value-list'>
+                                    <% item.values.forEach(function(val, iter) { %>
+                                        <li class='library-value-list-item'
+                                            id='item-value-<%=val.id%>'>
+                                            <span>
+                                                <%=val.value%>
+                                            </span>
+                                            <button class="btn" 
+                                                key-id='<%=item.id%>' 
+                                                value-id='<%=val.id%>'
+                                                type="button" 
+                                                onclick='deleteKeyValue(this,event)'>
+                                                <i class="fa fa-times" aria-hidden="true"></i> 
+                                            </button>
+                                        </li>
+                                    <% }); %>
+                                </ul>
+                                
+                                <p class='library-value-foot'>
+                                    <input type="text"
+                                        class='library-item-key form-control' 
+                                        placeholder="new value">
+                                    <button type='submit'
+                                        class="btn btn-success"> 
+                                        <i class="glyphicon glyphicon-plus full-width"></i> 
+                                    </button>
+                                </p>
+                            </div>
+                        </form>
+                    </li>
+                    <% }) %>
+                </ul>
+            </div>
+        </section>
+    </body>
+    <script>
+    //////////////////////////////////////
+    /////////////////////OnDomReadyBegin/
+
+
+    function parseLibObj(json){
+        var lib_arr= json.map((item)=>{
+            var obj = {};
+            obj[item['key']] = [];
+            return obj;
+        });
+        var lib = {};
+        Array.prototype.forEach.call(lib_arr,function(elem) {
+           var keys = Object.keys(elem);
+           lib[keys[0]] = elem[keys[0]];
+        });
+        for(var i=0; i<json.length; i++){
+            var key = json[i]['key'];
+            var val_arr = json[i]['values'];
+            console.log(key);
+            console.log(val_arr);
+            for(var j=0; j<val_arr.length; j++){
+                lib[key].push(val_arr[j].value);
+            }
+        }
+        return lib;
+    }
+    function showWindow(){
+        $('#import-section').removeClass('hide');
+    }
+    function closeWindow(){
+        $('#import-section').addClass('hide');
+    }
+    function importLib(event){
+        if (event.preventDefault) event.preventDefault();
+
+        blockTheKraken("");
+        var file = event.target.querySelector("input[name=file]").files[0];
+        console.log(file.name);
+
+        var reader = new FileReader();
+        var xhr = new XMLHttpRequest();
+        var response;
+        if (file.type == "application/json" ) {
+            reader.readAsText(file);
+            reader.onload = (e) => {
+                console.log(file);
+                var body = 'data=' + encodeURIComponent(e.target.result);
+                body += '&type=import.library';
+                xhr.open("POST", '/library', true);
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                xhr.onprogress = function (e) {
+                    if (e.lengthComputable) {
+                        console.log(e.loaded+  " / " + e.total)
+                    }
+                }
+                xhr.onloadstart = function (e) {
+                    console.log("start");
+                }
+                xhr.onloadend = function (e) {
+                    console.log("end");
+                    releaseTheKraken();
+                    // alert('finish');
+                    closeWindow();
+                }
+                xhr.onreadystatechange = function (){
+                    console.log(xhr);
+                    if(xhr.readyState == 4){
+                        response = xhr.response;
+                        console.log(response);
+                        alert(response);
+                        window.location.reload(true); 
+                    }
+                };
+                xhr.send(body); 
+            };
+        }else {
+            console.log('file.type error'); 
+            alert('file.type error'); 
+            releaseTheKraken();
+        }
+        return false;
+    }
+
+    function exportLib(event){
+        if (event.preventDefault) event.preventDefault();
+
+        let data = {
+            type: "library.export",
+        };
+        ajax('/library/', data, (result)=>{
+            console.log(result);
+            var lib = parseLibObj(result);
+            console.log(lib);
+            throwJsonFile(lib,'library');
+        });
+    }
+    function createKey(el,event){
+        if (event.preventDefault) event.preventDefault();
+        console.log(el);
+        console.log(event);
+
+        var name = prompt('new key name');
+        if(!name)return;
+        console.log("new key: "+name);
+
+        let data = {
+            type: "library.key.create",
+            name: name
+        };
+        ajax('/library/', data, (result)=>{
+            console.log(result);
+            if(result.status == 'ok')
+                location.reload();
+        });
+    }
+    function deleteKey(el,event){
+        if (event.preventDefault) event.preventDefault();
+        // console.log(event);
+
+        if(!confirm('are you shure?'))return;
+        let id = el.getAttribute('key-id');
+
+        let data = {
+            type: "library.key.delete",
+            id: id
+        };
+        console.log(data);
+        ajax('/library/', data, (result)=>{
+            console.log(result);
+            if(result.status == 'ok'){
+                let node = document.getElementById('item-key-'+id);
+                node.parentNode.removeChild(node);
+                // el.remove();
+            }
+        });
+    }
+    function addValueToKey(el,event){
+        if (event.preventDefault) event.preventDefault();
+        console.log(el);
+
+        let input = el.querySelector('input.library-item-key');
+        let keyID = el.getAttribute('key-id');
+
+        if(!input.value)return;
+        let data = {
+            type: "library.key.value.add",
+            id: keyID,
+            value: input.value,
+        };
+        ajax('/library/', data, (result)=>{
+            console.log(result);
+            if(result.status == 'ok'){
+                let list = el.querySelector('ul.library-value-list');
+                var _li = document.createElement('li');
+                // div.className = "alert alert-success";
+                _li.setAttribute('class', "library-value-list-item");
+                _li.setAttribute('id', `item-value-${result.id}`);
+                _li.innerHTML = `
+                        <span>
+                            ${escapeHtml(input.value)}
+                        </span>
+                        <button class="btn" 
+                            key-id='${keyID}' 
+                            value-id='${result.id}'
+                            type="button" 
+                            onclick='deleteKeyValue(this,event)'>
+                            <i class="fa fa-times" aria-hidden="true"></i> 
+                        </button>
+                `;
+                list.appendChild(_li);
+
+                input.value = '';
+            }
+        });
+    }
+    function deleteKeyValue(el,event){
+        if (event.preventDefault) event.preventDefault();
+        console.log(el);
+
+        let value_id = el.getAttribute('value-id');
+        if(!value_id)return;
+        let data = {
+            type: "library.key.value.delete",
+            value_id: value_id,
+        };
+        ajax('/library/', data, (result)=>{
+            console.log(result);
+            if(result.status == 'ok'){
+                let node = document.getElementById('item-value-'+value_id);
+                node.parentNode.removeChild(node);
+                // el.remove();
+            }
+        });
+    }
+    $(function(){
+
+    });
+    /////////////////////OnDomReadyEnd//
+    ///////////////////////////////////
+    </script>
+</html>

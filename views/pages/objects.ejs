@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html class="ng-scope" np-app="Reple">
+<head>
+  <% include ../partials/header.ejs %>
+</head>
+<body class='side-pad'>
+  <% include ../partials/topnav.ejs %>
+  <% include ../partials/leftnav.ejs %>
+  
+  <div class="container">
+    <div class="row">
+            <div class='col-xs-4'>
+        <h1>Object List Page</h1>
+        <h3>Data length: <%=scope.size%></h3>
+        <h3>Ready Objects: <%=scope.size2%></h3>
+      </div>
+      <div class="col-xs-8 controllers">
+        <hr>
+        <div class='controller-row thumb-maker'>
+          <i class="fa fa-camera-retro" aria-hidden="true"></i>
+          <span>Make thumbs</span>
+          <div>
+            <button class='btn btn-secondary' onclick='makeThumbs(event)'>start</button>
+            <button class='btn btn-secondary' onclick='stopMakeThumbs(event)'>stop</button>
+          </div>
+          <div class="c-status-bar">
+            <span class="c-iterator">0 / <%=scope.size%></span>
+            <span class="c-timer">00:00:00</span>
+            <span class="c-loader"></span>
+          </div>
+        </div>
+        <hr>
+        <div class='controller-row'>
+          <i class="fa fa-eye" aria-hidden="true"></i>
+          <span>Check object-links</span>
+          <div>
+            <button class='btn btn-secondary' onclick=''>start</button>
+            <button class='btn btn-secondary' onclick=''>stop</button>
+          </div>
+          <div class="c-status-bar">
+            <span class="c-iterator">0 / 1200</span>
+            <span class="c-timer">00:00:00</span>
+            <span class="c-loader"></span>
+          </div>
+          <hr>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+
+	<!-- <div class="psearch">
+		<input type="text" id="search" placeholder="SEARCH BY NAME" >
+		<img class="find noselect" src="/img/s-icon.svg">
+	</div> -->
+  	<table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Id</th>
+            <th>Thumbs</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>link</th>
+          </tr>
+        </thead>
+
+        <tbody id='search-tbody'>
+        </tbody>
+
+        <tbody id='list-tbody'>
+          <% scope.objects.forEach(function(obj, iter) { %>
+          <tr>
+            <td class="number"> <%= obj.id %> </td>
+            <td>
+              <%if ( obj.DataLink2 ){ %>
+                <i class='fa fa-check' aria-hidden='true' style='color:green;'></i>
+              <% } %> 
+            </td>
+            <td><%= obj.DataTitle1 %></td>
+            <td><%= obj.DataText1 %></td>
+            <td><a href="<%= obj.DataLink1 %>">link</a></td>
+          </tr>
+          <% }); %>
+        </tbody>
+    </table>
+  </div>
+</body>
+<script>
+  const projectID = <%=scope.project.id%>;
+  function stopMakeThumbs(event){
+    if (event.preventDefault) event.preventDefault();
+    console.log('stopMakeThumbs click');
+    data = {};
+    data.type = 'process.thumbs.terminate';
+    if( confirm("are you sure?") ){
+      // blockTheKraken();
+      // $('.controller-row.thumb-maker').removeClass('active'); 
+      ajax('/project/'+projectID+'/objects/', data, (result)=>{
+        console.log(result);
+        // releaseTheKraken();
+        // alert('finish');
+      });
+    }
+  }
+  function makeThumbs(event){
+    if (event.preventDefault) event.preventDefault();
+    console.log('makeThumbs click');
+    data = {};
+    data.type = 'objects.thumbs.make';
+    data.time = new Date();
+    if( confirm("are you sure?") ){
+      // blockTheKraken();
+      $('.controller-row.thumb-maker').addClass('active'); 
+      ajax('/project/'+projectID+'/objects/', data, (result)=>{
+        console.log(result);
+        // releaseTheKraken();
+        // alert('finish');
+      });
+    }
+  }
+  function checkStatus(){
+    // console.log('checkMakeThumbs click');
+    data = {};
+    data.type = 'objects.thumbs.check';
+
+      ajax('/project/'+projectID+'/objects/', data, (result)=>{
+        // console.log(result);
+        if(!result.status){
+          $('.controller-row.thumb-maker').removeClass('active');
+        }
+        else{
+          var mseconds = -1*(result.time);
+          // console.log(mseconds);
+          var date = new Date(null);
+          date.setMilliseconds(mseconds);
+          var time = date.toISOString().substr(11, 8);
+          var step = result.step;
+          $('.controller-row.thumb-maker').addClass('active');
+          $('.controller-row.thumb-maker span.c-timer').text(time);
+          $('.controller-row.thumb-maker span.c-iterator').text(step+" / "+<%=scope.size%>);
+
+        }
+      });
+  }
+  $(function(){
+    console.log('start');
+
+    var timerId = setInterval(function() { 
+      checkStatus();
+    }, 1000);
+  });
+
+</script>
+
+
+<script src="/socket.io/socket.io.js">
+  // <script src="/javascripts/socket.io/socket.io.js">
+  // https://github.com/socketio/socket.io-client/blob/master/dist/socket.io.js
+</script>
+<script>
+  // window.location
+  // http://localhost
+  const socket = io();
+  socket.on('connect', function(){
+    console.log('socket connect');
+    socket.emit('join', 'Hello World from client');
+  });
+  socket.on('event', function(data){
+    console.log('socket event');
+    console.log(data);
+  });
+  socket.on('notify', function(data){
+    console.log('socket notify');
+    console.log(data);
+    snackbox(`
+          <h4>${data.title}</h4>
+          <p>${data.messages}</p>
+      `);
+  });
+  socket.on('disconnect', function(){
+    console.log('socket disconnect');
+  });
+</script>
+
+
+</html>

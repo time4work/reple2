@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<% include ../partials/header.ejs %>
+	    <link rel="stylesheet" href="http://bootstrap-tagsinput.github.io/bootstrap-tagsinput/dist/bootstrap-tagsinput.css">
+	    <script src="http://bootstrap-tagsinput.github.io/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js"></script>
+	    <script type="text/javascript" src='/javascripts/tmpl.js'></script>
+	</head>
+	<body>
+
+		<% include ../partials/topnav.ejs %>
+		<section class="p-console bot">
+			<ul class='output'>
+			</ul>
+		</section>
+		<section id="tag-details" class="col-md-12" tag-id='<%=scope.tag.id%>'>
+			<div class="details-body">
+
+				<section class="p-console">
+					<input type="text">
+				</section>
+				<div class='block'>
+					<form id='tag-info-form'>
+						<h1>Tag details</h1>
+						<p class="name input">
+							<span class="label-title">Name</span>
+							<input type="text"  id='name-input' value="<%= scope.tag.name %>">
+						</p>
+						<p class="id input">
+							<span class="label-title">id</span>
+							<input type="text"  id='id-input' value="<%= scope.tag.id %>" readonly>
+						</p>
+						<div class="tags select syns">
+							<p class="tags input">
+								<span class="label-title">Synonym tags</span>
+								<select multiple id='syns-tag'>
+								</select>
+							</p>
+							<p>
+								<select id='syn-tag-select' onchange="tagSelectFunc()">
+								<% scope.tags.forEach(function(tag, iter){ %>
+									<% if (tag.id != scope.tag.id) { %>
+										<% if (tag.flag) { %>
+											<option class='hasflag' tag-id='<%= tag.id %>'><%= tag.name %></option>
+										<% } else { %>
+											<option tag-id='<%= tag.id %>'><%= tag.name %></option>
+										<% } %>
+									<% } %>
+								<% }); %>
+								</select>
+								<button class="btn btn-success add-more" select-id='syns-tag' type="button">
+									<i class="glyphicon glyphicon-plus full-width"></i> 
+								</button>
+							</p>
+						</div>
+						<p><button type='submit' class='btn'>save</button></p>
+					</form>
+					<div class="templates_mng">
+							<p class="templates input">
+								<span class="label-title">templates</span>
+							<p>
+							<p class='input-line'>
+								<label>Key</label>
+								<input type="text" name="" id='tmpl-key'>
+							</p>
+							<p class='input-line'>
+								<label>Value</label>
+								<input type="text" name="" id='tmpl-val'>
+							</p>
+							<p>
+								<button class="btn btn-success add-tmpl full-width" select-id='template-text' type="button"><i class="glyphicon glyphicon-plus full-width"></i></button>
+							</p>	
+							<div class='tag-tmpls'>
+								<ul>
+								<% scope.templates.forEach(function(tmpl, iter){ %>
+									<li>
+										<div class="remove" tmpl-id='<%=tmpl.id%>' onClick='removeTmpl(this);'>
+											<i class="fa fa-times" aria-hidden="true"></i>
+										</div>
+										<span><%=tmpl.keyword%></span>
+										<p><%=tmpl.val%></p>
+									</li>
+								<% }); %>
+								</ul>
+							</div>
+						</p>
+					</div>
+				</div>
+			</div>
+		</section>
+<script type="text/javascript">
+	var url = '/tag/'+'<%=scope.tag.id%>';
+	var tmpl_pack = <%-JSON.stringify(scope.templates)%>;
+	var tmpls = parseTmplObj(tmpl_pack);
+
+	function removeTmpl(e){
+		console.log(e);
+		var id = e.getAttribute('tmpl-id');
+		console.log(id);
+		ajax(url, {type:'delTmpl',id:id}, (resp)=>{
+			console.log(resp);
+		});
+		location.reload();
+	}
+	function tagSelectFunc() {
+		var selectBox = document.getElementById("syn-tag-select");
+		console.log(selectBox);
+		if ( selectBox.options[selectBox.selectedIndex].classList.contains('hasflag') )
+			alert("This tag has flag! If you add it to synonym tags, you may rewrite some text templates of this tag.");
+	}
+
+	$(function(){
+		$('#syns-tag').tagsinput({
+			allowDuplicates: false,
+			itemValue: 'id',
+			itemText: 'label'
+		});
+		$('#template-text').tagsinput({
+			allowDuplicates: false,
+			// itemValue: 'key',
+			// itemText: 'script'
+		});
+
+		$(".bootstrap-tagsinput input").attr("readonly", true);
+
+		<% scope.syns.forEach(function(syn, iter){ %>
+			<% if(syn.id != scope.tag.id) { %>
+	  			$('#syns-tag').tagsinput('add', {"id":<%= syn.id %>, "label": "<%= syn.name %>"} );
+	  		<% } %>
+		<% }); %>
+
+		$('div.templates_mng button.add-tmpl').on('click', (e)=>{
+			console.log('click');
+			var btn = e.target;
+			var key = $('input#tmpl-key').val(),
+				val = $('input#tmpl-val').val();
+			if( !key )
+				return
+			// var script = key+" : \""+val+"\"";
+			// $('#template-text').tagsinput('add', script );
+
+			var url = '/tag/'+'<%=scope.tag.id%>';
+			ajax(url, {type:'newTempl',key:key, val:val}, (resp)=>{
+				console.log(resp);
+			});
+			location.reload();
+		});
+		$('div.tags button.add-more').on('click', (e)=>{
+			console.log(e);
+			console.log('click');
+			var btn = e.target;
+
+			var select = document.getElementById("syn-tag-select");
+			var tag_name = select.options[select.selectedIndex].value;
+			var tag_id = select.options[select.selectedIndex].getAttribute('tag-id');
+
+			console.log(select);
+			console.log(tag_name);
+			console.log(tag_id);
+
+			// var select_id = btn.getAttribute('select-id');
+			// var select = document.getElementById(select_id);
+			// var select_name = '#'+select_id;
+			console.log( {"id":tag_id, "label":tag_name} );
+			$('#syns-tag').tagsinput('add', {"id":tag_id, "label":tag_name} );
+		});
+	});
+</script>
+	</body>
+</html>	

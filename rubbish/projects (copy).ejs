@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <% include ../partials/header.ejs %>
+  </head>
+  <body>
+    <% include ../partials/nav.ejs %>
+    <section id="project-page">
+      <div class="container">
+        <div class="proj-title">
+          <h1>Project</h1>
+          <h3>Add new project</h3>
+        </div>
+        <!-- <form id='project-form' method="POST" action="/projects"> -->
+        <form id='projects-form'>
+          <div class="input-body">
+            <div class="col-md-12">
+              <div class="col-md-12">
+                <div class="name-input">
+                  <p><span>select name</span>
+                  <input type="text" name='name'>
+                </p>
+              </div>
+            </div>
+            <div class="col-md-12">
+              <div class="main-butt-second">
+                <input class="button" type="submit" value="SAVE">
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </section>
+  <section id="table-first">
+    <div class="table-body">
+      <h3>Tottal length: <%= scope.projects.length %></h3>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>№</th>
+            <th>Name</th>
+            <th>Size</th>
+            <!-- <th>Download</th>
+            <th></th> -->
+          </tr>
+        </thead>
+        <tbody>
+          <% scope.projects.forEach(function(proj, iter) { %>
+
+          <tr>
+            <td> <%= iter %> </td>
+            <td> 
+              <a href="/project/<%= proj.id %>"> 
+                <%= proj.name %>
+              </a>
+            </td>
+            <td> 0 </td>
+            <!-- <td><a href="">Download</a></td>
+            <td><a href=""><i class="fa fa-times" aria-hidden="true"></i></a></td> -->
+          </tr>
+
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</body>
+</html>

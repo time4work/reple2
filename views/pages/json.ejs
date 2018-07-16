@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <% include ../partials/header.ejs %>
+    </head>
+
+    <body np-app="Reple">
+
+        <% include ../partials/topnav.ejs %>
+        
+        <section id='json-list'>
+            <ul>
+            <% scope.jsons.forEach(function(json, iter) {  %>
+                <li json-id='<%=json.id%>' id='json-obj-<%=json.id%>'>
+                    <p> 
+                        <div class="file-wrap" json-id='<%=json.id%>' >
+                            <div class="spinner"></div>
+                            <span class='size'>( <%=json.size%> )</span>
+                            <%=json.name%>
+                            <span class='date'>[ <%=json.date%> ]</span>
+                        </div>
+                        <span class='download' json-id='<%=json.id%>' >
+                            <i class="fa fa-download" aria-hidden="true"></i>
+                        </span>
+                    </p>
+                </li>
+                
+            <% }); %>
+            </ul>
+        </section>
+
+        <section id="jsonpage">
+            <div class="container">
+                <div class="title">
+                    <h1>LOAD JSON</h1>
+                </div>
+                <div class="col-md-12">
+                <form id='json-form'>
+                    <div class="upload">
+                        <div class="">
+                            <h2>SELECT FILE</h2>
+                        </div>
+                        <div class="">
+                            <input class="button" type="file">
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="main-butt">
+                            <input class="button" type="submit" value="SAVE">
+                        </div>
+                    </div>
+                </form>
+                </div>
+            </div>
+        </section>
+    </body>
+    <script>
+        var ProcessInProgressFlag = false;
+        var timerTrigger;
+
+        function checkStatus(){
+            let data = {
+                type: "json.import.process.check"
+            };
+            ajax('/json/', data, (result)=>{
+                console.log(result);
+                let id = result.resp.id;
+
+                if(id > -1){
+                    ProcessInProgressFlag = true;
+                    $('li#json-obj-'+id).addClass('inProgress');
+                }else{
+                    ProcessInProgressFlag = false;
+                    $('#json-list li').removeClass('inProgress');
+                }
+                console.log('ProcessActivity '+ProcessInProgressFlag);
+            });
+        }
+
+        // function timer(key){
+        //     key = setInterval(function() { 
+        //         checkStatus();
+        //     }, 3000);
+        // }
+//////////////////////////////////////
+/////////////////////OnDomReadyBegin/
+$(function(){
+    var timerId = setInterval(function() { 
+        checkStatus();
+    }, 3000);
+
+    $("#json-list li div.file-wrap").on('click', function(e){
+        console.log(e.currentTarget);
+        if(!ProcessInProgressFlag){
+            // timer(timerTrigger);
+            
+            let data = {
+                type: "json.file.import",
+                id: $(e.currentTarget).attr('json-id')
+            };
+            ajax('/json/', data, (result)=>{
+                console.log(result);
+                snackbox(`<p>${result.resp} [ ${result.id} ]</p>`);
+                // clearInterval(timerTrigger);
+            });
+        }else snackbox(' the process in progress ');
+    });
+    $("#json-list li span.download").on('click', function(e){
+        console.log(e.currentTarget);
+        let data = {
+            type: "json.file.download",
+            id: $(e.currentTarget).attr('json-id')
+        };
+        ajax('/json/', data, (result)=>{
+            // console.log(result);
+            // clearInterval(timerTrigger);
+            if(result.err) {
+                snackbox(result.err);
+            }else if(result.resp){
+                throwJsonFile(result.resp)
+            }else snackbox("wrong resp");
+        });
+    });
+});
+/////////////////////OnDomReadyEnd//
+///////////////////////////////////
+    </script>
+</html>
