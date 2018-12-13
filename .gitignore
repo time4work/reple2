@@ -1,3 +1,5 @@
 node_modules/
 screens/*.png
 json/*.json
+*.lock
+package-lock.json

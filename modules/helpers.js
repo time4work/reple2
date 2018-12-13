@@ -348,16 +348,16 @@ async function selectLibraryItems (callback) {
 	try {
 		var query = `
 			SELECT r.id as 'keyID', r.name as 'key', res2.id as 'valueID', res2.value 
-			FROM replecon.libraryKey r 
+			FROM libraryKey r 
 			left join 
 				( 
 					select * 
-					from  replecon.libraryRelation 
+					from  libraryRelation 
 				) as res on res.keyID = r.id  
 			left join 
 			( 
 				select * 
-				from  replecon.libraryValue 
+				from  libraryValue 
 			) as res2 on res2.id = res.valueID 
 		`;
 		let result = await myquery(query, []);
@@ -429,16 +429,16 @@ async function selectProjectTemplates (type, projectID, tagIDs, callback)  {
 			// console.log(" < tmpl keys >");
 			// console.log(keys);
 			let tmpl_query = `
-				SELECT res.keyID, a.keyword, res.valueID, b.value as 'val'
+				SELECT res.keyID, a.keyword, b.id, b.value as 'val'
 				FROM replecon.tmplRelation res 
 				left join ( 
 					select * 
 					from  replecon.tmplKey 
-				) as a on res.keyID = a.id 
+				) as a on a.id = res.keyID
 				left join ( 
 					select * 
 					from  replecon.tmplValue 
-				) as b on res.valueID = b.id 
+				) as b on b.keyID = a.id 
 				WHERE res.tmplID = ?
 				ORDER BY a.keyword
 			`; 
@@ -745,6 +745,7 @@ module.exports.createRelationLibraryKeyValue = async (keyID, valueID, callback) 
 	}
 }
 module.exports.selectLibraryItems = async (callback) => {
+	console.log(' - ', 'selectLibraryItems start');
 	try {
 		var query = ""
 			+ " SELECT r.id as `keyID`, r.name as `key`, res2.id as `valueID`, res2.value "

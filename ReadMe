@@ -1,5 +1,15 @@
 #apt dependencies
-sudo apt install libgtk2.0-0:i386, libxss-dev, ffmpeg, xvfb, libgconf-2-4
+sudo apt install 
+    xvfb, 
+    ffmpeg, 
+    libgtk2.0-0, 
+    libxss-dev, 
+    libgconf-2-4,
+    libxtst6, 
+    libnss3-dev
+
+
+
 
 #npm dependencies
 npm i -g nightmare --force --allow-root
