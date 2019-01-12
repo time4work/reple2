@@ -1,7 +1,7 @@
 #!/bin/bash
 export DB_HOST=localhost 
-export DB_USER=root
-export DB_PASSWORD=zaJWESh2We 
-export DB_DATABASE=replecon 
+export DB_USER=test
+export DB_PASSWORD=test 
+export DB_DATABASE=replecon
+export DB_SOCK=/var/run/mysqld/mysqld.sock
 pm2 start app.js
-

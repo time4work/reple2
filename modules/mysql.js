@@ -2,48 +2,60 @@
 /////////////////////////////////////////////
 module.exports.connection = function(params){
 	const  mysql = require('mysql2');
-	return mysql.createConnection({
+	const conf = {
 		host     : process.env.DB_HOST 		|| 'localhost',
 		user     : process.env.DB_USER 		|| 'test',
 		password : process.env.DB_PASSWORD 	|| 'test',
 		database : process.env.DB_DATABASE 	|| 'replecon'
-	});
+	};
+	if (process.env.DB_SOCK)
+		conf.socketPath = process.env.DB_SOCK
+	return mysql.createConnection(conf);
 };
 /////////////////////////////////////////////
 module.exports.asynccon = async function(){
 	// const connection = await mysql.createConnection(/* ... */) or mysql.createConnection(/* ... */).then( connection => { /* .... */ })
 	const  mysql = require('mysql2/promise');
-	return await mysql.createConnection({
+	const conf = {
 		host     : process.env.DB_HOST 		|| 'localhost',
 		user     : process.env.DB_USER 		|| 'test',
 		password : process.env.DB_PASSWORD 	|| 'test',
 		database : process.env.DB_DATABASE 	|| 'replecon'
-	});
+	};
+	if (process.env.DB_SOCK)
+		conf.socketPath =process.env.DB_SOCK
+	return await mysql.createConnection(conf);
 };
 /////////////////////////////////////////////
 module.exports.pool = async function(){
 	const  mysql = require('mysql2/promise');
-	return  await mysql.createPool({
+	const conf = {
 		host     : process.env.DB_HOST || 'localhost',
 		user     : process.env.DB_USER || 'test',
 		password : process.env.DB_PASSWORD || 'test',
 		database : process.env.DB_DATABASE || 'replecon',
 	    connectionLimit : 500000, //important
 	    debug    : false
-	});
+	};
+	if (process.env.DB_SOCK)
+		conf.socketPath = process.env.DB_SOCK
+	return  await mysql.createPool(conf);
 };
 module.exports.childcon = function(params){
 	const  mysql = require('mysql2/promise');
-	return mysql.createConnection({
-		host     : params.host 		|| 'localhost',
-		user     : params.user 		|| 'test',
-		password : params.password 	|| 'test',
-		database : params.name 		|| 'wpchild'
-	});
+	const conf = {
+		host     : process.env.DB_HOST 		|| 'localhost',
+		user     : process.env.DB_USER 		|| 'test',
+		password : process.env.DB_PASSWORD 	|| 'test',
+		database : process.env.DB_DATABASE 	|| 'wpchild'
+	};
+	if (process.env.DB_SOCK)
+		conf.socketPath =process.env.DB_SOCK
+	return mysql.createConnection(conf);
 };
 module.exports.chilpool = async function(params){
 	const  mysql = require('mysql2/promise');
-	return  await mysql.createPool({
+	const conf = {
 		host     : params.host 		|| 'localhost',
 		user     : params.user 		|| 'test',
 		password : params.password 	|| 'test',
@@ -52,7 +64,10 @@ module.exports.chilpool = async function(params){
 	    multipleStatements: true,
 	    debug    : false
 	    // debug    : true
-	});
+	};
+	if (process.env.DB_SOCK)
+		conf.socketPath =process.env.DB_SOCK
+	return  await mysql.createPool(conf);
 };
 /////////////////////////////////////////////
 module.exports.sshcon = function(params){
