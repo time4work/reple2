@@ -5,8 +5,7 @@ const mysql = require('mysql2');
 const conf = {
 	host     : process.env.DB_HOST 		|| 'localhost',
 	user     : process.env.DB_USER 		|| 'test',
-	password : process.env.DB_PASSWORD 	|| 'test',
-	database : process.env.DB_DATABASE 	|| 'replecon'
+	password : process.env.DB_PASSWORD 	|| 'test'
 };
 if (process.env.DB_SOCK)
 	conf.socketPath = process.env.DB_SOCK
