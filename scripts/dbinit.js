@@ -2,11 +2,15 @@
 /////////////////////////////////////////////
 const mysql = require('mysql2');
 /////////////////////////////////////////////
-const connection 	= mysql.createConnection({
+const conf = {
 	host     : process.env.DB_HOST 		|| 'localhost',
 	user     : process.env.DB_USER 		|| 'test',
 	password : process.env.DB_PASSWORD 	|| 'test',
-});
+	database : process.env.DB_DATABASE 	|| 'replecon'
+};
+if (process.env.DB_SOCK)
+	conf.socketPath = process.env.DB_SOCK
+const connection 	= mysql.createConnection(conf);
 /////////////////////////////////////////////
 var queries = {
 	'setting-FK-check': 	'SET foreign_key_checks=0',
