@@ -18,7 +18,7 @@ var queries = {
 	'tag': 			'CREATE TABLE IF NOT EXISTS replecon.tag (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255), flag INT(4), UNIQUE(name) )ENGINE = InnoDB',
 	'original': 	'CREATE TABLE IF NOT EXISTS replecon.original (id INT AUTO_INCREMENT PRIMARY KEY, title VARCHAR(255), link VARCHAR(600), video VARCHAR(600),  description VARCHAR(1500))ENGINE = InnoDB',
 	'template': 	"CREATE TABLE IF NOT EXISTS replecon.template (id INT AUTO_INCREMENT PRIMARY KEY,name VARCHAR(255), UNIQUE(name))ENGINE = InnoDB",
-	'jsonFiles': 	'CREATE TABLE IF NOT EXISTS replecon.jsonFiles (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(50) NOT NULL, size INT(10) NOT NULL, date VARCHAR(20) NOT NULL)ENGINE = InnoDB',
+	'jsonFiles': 	'CREATE TABLE IF NOT EXISTS replecon.jsonFiles (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(50) NOT NULL, size INT(10) NOT NULL, date VARCHAR(20) NOT NULL, UNIQUE(name))ENGINE = InnoDB',
 
 	// 'project-db': 	"CREATE TABLE IF NOT EXISTS replecon.projectDB (id INT AUTO_INCREMENT PRIMARY KEY,host VARCHAR(255),port VARCHAR(255),user VARCHAR(255),password VARCHAR(255),dbname VARCHAR(255))ENGINE = InnoDB",
 	'project-db':
