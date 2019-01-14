@@ -757,13 +757,13 @@ module.exports = function(params){
 			case "json.file.import":
 				if(!JsonImportProgress){
 					let jsonId = request.body.id;
-					await helpers.getJson(jsonId, async (obj) => {
+					await helpers.getJson(jsonId, async (obj, file_name) => {
 						JsonImportProgress = true;
 						JsonImportId = jsonId;
 
 						response.send({resp: 'import started', id:JsonImportId});
 						
-						await helpers.importJson(obj, async (result) => {
+						await helpers.importJson(obj, file_name, async (result) => {
 							JsonImportProgress = false;
 							JsonImportId = -1;
 						});

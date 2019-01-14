@@ -3625,12 +3625,14 @@ module.exports.getJsons = async function(callback){
 /////////////////////////////////////////////
 module.exports.getJson = async function(id, callback){
 	try {
-		await getJsonName(id, async (obj)=>{
-			fs.readFile('./json/'+obj[0].name, async (err, data) => {  
+		await getJsonName(id, async (obj) => {
+			const name = obj[0].name;
+
+			fs.readFile('./json/'+name, async (err, data) => {  
 		    	if (err) throw err;
 
     			if(callback)
-					await callback( JSON.parse(data) );
+					await callback( JSON.parse(data), name);
 			});
 		});
 
@@ -3688,7 +3690,7 @@ module.exports.saveJson = async function(json, name, callback){
 	}
 }
 /////////////////////////////////////////////
-module.exports.importJson = async function(json, callback){ // !
+module.exports.importJson = async function(json, file_name, callback){ // !
 	// var connection 	= await ASYNSQL(); // !
 	try {
 		// console.log(json.length);
@@ -3703,8 +3705,8 @@ module.exports.importJson = async function(json, callback){ // !
 				console.log(" - - - - - - - - - - - - JSON ");
 					let bool = await uniqItem(connection,item);
 					if( bool ){
-						await magic(connection,item)
-							.then(async function(ids){
+						await magic(connection, file_name, item)
+							.then(async (ids) => {
 								console.log('------------- ids >');
 								console.log(ids);
 								await originalRelation(connection,ids);
@@ -3873,7 +3875,7 @@ async function tagsParse(connection, tags){
 		console.log(e);
 	}
 }
-async function magic(connection, item){
+async function magic(connection, file_name, item){
 	try{
 		let ids = {};
 		let tags;
@@ -3884,7 +3886,9 @@ async function magic(connection, item){
 			tags = item.tags;
 		else console.log("wrong type of tags");
 
-		if( item.href ) tags.push( item.href );
+		tags.push(file_name);
+
+		if (item.href) tags.push(item.href);
 
 		ids.tags = await tagsParse(connection, tags);
 
