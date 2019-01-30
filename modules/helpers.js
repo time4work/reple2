@@ -2620,6 +2620,11 @@ module.exports.deleteProject = async (projectID, callback) => {
 		var objs_query = "SELECT objectID FROM relationProjectObject WHERE projectID = ?";
 		let [projectObjs, ...stuff2] = await connection.query(objs_query, [ projectID ]);
 		console.log('select relationProjectObject', projectObjs);
+
+		var objs_relation_query = "DELETE FROM relationProjectObject WHERE projectID = ?";
+		var objs_relation = await connection.query(objs_relation_query, [ projectID ]);
+		console.log('del relationProjectObject', objs_relation);
+
 		if (projectObjs) {
 
 			if(projectObjs.length > 0){
@@ -2631,9 +2636,6 @@ module.exports.deleteProject = async (projectID, callback) => {
 			}
 		}
 
-		var objs_relation_query = "DELETE FROM relationProjectObject WHERE projectID = ?";
-		var objs_relation = await connection.query(objs_relation_query, [ projectID ]);
-		console.log('del relationProjectObject', objs_relation);
 
 
 
