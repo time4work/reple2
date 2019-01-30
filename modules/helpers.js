@@ -2573,47 +2573,71 @@ module.exports.deleteTag = async (tagID, callback) => {
 }
 module.exports.deleteProject = async (projectID, callback) => {
 	try {
-		var query = "DELETE FROM project WHERE id = ?";
-		var query2 = "DELETE FROM relationTagProject WHERE projectID = ?";
-		var query3 = "DELETE FROM relationTmplProject WHERE projectID = ?";
-		var query4 = "DELETE FROM relationProjectOriginal WHERE projectID = ?";
-		var query5 = "DELETE FROM projectLog WHERE projectID = ?";
-		var query6 = "DELETE FROM exportLog WHERE projectID = ?";
+		const connection = await POOLCON();
+		const myquery = connection.query;
+		const query = "DELETE FROM project WHERE id = ?";
+		const query2 = "DELETE FROM relationTagProject WHERE projectID = ?";
+		const query3 = "DELETE FROM relationTmplProject WHERE projectID = ?";
+		const query4 = "DELETE FROM relationProjectOriginal WHERE projectID = ?";
+		const query5 = "DELETE FROM projectLog WHERE projectID = ?";
+		const query6 = "DELETE FROM exportLog WHERE projectID = ?";
 
-		var result1 = await myquery(query2, [ projectID ]);
-		var result2 = await myquery(query3, [ projectID ]);
-		var result3 = await myquery(query4, [ projectID ]);
-		var result4 = await myquery(query5, [ projectID ]);
-		var result5 = await myquery(query6, [ projectID ]);
+		// var result1 = await myquery(query2, [ projectID ]);
+		// var result2 = await myquery(query3, [ projectID ]);
+		// var result3 = await myquery(query4, [ projectID ]);
+		// var result4 = await myquery(query5, [ projectID ]);
+		// var result5 = await myquery(query6, [ projectID ]);
+		const res1 = await connection.query(query2, [ projectID ]);
+		const res2 = await connection.query(query3, [ projectID ]);
+		const res3 = await connection.query(query4, [ projectID ]);
+		const res4 = await connection.query(query5, [ projectID ]);
+		const res5 = await connection.query(query6, [ projectID ]);
 		
-		var db_query = "SELECT sshhID, dbhID FROM projectDB WHERE projectID = ?";
-		var projectDB = await myquery(db_query, [ projectID ]);
-		if(projectDB[0]){
+		const db_query = "SELECT sshhID, dbhID FROM projectDB WHERE projectID = ?";
+		let [projectDB, ...stuff] = await connection.query(db_query, [ projectID ]);
+		console.log('select projectDB', projectDB);
+
+		if (projectDB[0]) {
 			projectDB = projectDB[0];
-			if(projectDB.sshhID){
+			if (projectDB.sshhID) {
 				var sshhID_query = "DELETE FROM sshhost WHERE id = ?";
-				var sshh = await myquery(sshhID_query, [ projectDB.sshhID ]);
+				var sshh = await connection.query(sshhID_query, [ projectDB.sshhID ]);
 			}
-			if(projectDB.dbhID){
+			if (projectDB.dbhID) {
 				var dbhID_query = "DELETE FROM sshhost WHERE id = ?";
-				var dbh = await myquery(sshhID_query, [ projectDB.dbhID ]);
+				var dbh = await connection.query(sshhID_query, [ projectDB.dbhID ]);
 			}
 		}
 		var query7 = "DELETE FROM projectDB WHERE projectID = ?";
-		var result6 = await myquery(query7, [ projectID ]);
+		var result6 = await connection.query(query7, [ projectID ]);
+		console.log('del projectDB', result6);
 	
+		var query8 = "DELETE FROM projectDir WHERE projectID = ?";
+		var result7 = await connection.query(query8, [ projectID ]);
+		console.log('del projectDir', result7);
+	
+		
 		var objs_query = "SELECT objectID FROM relationProjectObject WHERE projectID = ?";
-		var projectObjs = await myquery(objs_query, [ projectID ]);
-		if(projectObjs.length > 0){
-			var obj_query = "DELETE FROM object WHERE id = ?";
-			for(var i=0; i<projectObjs.length; i++){
-				var obj = await myquery(obj_query, [ projectObjs[i] ]);
+		let [projectObjs, ...stuff2] = await connection.query(objs_query, [ projectID ]);
+		console.log('select relationProjectObject', projectObjs);
+		if (projectObjs) {
+
+			if(projectObjs.length > 0){
+				var obj_query = "DELETE FROM object WHERE id = ?";
+				for(var i=0; i<projectObjs.length; i++){
+					let [obj, ...stuff3] = await connection.query(obj_query, [ projectObjs[i].objectID ]);
+					console.log('del object', obj);
+				}
 			}
 		}
-		var objs_relation_query = "DELETE FROM relationProjectObject WHERE projectID = ?";
-		var objs_relation = await myquery(objs_relation_query, [ projectID ]);
 
-		var result = await myquery(query, [ projectID ]);
+		var objs_relation_query = "DELETE FROM relationProjectObject WHERE projectID = ?";
+		var objs_relation = await connection.query(objs_relation_query, [ projectID ]);
+		console.log('del relationProjectObject', objs_relation);
+
+
+
+		var result = await connection.query(query, [ projectID ]);
 
 		// console.log(result);
 		if(callback)
@@ -3625,14 +3649,12 @@ module.exports.getJsons = async function(callback){
 /////////////////////////////////////////////
 module.exports.getJson = async function(id, callback){
 	try {
-		await getJsonName(id, async (obj) => {
-			const name = obj[0].name;
-
-			fs.readFile('./json/'+name, async (err, data) => {  
+		await getJsonName(id, async (obj)=>{
+			fs.readFile('./json/'+obj[0].name, async (err, data) => {  
 		    	if (err) throw err;
 
     			if(callback)
-					await callback( JSON.parse(data), name);
+					await callback( JSON.parse(data) );
 			});
 		});
 
@@ -3690,7 +3712,7 @@ module.exports.saveJson = async function(json, name, callback){
 	}
 }
 /////////////////////////////////////////////
-module.exports.importJson = async function(json, file_name, callback){ // !
+module.exports.importJson = async function(json, callback){ // !
 	// var connection 	= await ASYNSQL(); // !
 	try {
 		// console.log(json.length);
@@ -3705,8 +3727,8 @@ module.exports.importJson = async function(json, file_name, callback){ // !
 				console.log(" - - - - - - - - - - - - JSON ");
 					let bool = await uniqItem(connection,item);
 					if( bool ){
-						await magic(connection, file_name, item)
-							.then(async (ids) => {
+						await magic(connection,item)
+							.then(async function(ids){
 								console.log('------------- ids >');
 								console.log(ids);
 								await originalRelation(connection,ids);
@@ -3875,7 +3897,7 @@ async function tagsParse(connection, tags){
 		console.log(e);
 	}
 }
-async function magic(connection, file_name, item){
+async function magic(connection, item){
 	try{
 		let ids = {};
 		let tags;
@@ -3886,9 +3908,7 @@ async function magic(connection, file_name, item){
 			tags = item.tags;
 		else console.log("wrong type of tags");
 
-		tags.push(file_name);
-
-		if (item.href) tags.push(item.href);
+		if( item.href ) tags.push( item.href );
 
 		ids.tags = await tagsParse(connection, tags);
 
