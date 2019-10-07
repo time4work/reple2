@@ -44,13 +44,19 @@ module.exports = {
 			await ProjectService.selectProjectSize(project_id, async (result4) => {
 				await TemplateService.selectTmpls(async (result5) => {
 					await ProjectService.selectProjectTmpls(project_id, async (result6) => {
-						response.render('pages/project', {
-							scope: {
-								project: result,
-								size: result4,
-								tmpls: result5,
-								tmplRelation: result6
-							}
+						await ProjectService.selectProjectJson(project_id, async (result7) => {
+							await ProjectService.selectAllJsons(async (result8) => {
+								response.render('pages/project', {
+									scope: {
+										project: result,
+										size: result4,
+										tmpls: result5,
+										tmplRelation: result6,
+										jsons: result7,
+										jsonsAvailable: result8
+									}
+								});
+							});
 						});
 					});
 				});
@@ -109,6 +115,7 @@ module.exports = {
 				let d_tmpls = request.body.d_tmpls;
 				let t_tmpls = request.body.t_tmpls;
 				let db = request.body.db;
+				let jsons = request.body.jsons;
 				if (!name)
 					return;
 
@@ -118,6 +125,7 @@ module.exports = {
 					info,
 					t_tmpls,
 					d_tmpls,
+					jsons,
 					db,
 					() => {
 						response.send({ result: 'saved' });

@@ -83,6 +83,15 @@
                 <input type="text"  id='size-input' value="<%= scope.size %> objects" readonly>
                   <a href="/project/<%=scope.project.id%>/objects/" class='p-top-link'>object list</a>
               </p>
+                <p class="json input">
+                  <span class="label-title">JSON</span>
+                  <input type="text"  id='jsons' value="<% scope.jsons.forEach(json => { %><%= `${json.name}, ` %><% }); %>" readonly>
+                  <select id="jsons-input" multiple>
+                    <% scope.jsonsAvailable.forEach(json => { %>
+                    <option value="<%= json.id %>"><%= json.name %></option>
+                   <% }); %>
+                  </select>
+                </p>
               
               <h1>Templates</h1>
               <div class="tmpls select ">

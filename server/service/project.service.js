@@ -50,6 +50,45 @@ module.exports = {
         }
     },
 
+    selectProjectJson: async (projectID, callback) => {
+        try {
+            const query = ""
+                + "	SELECT "
+                + " j.name "
+                + "	FROM relationProjectJson AS r "
+                + " INNER JOIN jsonFiles AS j "
+                + " ON r.jsonID = j.id "
+                + "	WHERE r.projectID = ?";
+
+            const result = await myquery(query, [projectID]);
+
+            if (callback) await callback(result);
+            return result;
+
+        } catch (e) {
+            console.log(e);
+            return 0;
+        }
+    },
+
+    selectAllJsons: async (callback) => {
+        try {
+            const query = ""
+                + "	SELECT "
+                + " * "
+                + "	FROM jsonFiles ";
+
+            const result = await myquery(query);
+
+            if (callback) await callback(result);
+            return result;
+
+        } catch (e) {
+            console.log(e);
+            return 0;
+        }
+    },
+
     selectProjectsRelation: async (callback) => {
         try {
             const result = [];
@@ -616,7 +655,7 @@ module.exports = {
         }
     },
 
-    saveProjectChanges: async (id, name, info, t_tmpls, d_tmpls, db, callback) => {
+    saveProjectChanges: async (id, name, info, t_tmpls, d_tmpls, jsons, db, callback) => {
         try {
             if (!name) return
 
@@ -625,6 +664,20 @@ module.exports = {
                 + "SET name=?, description=? "
                 + "WHERE id=?;";
             const base_save = await myquery(query, [name, info, id]);
+
+            if (jsons && jsons.length != 0) {
+                query = 'DELETE '
+                    + ' FROM relationProjectJson '
+                    + ' WHERE projectID = ?';
+                const deleted_jsons = await myquery(query, [id]);
+
+                query = 'INSERT INTO '
+                    + 'relationProjectJson(projectID, jsonID) '
+                    + 'VALUES(?,?)';
+                for (let i = 0; i < jsons.length; i++) {
+                    const jsons_res = await myquery(query, [id, jsons[i]]);
+                }
+            }
 
             query = "select tmplID "
                 + "from relationTmplProject "
