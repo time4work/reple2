@@ -5,6 +5,8 @@ const ExportService = require('../service/export-data.service');
 const TemplateService = require('../service/template.service');
 const TagService = require('../service/tag.service');
 const { selectDir } = require('../helper');
+const TMClass = require('../helper/thumb-maker');
+const TM = new TMClass();
 
 let ExportProgress = false;
 

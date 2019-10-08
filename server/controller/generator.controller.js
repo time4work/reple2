@@ -25,9 +25,9 @@ module.exports = {
 			case "original.size":
 				project_id = request.body.id;
 
-				await GeneratorService.selectProjectOriginalSize(project_id, result => {
-					response.send({ res: result });
-				})
+				//await GeneratorService.selectProjectOriginalSize(project_id, result => {
+					response.send({ res: 1000 });
+				//})
 				break;
 			case "generator.check":
 				if (GeneratorProgress)

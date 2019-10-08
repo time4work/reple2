@@ -19,6 +19,7 @@ mysql nodeJs+npm
 
 #run
 DB_HOST=localhost DB_USER=root DB_PASSWORD=*** DB_DATABASE=replecon node app.js
+DB_HOST=localhost DB_USER=root DB_PASSWORD=3323 DB_DATABASE=replecon nodemon app.js
 
 #debug
 DEBUG=* node app.js

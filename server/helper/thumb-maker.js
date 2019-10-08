@@ -1,14 +1,14 @@
 ////////////////////////////////////////////////////////
 //////////////////thumbMaker///////////////////////////
 //////////////////////////////////////////////////////
-const scraperModule = require('./scraper');
+const scraperModule = require('./scrapper');
 // const scraperModule     = require('./scraper-light');
 const ffmpegModule = require('./ffmpeg');
 const ASYNSQL = require('./mysql').asynccon;
 const Xvfb = require('xvfb');
 let thumbManager = class {
-    constructor(io) {
-        this.io = io;
+    constructor() {
+       // this.io = io;
         // this.dir = dir;
         // this.idArr = [];
         this.processArr = {};
@@ -21,7 +21,7 @@ let thumbManager = class {
         this.timer = new Date().getTime();
         if (this.processArr.hasOwnProperty(projectID))
             return 'TM alredy busy with process[' + projectID + ']'
-        let process = await new thumbMaker(dir, this.io);
+        let process = await new thumbMaker(dir);
         this.processArr[projectID] = {
             id: projectID,
             tm: process,
@@ -57,8 +57,8 @@ let thumbManager = class {
 }
 ///////////////////////////////////////////
 var thumbMaker = class {
-    constructor(dir, io) {
-        this.io = io;
+    constructor(dir) {
+        //this.io = io;
         this.dir = dir;
         this.process = false;
         this.xvfb = new Xvfb();
@@ -99,22 +99,22 @@ var thumbMaker = class {
 
                 if (!objects[i].DataLink2 || !objects[i].DataLink3 || !objects[i].DataLink4) {
                     const that = this;
-                    await scraperModule.getLink(objects[i].DataLink1)
+                    await scraperModule.getLink(objects[i].FootPrint2)
                         .then((result) => {
                             console.log(' -> result video link');
                             console.log(result);
-                            this.io.emit('notify', {
-                                title: 'nightmare video link',
-                                messages: result
-                            });
+                            // this.io.emit('notify', {
+                            //     title: 'nightmare video link',
+                            //     messages: result
+                            // });
                             if (result) this.videolink = result;
 
                         }, function (e) {
                             console.error('TM reject ' + e);
-                            that.io.emit('notify', {
-                                title: "TM reject",
-                                messages: e
-                            });
+                            // that.io.emit('notify', {
+                            //     title: "TM reject",
+                            //     messages: e
+                            // });
                             return;
                         })
                         .then(async () => { // do makeBaseThumb
@@ -184,10 +184,10 @@ var thumbMaker = class {
                         .catch(err => {
                             console.error("TM reject ");
                             console.log(err);
-                            this.io.emit('notify', {
-                                title: "Thumb-Maker Error",
-                                messages: err
-                            });
+                            // this.io.emit('notify', {
+                            //     title: "Thumb-Maker Error",
+                            //     messages: err
+                            // });
                         });
                 }
 
