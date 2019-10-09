@@ -4,8 +4,8 @@ const mysql = require('mysql2');
 /////////////////////////////////////////////
 const conf = {
 	host     : process.env.DB_HOST 		|| 'localhost',
-	user     : process.env.DB_USER 		|| 'root',
-	password : process.env.DB_PASSWORD 	|| '3323'
+	user     : process.env.DB_USER 		|| 'test',
+	password : process.env.DB_PASSWORD 	|| 'test'
 };
 if (process.env.DB_SOCK)
 	conf.socketPath = process.env.DB_SOCK
@@ -144,7 +144,7 @@ var queries = {
 	'relation-project-object': 		'CREATE TABLE IF NOT EXISTS replecon.relationProjectObject (id INT AUTO_INCREMENT PRIMARY KEY, projectID INT(4) NOT NULL,  objectID INT(4) NOT NULL, FOREIGN KEY (projectID) REFERENCES replecon.project(id), FOREIGN KEY (objectID) REFERENCES replecon.object(id))ENGINE = InnoDB',
 	'relation-project-original': 	'CREATE TABLE IF NOT EXISTS replecon.relationProjectOriginal (id INT AUTO_INCREMENT PRIMARY KEY, projectID INT(4) NOT NULL,  originalID INT(4) NOT NULL, FOREIGN KEY (projectID) REFERENCES replecon.project(id), FOREIGN KEY (originalID) REFERENCES replecon.original(id))ENGINE = InnoDB',
 	'relation-tag-object': 			'CREATE TABLE IF NOT EXISTS replecon.relationTagObject (id INT AUTO_INCREMENT PRIMARY KEY, tagID INT(4) NOT NULL,  objectID INT(4) NOT NULL, FOREIGN KEY (tagID) REFERENCES replecon.tag(id), FOREIGN KEY (objectID) REFERENCES replecon.object(id))ENGINE = InnoDB',
-	'relation-project-json':	'CREATE TABLE TABLE IF NOT EXISTS replecon.relationProjectJson (id int(11) NOT NULL AUTO_INCREMENT, projectID int(11) NOT NULL, jsonID int(11) NOT NULL, PRIMARY KEY (id)) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8',
+	'relation-project-json':	'CREATE TABLE IF NOT EXISTS replecon.relationProjectJson (id int(11) NOT NULL AUTO_INCREMENT, projectID int(11) NOT NULL, jsonID int(11) NOT NULL, PRIMARY KEY (id)) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8',
 
 	// 'object': 		'CREATE TABLE IF NOT EXISTS replecon.object (id INT AUTO_INCREMENT PRIMARY KEY, title VARCHAR(255) NOT NULL, description VARCHAR(1500) NOT NULL, originID INT(4) NOT NULL, FOREIGN KEY (originID) REFERENCES replecon.original(id))ENGINE = InnoDB',
 	'object': " CREATE TABLE "

@@ -52,13 +52,13 @@ module.exports = {
 
     selectProjectJson: async (projectID, callback) => {
         try {
-            const query = ""
-                + "	SELECT "
-                + " j.name "
-                + "	FROM relationProjectJson AS r "
-                + " INNER JOIN jsonFiles AS j "
-                + " ON r.jsonID = j.id "
-                + "	WHERE r.projectID = ?";
+            const query = ``
+                + `	SELECT `
+                + ` j.name `
+                + `	FROM relationProjectJson AS r `
+                + ` INNER JOIN jsonFiles AS j `
+                + ` ON r.jsonID = j.id `
+                + `	WHERE r.projectID = ?`;
 
             const result = await myquery(query, [projectID]);
 
@@ -73,10 +73,10 @@ module.exports = {
 
     selectAllJsons: async (callback) => {
         try {
-            const query = ""
-                + "	SELECT "
-                + " * "
-                + "	FROM jsonFiles ";
+            const query = ``
+                + `	SELECT `
+                + ` * `
+                + `	FROM jsonFiles `;
 
             const result = await myquery(query);
 
