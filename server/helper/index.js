@@ -32,4 +32,10 @@ module.exports = {
         }
     },
 
+    isType: function(object, type) {
+        if (!object || !type) {
+            return false;
+        }
+        return object.constructor.name === type
+    }
 }
