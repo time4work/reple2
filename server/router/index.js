@@ -58,10 +58,6 @@ module.exports = function(app) {
 	app.get('/json', controller.json.getPage);
 	app.post('/json', controller.json.postJson); // TODO: refactor
 
-	// GENERATOR ROUT
-	app.get('/generator', controller.generator.getPage);
-	app.post('/generator', controller.generator.postGenerator); // TODO: refactor
-
 	// LIBRARY ROUT
 	app.get('/library', controller.library.getPage);
 	app.post('/library', controller.library.postLibrary); // TODO: refactor
