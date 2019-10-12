@@ -37,5 +37,16 @@ module.exports = {
             return false;
         }
         return object.constructor.name === type
+    },
+
+    getDataFromLocalJson: function (name) {
+        return new Promise((resolve, reject) => {
+            const filePath = `./json/'${name}`;
+
+            fs.readFile(filePath, (err, data) => {
+                if (err) reject(err);
+                resolve(JSON.parse(data));
+            });
+        });
     }
 }
