@@ -1685,10 +1685,10 @@ form#p-login-form input {
 section#json-list div.file-wrap {
     display: inline-block;
 }
-section#json-list span.download:hover {
+section#json-list span.download:hover, span.delete:hover {
     border: 1px solid black;
 }
-section#json-list span.download {
+section#json-list span.download, span.delete {
     display: inline-block;
     padding: 0px 10px;
     border: 1px solid #d0d0d0;
