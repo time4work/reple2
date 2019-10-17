@@ -65,7 +65,7 @@ module.exports = {
             const date = new Date();
             const _name = `${path}${name}`;
 
-            await fs.writeFileSync(_name, data);
+            await fs.writeFile(_name, data);
             await writeJson(name, date, length);
 
             console.log(' Json Saaved ! ');
