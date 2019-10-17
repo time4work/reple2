@@ -58,43 +58,6 @@ module.exports = {
         }
     },
 
-    importJson: async (json, callback) => {
-        try {
-            const connection = await POOLCON();
-            for (let iter = 0; iter < json.length; iter++) {
-
-                await new Promise(async (res, rej) => {
-                    let item = json[iter];
-
-                    console.log(" - - - - - - - - - - - - JSON ");
-                    console.log(" -[ " + iter + " ] - - - - - JSON ");
-                    console.log(" - - - - - - - - - - - - JSON ");
-
-                    let bool = await uniqItem(connection, item);
-                    if (bool) {
-                        await magic(connection, item)
-                            .then(async function (ids) {
-                                console.log('------------- ids >');
-                                console.log(ids);
-                                await originalRelation(connection, ids);
-                            });
-                        return res(connection);
-                    } else return res(connection);
-                });
-            }
-
-            console.log(' Json Loaded ! ');
-            connection.end();
-            console.log('x x x x x x x - connection.end');
-
-            if (callback)
-                await callback();
-
-        } catch (e) {
-            console.log(e);
-        }
-    },
-
     saveJson: async (json, name, callback) => {
         try {
             const length = json.length;
