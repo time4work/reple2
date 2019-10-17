@@ -4,7 +4,7 @@ module.exports = {
 
     selectProject: async (id, callback) => {
         try {
-            const query = "SELECT * FROM project WHERE id = ?";
+            const query = `SELECT * FROM project WHERE id = ?`;
             const result = await myquery(query, [id]);
 
             if (callback)
@@ -19,7 +19,12 @@ module.exports = {
 
     selectProjectTags: async (id, callback) => {
         try {
-            const query = "SELECT t.name, r.tagID, r.type, t.flag FROM relationTagProject r, tag t WHERE projectID = ? AND t.id = r.tagID";
+            const query = `
+                SELECT 
+                t.name, r.tagID, r.type, t.flag 
+                FROM relationTagProject r, tag t 
+                WHERE projectID = ? AND t.id = r.tagID 
+                `;
             const result = await myquery(query, [id]);
 
             if (callback) await callback(result);
@@ -33,11 +38,12 @@ module.exports = {
 
     selectProjectDir: async (projectID, callback) => {
         try {
-            const query = ""
-                + "	select "
-                + "	dir "
-                + "	from projectDir "
-                + "	where projectID = ?";
+            const query = `
+                SELECT 
+                dir 
+                FROM projectDir 
+                WHERE projectID = ? 
+                `;
 
             const result = await myquery(query, [projectID]);
 
@@ -52,13 +58,14 @@ module.exports = {
 
     selectProjectJson: async (projectID, callback) => {
         try {
-            const query = ""
-                + "	SELECT "
-                + " j.name "
-                + "	FROM relationProjectJson AS r "
-                + " INNER JOIN jsonFiles AS j "
-                + " ON r.jsonID = j.id "
-                + "	WHERE r.projectID = ?";
+            const query = `
+                SELECT 
+                j.name 
+                FROM relationProjectJson AS r 
+                INNER JOIN jsonFiles AS j 
+                ON r.jsonID = j.id 
+                WHERE r.projectID = ? 
+                `;
 
             const result = await myquery(query, [projectID]);
 
@@ -73,10 +80,7 @@ module.exports = {
 
     selectAllJsons: async (callback) => {
         try {
-            const query = ""
-                + "	SELECT "
-                + " * "
-                + "	FROM jsonFiles ";
+            const query = `SELECT * FROM jsonFiles`;
 
             const result = await myquery(query);
 
@@ -92,7 +96,7 @@ module.exports = {
     selectProjectsRelation: async (callback) => {
         try {
             const result = [];
-            const query = "SELECT * FROM project";
+            const query = `SELECT * FROM project`;
             const projects = await myquery(query, []);
 
             for (var i = 0; i < projects.length; i++) {
@@ -101,11 +105,11 @@ module.exports = {
                 project.name = projects[i].name;
                 project.tags = { assoc: [], stop: [] };
 
-                const query2 = "SELECT count(*) FROM relationProjectObject WHERE projectID = ?";
+                const query2 = `SELECT count(*) FROM relationProjectObject WHERE projectID = ?`;
                 const size = await myquery(query2, [projects[i].id]);
                 project.size = size[0]['count(*)'];
 
-                const query3 = "SELECT t.name, r.tagID, r.type FROM relationTagProject r, tag t WHERE projectID = ? AND t.id = r.tagID";
+                const query3 = `SELECT t.name, r.tagID, r.type FROM relationTagProject r, tag t WHERE projectID = ? AND t.id = r.tagID`;
                 const tags = await myquery(query3, [projects[i].id]);
 
                 for (var j = 0; j < tags.length; j++) {
@@ -140,7 +144,7 @@ module.exports = {
 
     searchProject: async (name, callback) => {
         try {
-            const query = "SELECT * FROM project WHERE name like ?";
+            const query = `SELECT * FROM project WHERE name like ?`;
             const result = await myquery(query, ['%' + name + '%']);
 
             if (callback) await callback(result);
@@ -154,7 +158,7 @@ module.exports = {
 
     createProject: async (name, callback) => {
         try {
-            const query = "INSERT INTO project (`name`) VALUES (?)";
+            const query = `INSERT INTO project (name) VALUES (?)`;
             const result = await myquery(query, [name]);
 
             if (callback) await callback(result);
@@ -168,18 +172,18 @@ module.exports = {
 
     saveProjectDB: async (projID, pack, callback) => { // TODO: needs to be refactored
         try {
-            const query = "SELECT * FROM projectDB WHERE projectID = ?";
+            const query = `SELECT * FROM projectDB WHERE projectID = ?`;
             const projectDB = await myquery(query, [projID]);
 
             if (!projectDB || !projectDB.length) {
-                query = "INSERT INTO projectDB (projectID, flag) VALUES (?,?)";
+                query = `INSERT INTO projectDB (projectID, flag) VALUES (?,?)`;
                 let flag = (pack.db_type == 'localhost') ? 0 : 1;
 
                 projectDB = await myquery(query, [projID, flag]);
                 let pdbID = projectDB.insertId;
 
                 if (!flag) {
-                    query = "INSERT INTO dbhost (host, user, password, name) VALUES (?,?,?,?)";
+                    query = `INSERT INTO dbhost (host, user, password, name) VALUES (?,?,?,?)`;
 
                     let host = pack.db_adr,
                         user = pack.db_usr,
@@ -190,7 +194,7 @@ module.exports = {
                     let dbhost = await myquery(query, [host, user, password, name]);
                     let dbhID = dbhost.insertId;
 
-                    query = "UPDATE projectDB SET dbhID = ? WHERE projectID = ?";
+                    query = `UPDATE projectDB SET dbhID = ? WHERE projectID = ?`;
                     let updatePDB = await myquery(query, [dbhID, projID]);
                 } else {
                     let l_host = pack.db_adr,
@@ -212,10 +216,10 @@ module.exports = {
 
                     /* foreign ssh host */
                     if (f_port) {
-                        query = "INSERT INTO sshhost (host, port, user, password) VALUES (?,?,?,?)";
+                        query = `INSERT INTO sshhost (host, port, user, password) VALUES (?,?,?,?)`;
                         f_options = [f_host, f_port, f_user, f_password];
                     } else {
-                        query = "INSERT INTO sshhost (host, user, password) VALUES (?,?,?)";
+                        query = `INSERT INTO sshhost (host, user, password) VALUES (?,?,?)`;
                         f_options = [f_host, f_user, f_password];
                     }
                     let sshhost = await myquery(query, f_options);
@@ -223,17 +227,17 @@ module.exports = {
 
                     /* local db host */
                     if (l_port) {
-                        query = "INSERT INTO dbhost (host, port, user, password, name) VALUES (?,?,?,?,?)";
+                        query = `INSERT INTO dbhost (host, port, user, password, name) VALUES (?,?,?,?,?)`;
                         let l_options = [l_host, l_port, l_user, l_password, l_name];
                     } else {
-                        query = "INSERT INTO dbhost (host, user, password, name) VALUES (?,?,?,?)";
+                        query = `INSERT INTO dbhost (host, user, password, name) VALUES (?,?,?,?)`;
                         let l_options = [l_host, l_user, l_password, l_name];
                     }
                     let dbhost = await myquery(query, l_options);
                     let dbhID = dbhost.insertId;
 
                     /* project DB config */
-                    query = "UPDATE projectDB SET dbhID = ?, sshhID = ? WHERE projectID = ?";
+                    query = `UPDATE projectDB SET dbhID = ?, sshhID = ? WHERE projectID = ?`;
                     let updatePDB = await myquery(query, [dbhID, sshhID, projID]);
 
                 }
@@ -242,7 +246,7 @@ module.exports = {
                 let flag = projectDB[0].flag;
 
                 if (flag != newflag) {// new flag
-                    let upd_query = "UPDATE projectDB SET flag = ? WHERE projectID = ?";
+                    let upd_query = `UPDATE projectDB SET flag = ? WHERE projectID = ?`;
                     let result = await myquery(upd_query, [newflag, projID]);
                 }
 
@@ -250,7 +254,7 @@ module.exports = {
                     // ...
                 } else { // local db host 
                     let dbhID = projectDB[0].dbhID;
-                    let dbh_query = "SELECT * FROM dbhost WHERE id = ?";
+                    let dbh_query = `SELECT * FROM dbhost WHERE id = ?`;
                     let dbh = await myquery(dbh_query, [dbhID]);
                     let host = pack.db_adr,
                         port = pack.db_port,
@@ -259,12 +263,12 @@ module.exports = {
                         name = pack.db_name;
 
                     if (dbh[0].host != host) {
-                        let upd_query = "UPDATE dbhost SET host = ? WHERE id = ?";
+                        let upd_query = `UPDATE dbhost SET host = ? WHERE id = ?`;
                         let result = await myquery(upd_query, [host, dbhID]);
                     }
                     if (dbh[0].port != port) {
                         if (port) { // some port
-                            let upd_query = "UPDATE dbhost SET port = ? WHERE id = ?";
+                            let upd_query = `UPDATE dbhost SET port = ? WHERE id = ?`;
                             let result = await myquery(upd_query, [port, dbhID]);
                         } else { // no port ''
                             if (dbh[0].port) { // if there was some port, and now there is no port
@@ -277,15 +281,15 @@ module.exports = {
                         }
                     }
                     if (dbh[0].user !== user) {
-                        let upd_query = "UPDATE dbhost SET user = ? WHERE id = ?";
+                        let upd_query = `UPDATE dbhost SET user = ? WHERE id = ?`;
                         let result = await myquery(upd_query, [user, dbhID]);
                     }
                     if (dbh[0].password !== password) {
-                        let upd_query = "UPDATE dbhost SET password = ? WHERE id = ?";
+                        let upd_query = `UPDATE dbhost SET password = ? WHERE id = ?`;
                         let result = await myquery(upd_query, [password, dbhID]);
                     }
                     if (dbh[0].name !== name) {
-                        let upd_query = "UPDATE dbhost SET name = ? WHERE id = ?";
+                        let upd_query = `UPDATE dbhost SET name = ? WHERE id = ?`;
                         let result = await myquery(upd_query, [name, dbhID]);
                     }
                 }
@@ -302,7 +306,7 @@ module.exports = {
 
     selectProjectDBsshhost: async (id, callback) => {
         try {
-            let query = "SELECT * FROM sshhost WHERE id = ?";
+            let query = `SELECT * FROM sshhost WHERE id = ?`;
             let sshhost = await myquery(query, [id]);
             let result = sshhost[0];
 
@@ -318,7 +322,7 @@ module.exports = {
 
     selectProjectDB: async (id, callback) => {
         try {
-            let query = "SELECT * FROM projectDB WHERE projectID = ?";
+            let query = `SELECT * FROM projectDB WHERE projectID = ?`;
             let projectDB = await myquery(query, [id]);
             let result = projectDB[0];
 
@@ -333,7 +337,7 @@ module.exports = {
 
     selectExportLogObjects: async (logID, callback) => {
         try {
-            let query = " SELECT * FROM object WHERE DataKey2 = ? ";
+            let query = ` SELECT * FROM object WHERE DataKey2 = ? `;
             let result = await myquery(query, [logID]);
 
             if (callback) await callback(result);
@@ -347,7 +351,7 @@ module.exports = {
 
     selectExportLog: async (logID, callback) => {
         try {
-            const query = " SELECT * FROM exportLog WHERE id = ? ";
+            const query = ` SELECT * FROM exportLog WHERE id = ? `;
             const result = await myquery(query, [logID]);
 
             if (callback) await callback(result[0]);
@@ -361,7 +365,7 @@ module.exports = {
 
     selectProjectDBlocalhost: async (id, callback) => {
         try {
-            const query = "SELECT * FROM dbhost WHERE id = ?";
+            const query = `SELECT * FROM dbhost WHERE id = ?`;
             const localhost = await myquery(query, [id]);
             const result = localhost[0];
 
@@ -376,14 +380,15 @@ module.exports = {
 
     selectProjectLogs: async (projectID, callback) => {
         try {
-            const query = ""
-                + "	select "
-                + "	l.projectID, l.type, l.date, l.id, count(o.id) as `length`"
-                + "	from projectLog l"
-                + "	left join object as o"
-                + "	on o.DataKey1 = l.id"
-                + "	where projectID = ?"
-                + "	group by l.id";
+            const query = `
+                SELECT 
+                l.projectID, l.type, l.date, l.id, count(o.id) AS length 
+                FROM projectLog l 
+                LEFT JOIN object AS o 
+                ON o.DataKey1 = l.id 
+                WHERE projectID = ? 
+                GROUP BY l.id 
+                `;
             const result = await myquery(query, [projectID]);
 
             if (callback) await callback(result);
@@ -449,13 +454,14 @@ module.exports = {
 
     selectProjectObjects: async (projectID, callback) => {
         try {
-            const query = ""
-                + " SELECT *"
-                + " FROM object"
-                + " WHERE id in"
-                + " (SELECT objectID"
-                + " FROM relationProjectObject"
-                + " WHERE projectID = ?)";
+            const query = `
+                SELECT * 
+                FROM object 
+                WHERE id IN 
+                (SELECT objectID 
+                FROM relationProjectObject 
+                WHERE projectID = ?) 
+                `;
             const result = await myquery(query, [projectID]);
 
             if (callback) await callback(result);
@@ -469,7 +475,7 @@ module.exports = {
 
     selectProjects: async (callback) => {
         try {
-            const query = "SELECT * FROM project";
+            const query = `SELECT * FROM project`;
             const result = await myquery(query, []);
 
             if (callback) await callback(result);
@@ -483,7 +489,7 @@ module.exports = {
 
     selectProjectSize: async (id, callback) => {
         try {
-            const query = "SELECT count(*) FROM relationProjectObject WHERE projectID = ?";
+            const query = `SELECT count(*) FROM relationProjectObject WHERE projectID = ?`;
             const size = await myquery(query, [id]);
             const result = size[0]['count(*)'];
 
@@ -500,24 +506,27 @@ module.exports = {
     saveProjectDir: async (projectID, dir, callback) => {
         try {
             let result;
-            let query = ""
-                + "	select "
-                + "	dir "
-                + "	from projectDir "
-                + "	where projectID = ? ";
+            let query = `
+                SELECT 
+                dir 
+                FROM projectDir 
+                WHERE projectID = ? 
+                `;
             const select = await myquery(query, [projectID]);
 
             if (select.length > 0) {
-                query = ""
-                    + "	UPDATE projectDir "
-                    + "	SET dir = ? "
-                    + "	where projectID = ? ";
+                query = `
+                    UPDATE projectDir 
+                    SET dir = ? 
+                    where projectID = ? 
+                    `;
                 result = await myquery(query, [dir, projectID]);
             } else {
-                query = ""
-                    + "	INSERT INTO projectDir(dir, projectID)"
-                    + "	VALUES "
-                    + "	(?,?) ";
+                query = `
+                    INSERT INTO projectDir(dir, projectID) 
+                    VALUES 
+                    (?,?) 
+                    `;
                 result = await myquery(query, [dir, projectID]);
             }
 
@@ -533,11 +542,12 @@ module.exports = {
     saveProjectTags: async (projectID, tags, callback) => {
         try {
             let query = '';
-            query = ''
-                + "	select r.tagID, r.projectID, type, res.flag "
-                + "	from replecon.relationTagProject r "
-                + "	left join (select id, name, flag from replecon.tag) as res on res.id = r.tagID "
-                + "	where r.projectID = ? order by res.id ";
+            query = `
+                SELECT r.tagID, r.projectID, type, res.flag 
+                FROM replecon.relationTagProject r 
+                LEFT JOIN (SELECT id, name, flag from replecon.tag) AS res ON res.id = r.tagID 
+                WHERE r.projectID = ? ORDER BY res.id 
+                `;
 
             const p_t = await myquery(query, [projectID]);
 
@@ -567,13 +577,18 @@ module.exports = {
                 }
             }
 
-            const insert_query = 'insert into '
-                + 'relationTagProject(projectID, tagID, type) '
-                + 'values(?,?,?)';
-            const remove_query = 'DELETE FROM relationTagProject '
-                + 'WHERE projectID = ? '
-                + 'and tagID = ? '
-                + 'and type = ? ';
+            const insert_query = `
+                INSERT INTO 
+                relationTagProject(projectID, tagID, type) 
+                VALUES(?,?,?) 
+                `;
+
+            const remove_query = `
+                DELETE FROM relationTagProject 
+                WHERE projectID = ? 
+                AND tagID = ? 
+                AND type = ? 
+                `;
 
             for (let i = 0; i < tags.categories.length; i++) {
 
@@ -643,7 +658,14 @@ module.exports = {
 
     selectProjectTmpls: async (projID, callback) => {
         try {
-            const query = "SELECT res.id, res.title, type FROM relationTmplProject left join (select id, title from tmpl)as res on res.id = tmplID WHERE projectID = ?";
+            const query = `
+                SELECT 
+                res.id, res.title, type 
+                FROM relationTmplProject 
+                LEFT JOIN (SELECT id, title FROM tmpl) AS res 
+                ON res.id = tmplID 
+                WHERE projectID = ? 
+                `;
             const result = await myquery(query, [projID]);
 
             if (callback) await callback(result);
@@ -659,29 +681,36 @@ module.exports = {
         try {
             if (!name) return
 
-            let query = '';
-            query = "UPDATE project "
-                + "SET name=?, description=? "
-                + "WHERE id=?;";
+            let query = `
+                UPDATE project 
+                SET name = ?, description = ? 
+                WHERE id = ? 
+                `;
             const base_save = await myquery(query, [name, info, id]);
 
             if (jsons && jsons.length != 0) {
-                query = 'DELETE '
-                    + ' FROM relationProjectJson '
-                    + ' WHERE projectID = ?';
+                query = `
+                    DELETE 
+                    FROM relationProjectJson 
+                    WHERE projectID = ? 
+                    `;
                 const deleted_jsons = await myquery(query, [id]);
 
-                query = 'INSERT INTO '
-                    + 'relationProjectJson(projectID, jsonID) '
-                    + 'VALUES(?,?)';
+                query = `
+                    INSERT INTO 
+                    relationProjectJson(projectID, jsonID) 
+                    VALUES(?,?) 
+                    `;
                 for (let i = 0; i < jsons.length; i++) {
                     const jsons_res = await myquery(query, [id, jsons[i]]);
                 }
             }
 
-            query = "select tmplID "
-                + "from relationTmplProject "
-                + "where projectID = ? and type = 'title'"
+            query = `
+                SELECT tmplID 
+                FROM relationTmplProject 
+                WHERE projectID = ? AND type = 'title' 
+                `;
             const p_tmpls_res = await myquery(query, [id]);
 
             const p_tmpls = [];
@@ -704,23 +733,30 @@ module.exports = {
                     await lost_tmpls.push(p_tmpls[i])
             }
 
-            query = 'insert into '
-                + 'relationTmplProject(tmplID, projectID, type) '
-                + 'values(?,?,?)';
+            query = `
+                INSERT INTO 
+                relationTmplProject(tmplID, projectID, type) 
+                VALUES(?,?,?) 
+                `;
             for (let i = 0; i < new_tmpls.length; i++) {
                 const tmpl_res = await myquery(query, [new_tmpls[i], id, 'title']);
             }
 
-            query = "DELETE FROM relationTmplProject "
-                + "WHERE tmplID = ? "
-                + "and projectID = ? and type = 'title'";
+            query = `
+                DELETE FROM 
+                relationTmplProject 
+                WHERE tmplID = ? 
+                AND projectID = ? AND type = 'title' 
+                `;
             for (let i = 0; i < lost_tmpls.length; i++) {
                 const tmpl_res = await myquery(query, [lost_tmpls[i], id]);
             }
 
-            query = "select tmplID "
-                + "from relationTmplProject "
-                + "where projectID = ? and type = 'description'"
+            query = `
+                SELECT tmplID 
+                FROM relationTmplProject 
+                WHERE projectID = ? AND type = 'description' 
+                `;
             const _p_tmpls_res = await myquery(query, [id]);
 
             const _p_tmpls = [];
@@ -743,16 +779,20 @@ module.exports = {
                     await _lost_tmpls.push(_p_tmpls[i])
             }
 
-            query = 'insert into '
-                + 'relationTmplProject(tmplID, projectID, type) '
-                + 'values(?,?,?)';
+            query = `
+                INSERT INTO 
+                relationTmplProject(tmplID, projectID, type) 
+                VALUES(?,?,?) 
+                `;
             for (let i = 0; i < _new_tmpls.length; i++) {
                 const tmpl_res = await myquery(query, [_new_tmpls[i], id, 'description']);
             }
 
-            query = "DELETE FROM relationTmplProject "
-                + "WHERE tmplID = ? "
-                + "and projectID = ? and type = 'description'";
+            query = `
+                DELETE FROM relationTmplProject 
+                WHERE tmplID = ? 
+                AND projectID = ? AND type = 'description' 
+                `;
             for (let i = 0; i < _lost_tmpls.length; i++) {
                 const tmpl_res = await myquery(query, [_lost_tmpls[i], id]);
             }
@@ -768,12 +808,12 @@ module.exports = {
     deleteProject: async (projectID, callback) => {
         try {
             const connection = await POOLCON();
-            const query = "DELETE FROM project WHERE id = ?";
-            const query2 = "DELETE FROM relationTagProject WHERE projectID = ?";
-            const query3 = "DELETE FROM relationTmplProject WHERE projectID = ?";
-            const query4 = "DELETE FROM relationProjectOriginal WHERE projectID = ?";
-            const query5 = "DELETE FROM projectLog WHERE projectID = ?";
-            const query6 = "DELETE FROM exportLog WHERE projectID = ?";
+            const query = `DELETE FROM project WHERE id = ?`;
+            const query2 = `DELETE FROM relationTagProject WHERE projectID = ?`;
+            const query3 = `DELETE FROM relationTmplProject WHERE projectID = ?`;
+            const query4 = `DELETE FROM relationProjectOriginal WHERE projectID = ?`;
+            const query5 = `DELETE FROM projectLog WHERE projectID = ?`;
+            const query6 = `DELETE FROM exportLog WHERE projectID = ?`;
 
             const res1 = await connection.query(query2, [projectID]);
             const res2 = await connection.query(query3, [projectID]);
@@ -781,35 +821,35 @@ module.exports = {
             const res4 = await connection.query(query5, [projectID]);
             const res5 = await connection.query(query6, [projectID]);
 
-            const db_query = "SELECT sshhID, dbhID FROM projectDB WHERE projectID = ?";
+            const db_query = `SELECT sshhID, dbhID FROM projectDB WHERE projectID = ?`;
             let [projectDB, ...stuff] = await connection.query(db_query, [projectID]);
 
             if (projectDB[0]) {
                 projectDB = projectDB[0];
                 if (projectDB.sshhID) {
-                    const sshhID_query = "DELETE FROM sshhost WHERE id = ?";
+                    const sshhID_query = `DELETE FROM sshhost WHERE id = ?`;
                     const sshh = await connection.query(sshhID_query, [projectDB.sshhID]);
                 }
                 if (projectDB.dbhID) {
-                    const dbhID_query = "DELETE FROM sshhost WHERE id = ?";
+                    const dbhID_query = `DELETE FROM sshhost WHERE id = ?`;
                     const dbh = await connection.query(sshhID_query, [projectDB.dbhID]);
                 }
             }
-            const query7 = "DELETE FROM projectDB WHERE projectID = ?";
+            const query7 = `DELETE FROM projectDB WHERE projectID = ?`;
             const result7 = await connection.query(query7, [projectID]);
 
-            const query8 = "DELETE FROM projectDir WHERE projectID = ?";
+            const query8 = `DELETE FROM projectDir WHERE projectID = ?`;
             const result8 = await connection.query(query8, [projectID]);
 
-            const objs_query = "SELECT objectID FROM relationProjectObject WHERE projectID = ?";
+            const objs_query = `SELECT objectID FROM relationProjectObject WHERE projectID = ?`;
             const [projectObjs, ...stuff2] = await connection.query(objs_query, [projectID]);
 
-            const objs_relation_query = "DELETE FROM relationProjectObject WHERE projectID = ?";
+            const objs_relation_query = `DELETE FROM relationProjectObject WHERE projectID = ?`;
             const objs_relation = await connection.query(objs_relation_query, [projectID]);
 
             if (projectObjs) {
                 if (projectObjs.length > 0) {
-                    const obj_query = "DELETE FROM object WHERE id = ?";
+                    const obj_query = `DELETE FROM object WHERE id = ?`;
                     for (var i = 0; i < projectObjs.length; i++) {
                         const [obj, ...stuff3] = await connection.query(obj_query, [projectObjs[i].objectID]);
                     }
