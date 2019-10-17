@@ -3,7 +3,7 @@ const JsonService = require('../service/json.service');
 module.exports = {
 
 	getPage: async (request, response) => {
-		await JsonService.getJsons(async files => {
+		return JsonService.getJsons(files => {
 			response.render('pages/json', {
 				scope: {
 					jsons: files
@@ -13,10 +13,12 @@ module.exports = {
 	},
 
 	postJson: async (request, response) => {
+		let jsonId;
+
 		switch (request.body.type) {
 
 			case "json.file.download":
-				var jsonId = request.body.id;
+				jsonId = request.body.id;
 
 				await JsonService.getJson(jsonId, async obj => {
 					if (obj) {
@@ -34,10 +36,9 @@ module.exports = {
 				break;
 
 			case "json.file.delete":
-				var jsonId = request.body.id;
+				jsonId = request.body.id;
 
 				await JsonService.deleteJson(jsonId, async obj => {
-					console.log(obj);
 					if (obj) {
 						response.send({ resp: obj });
 					} else response.send({ err: "bad obj id" });
