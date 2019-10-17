@@ -1,5 +1,7 @@
 const { myquery, asynccon } = require('../helper/mysql');
 const Tree = require('../helper/tree');
+const fs = require('fs');
+const getLink = require('../helper/scrapper').getLink;
 
 module.exports = {
 
@@ -46,52 +48,70 @@ module.exports = {
     createProjectObjects: async (projectID, size, callback) => {
         const connection = await asynccon();
         try {
-            const positiveArr = [];
-            const negetiveArr = [];
-            await selectProjectTags(connection, projectID, async (result) => {
-                for (let i = 0; i < result.length; i++) {
-                    if (result[i].positive == 0) {
-                        await negetiveArr.push(result[i].tagID);
-                    } else {
-                        await positiveArr.push(result[i].tagID);
-                    }
-                }
-            });
-            const originalIDarr = await findFilteredOriginal(connection, projectID, { positive: positiveArr, negetive: negetiveArr });
+            // const positiveArr = [];
+            // const negetiveArr = [];
+            // await selectProjectTags(connection, projectID, async (result) => {
+            //     for (let i = 0; i < result.length; i++) {
+            //         if (result[i].positive == 0) {
+            //             await negetiveArr.push(result[i].tagID);
+            //         } else {
+            //             await positiveArr.push(result[i].tagID);
+            //         }
+            //     }
+            // });
+            //const originalIDarr = await findFilteredOriginal(connection, projectID, { positive: positiveArr, negetive: negetiveArr });
 
-            if (size > originalIDarr.length)
-                size = originalIDarr.length;
+            const jsons = await selectProjectJson(projectID);
+
+            var objectArr = [];
+
+            for(i in jsons){
+                let arr = JSON.parse(fs.readFileSync(`./json/${jsons[i].name}`));
+                objectArr = objectArr.concat(arr);
+            }
+
+            // console.log(objectArr);
+
+            //const originalIDarr;
+
+            if (size > objectArr.length)
+                size = objectArr.length;
 
             const logID = await createObjectLog(projectID);
 
             for (let j = 0; j < size; j++) {
-                const originalID = originalIDarr[j].originalID;
+                //const originalID = originalIDarr[j].originalID;
+                let original = objectArr[j];
 
-                await selectOriginal(connection, originalID, async (original) => {
-                    const video_link = original.video;
-                    const donor_link = original.link;
-                    const originalTags = await selectOriginalTags(connection, originalID);
+                // console.log(original);
 
-                    const synTags = [];
-                    for (var q = 0; q < originalTags.length; q++) {
-                        let syns = await selectTagSyns(originalTags[q].tagID);
+                    const donor_link = original.video;
+                    const video_link = await getLink(donor_link);
 
-                        if (syns.length > 0)
-                            for (var k = 0; k < syns.length; k++) {
-                                synTags.push(syns[k]);
-                            }
-                        else
-                            synTags.push(originalTags[q].tagID);
-                    }
+                    console.log(video_link);
+                    
+                    //const originalTags = await selectOriginalTags(connection, originalID);
+
+                    // const synTags = [];
+                    // for (var q = 0; q < originalTags.length; q++) {
+                    //     let syns = await selectTagSyns(originalTags[q].tagID);
+
+                    //     if (syns.length > 0)
+                    //         for (var k = 0; k < syns.length; k++) {
+                    //             synTags.push(syns[k]);
+                    //         }
+                    //     else
+                    //         synTags.push(originalTags[q].tagID);
+                    // }
 
                     // template key lib 
                     const tmpl_lib_pack = await selectLibraryItems();
 
                     // description tmpls 
-                    const d_tmpl_packs = await selectProjectTemplates('description', projectID, synTags);
+                    const d_tmpl_packs = await selectProjectTemplates('description', projectID);
 
-                    if (d_tmpl_packs[0].length == 0)
-                        return null;
+                    // if (d_tmpl_packs[0].length == 0)
+                    //     return null;
 
                     let description = null;
                     do {
@@ -111,7 +131,7 @@ module.exports = {
 
                     if (!description) return null;
 
-                    const t_tmpl_packs = await selectProjectTemplates('title', projectID, synTags);
+                    const t_tmpl_packs = await selectProjectTemplates('title', projectID);
 
                     if (t_tmpl_packs[0].length == 0)
                         return null;
@@ -135,11 +155,11 @@ module.exports = {
 
                     if (!title) return null;
 
-                    let objID = await createObject(projectID, originalID, title, description, video_link, donor_link, logID);
-                    await createRelationTagObj(objID, originalTags);
-                });
+                    await createObject(projectID, title, description, video_link, donor_link, logID);
+                    //await createRelationTagObj(objID, originalTags);
+                
             }
-            result = originalIDarr;
+            result = objectArr;
 
             if (callback) await callback(result);
             return result;
@@ -256,6 +276,27 @@ async function findFilteredOriginal(connection, projectID, tagIDs) {
     } catch (e) {
         console.log(e);
         return -1;
+    }
+}
+
+async function selectProjectJson (projectID, callback) {
+    try {
+        const query = ""
+            + "	SELECT "
+            + " * "
+            + "	FROM relationProjectJson AS r "
+            + " INNER JOIN jsonFiles AS j "
+            + " ON r.jsonID = j.id "
+            + "	WHERE r.projectID = ?";
+
+        const result = await myquery(query, [projectID]);
+
+        if (callback) await callback(result);
+        return result;
+
+    } catch (e) {
+        console.log(e);
+        return 0;
     }
 }
 
@@ -378,7 +419,7 @@ async function selectLibraryItems(callback) {
     }
 }
 
-async function selectProjectTemplates(type, projectID, tagIDs, callback) {
+async function selectProjectTemplates(type, projectID, callback) {
     try {
         const query = `
 			SELECT *
@@ -424,17 +465,17 @@ async function selectProjectTemplates(type, projectID, tagIDs, callback) {
     }
 }
 
-async function createObject(projectID, originalID, title, description, videolink, donorlink, logID) {
+async function createObject(projectID, title, description, videolink, donorlink, logID) {
+
     try {
         var query = ""
             + " Insert Into"
             + " object "
-            + " (DataTitle1, DataLink1, DataText1, FootPrint1, FootPrint2, DataKey1)"
-            + " values (?,?,?,?,?,?)";
+            + " (DataTitle1, DataLink1, DataText1, FootPrint2, DataKey1)"
+            + " values (?,?,?,?,?)";
         let object = await myquery(query,
-            [title, videolink, description, originalID, donorlink, logID]);
+            [title, videolink, description, donorlink, logID]);
         let objectID = object.insertId;
-
         query = ""
             + " Insert Into"
             + " relationProjectObject"
@@ -442,12 +483,12 @@ async function createObject(projectID, originalID, title, description, videolink
             + " values (?,?)";
         let relation = await myquery(query, [projectID, objectID]);
 
-        query = ""
-            + " Insert Into"
-            + " relationProjectOriginal"
-            + " (projectID, originalID)"
-            + " values (?,?)";
-        let relation2 = await myquery(query, [projectID, originalID]);
+        // query = ""
+        //     + " Insert Into"
+        //     + " relationProjectOriginal"
+        //     + " (projectID, originalID)"
+        //     + " values (?,?)";
+        // let relation2 = await myquery(query, [projectID, originalID]);
         return objectID;
 
     } catch (e) {

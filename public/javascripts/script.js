@@ -39,6 +39,7 @@ function projForm(e) {
     var info = $('#description-textarea').val();
     var d_tmpls = $('#d-tmpls').val();
     var t_tmpls = $('#t-tmpls').val();
+    var jsons = $('#jsons-input').val();
 
     // var assocTags = $('#assoc-tag').val();
     // var stopTags = $('#stop-tag').val();
@@ -60,6 +61,7 @@ function projForm(e) {
     // data.stopTags = stopTags;
     data.d_tmpls = d_tmpls;
     data.t_tmpls = t_tmpls;
+    data.jsons = jsons;
 
     var xhr = new XMLHttpRequest();
     xhr.open("POST", '/project/'+project_id, true);
