@@ -77,12 +77,12 @@ const quereList = {
 		(
 			id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
 			projectID INT(4) NOT NULL,
-			flag BOOLEAN NOT NULL,
-			sshhID INT(4),
-			dbhID INT(4),
-			FOREIGN KEY (projectID) REFERENCES replecon.project(id),
-			FOREIGN KEY (sshhID) REFERENCES replecon.sshhost(id),
-			FOREIGN KEY (dbhID) REFERENCES replecon.dbhost(id),
+			type VARCHAR(20),
+			host VARCHAR(20),
+			port int(5),
+			user VARCHAR(20),
+			password VARCHAR(20),
+			name VARCHAR(20),
 			UNIQUE(projectID)
 		) ENGINE = InnoDB
 	`,
@@ -108,19 +108,6 @@ const quereList = {
 			port int(5)  DEFAULT null,
 			user VARCHAR(20) NOT NULL,
 			password VARCHAR(20) NOT NULL
-		) ENGINE = InnoDB
-	`,
-
-	'project-db-dbhost': `
-		CREATE TABLE 
-		IF NOT EXISTS replecon.dbhost
-		(
-			id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
-			host VARCHAR(20) NOT NULL,
-			port int(5)  DEFAULT null,
-			user VARCHAR(20) NOT NULL,
-			password VARCHAR(20) NOT NULL,
-			name VARCHAR(20) NOT NULL
 		) ENGINE = InnoDB
 	`,
 
