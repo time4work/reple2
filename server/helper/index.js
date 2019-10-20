@@ -39,9 +39,11 @@ module.exports = {
         return object.constructor.name === type
     },
 
-    getDataFromLocalJson: function (name) {
+    getDataFromLocalJson: function (name, dir) {
         return new Promise((resolve, reject) => {
-            const filePath = `./json/'${name}`;
+            const filePath = dir
+                ? `${dir}/'${name}`
+                : `${__basedir}/json/${name}`;
 
             fs.readFile(filePath, (err, data) => {
                 if (err) reject(err);

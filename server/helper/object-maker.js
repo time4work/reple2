@@ -1,3 +1,5 @@
+global.__basedir = process.env.BASE_DIR;
+
 const Xvfb = require('xvfb');
 //================================================MODELS
 const { selectProjectJsonNames } = require('../model/relationProjectJson');
@@ -8,11 +10,11 @@ const {
 } = require('../model/object');
 //================================================HELPERS
 const { getDataFromLocalJson, isType } = require('../helper');
-const Tree = require('./tree');
-const { getLink } = require('./scrapper');
+// const Tree = require('./tree');
+// const { getLink } = require('./scrapper');
 //================================================INIT_VARIABLES
 const DEFAULT_DIR = `./screens`;
-const projectID = process.PROJECT_ID;
+const projectID = process.env.PROJECT_ID;
 const xvfb = new Xvfb();
 //================================================PROCESS
 // event beforeExit
@@ -40,6 +42,8 @@ xvfb.start(async function (err, xvfbProcess) {
         const jsonArray = await getDataFromLocalJson(jsonRecord.name);
 
         if (isType(jsonArray, 'Array') && jsonArray.length) {
+
+            process.exit();
 
             // now lets make project objects
             for(let j=0; j<jsonArray.length; j++) {

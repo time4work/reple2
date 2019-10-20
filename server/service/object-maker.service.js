@@ -1,19 +1,20 @@
 const cluster = require('cluster');
 
 const { selectProjectJsonSize } = require('../model/relationProjectJson');
-const { 
+const {
     getProjectTitleTmplSize,
     getProjectDescriptionTmplSize,
 } = require('../model/relationTmplProject');
 
 
-const processFile = `${__dirname}/server/helper/object-maker.js`;
+const processFile = `${__basedir}/server/helper/object-maker.js`;
+// const processFile = `./server/helper/test.js`;
 const processArr = {};
 
 
 module.exports = {
 
-    createProcess: async projectID => {
+    createProcess: projectID => {
         if (processArr.hasOwnProperty(projectID) ||
             canMakeObjects(projectID)
         ) {
@@ -28,16 +29,17 @@ module.exports = {
             node,
             step: 0,
         };
+        return node;
     },
 
-    stopProcess: async projectID => {
+    stopProcess: projectID => {
         if (!processArr.hasOwnProperty(projectID)) {
             return;
         }
         processArr[projectID].node.kill('force close');
     },
 
-    getStatus: async projectID => {
+    getStatus: projectID => {
         if (!processArr.hasOwnProperty(projectID)) {
             return null;
         }
@@ -54,40 +56,40 @@ module.exports = {
 
 function canMakeObjects(projectID) {
     return selectProjectJsonSize(projectID) >= 1
-        && getProjectTitleTmplSize(projectID) >=1 
+        && getProjectTitleTmplSize(projectID) >= 1
         && getProjectDescriptionTmplSize(projectID) >= 1;
 }
 
 function initFork(projectID) {
-    const node_env = {
+    cluster.setupMaster({
+        exec: processFile,
+    });
+    const worker = cluster.fork({
         PROJECT_ID: projectID,
-    };
-    const node = cluster.fork(processFile, null, node_env);
-
-    node.on('message', msg => {
-        console.log('[ object-maker node ] : sent a message :', msg);
-
-        const message = JSON.parse(msg);
-
-        switch (message.type) {
-            case 'step':
-                processArr[projectID].step = message.step;
-                break;
-            case 'closed':
-                node.kill('message closed');
-                break;
-                
-        }
+        BASE_DIR: __basedir
     });
 
-    node.on('error', error => {
+    worker.on('message', msg => {
+        console.log('[ object-maker node ] : sent a message :', msg);
+        // const message = JSON.parse(msg);
+        // switch (message.type) {
+        //     case 'step':
+        //         processArr[projectID].step = message.step;
+        //         break;
+        //     case 'closed':
+        //         worker.kill('message closed');
+        //         break;
+        // }
+    });
+
+    worker.on('error', error => {
         console.log('[ object-maker node ] : There was an error : ', error);
     });
 
-    node.on('exit', (worker, code, signal) => {
+    worker.on('exit', (worker, code, signal) => {
         console.log('[ object-maker node ] : exit');
         delete processArr[projectID];
     });
 
-    return node;
+    return worker;
 }
