@@ -5,7 +5,11 @@ const path = './json/';
 
 async function writeJson(name, date, size, callback) {
     try {
-        const query = `INSERT INTO jsonFiles (name, date, size) VALUES (?,?,?)`;
+        const query = `
+            INSERT INTO jsonFiles 
+            (name, date, size) 
+            VALUES (?,?,?)
+        `;
         const result = await myquery(query, [name, date, size]);
 
         if (callback)
@@ -43,7 +47,7 @@ module.exports = {
                 SELECT * 
                 FROM jsonFiles 
                 WHERE id = ? 
-                `;
+            `;
 
             const result = await myquery(query, [id]);
 
@@ -65,10 +69,8 @@ module.exports = {
             const date = new Date();
             const _name = `${path}${name}`;
 
-            await fs.writeFile(_name, data);
+            await fs.writeFileSync(_name, data);
             await writeJson(name, date, length);
-
-            console.log(' Json Saaved ! ');
 
             if (callback)
                 await callback();
@@ -82,9 +84,9 @@ module.exports = {
         try {
 
             const select_query = `
-            SELECT name 
-            FROM jsonFiles 
-            WHERE id = ? 
+                SELECT name 
+                FROM jsonFiles 
+                WHERE id = ? 
             `;
             const jsonName = await myquery(select_query, [id]);
 
@@ -96,14 +98,17 @@ module.exports = {
             }
 
             const delete_dep_query = `
-            DELETE 
-            FROM relationProjectJson 
-            WHERE jsonID = ?`;
+                DELETE 
+                FROM relationProjectJson 
+                WHERE jsonID = ?
+            `;
             const dep_result = await myquery(delete_dep_query, [id]);
 
-            const delete_query = `DELETE 
-            FROM jsonFiles 
-            WHERE id = ?`;
+            const delete_query = `
+                DELETE 
+                FROM jsonFiles 
+                WHERE id = ?
+            `;
             const result = await myquery(delete_query, [id]);
 
             fs.unlinkSync(`${path}${jsonName[0].name}`);
