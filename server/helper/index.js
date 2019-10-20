@@ -2,6 +2,11 @@ const fs = require('fs');
 const path = require('path');
 
 module.exports = {
+    punctREGEX: /[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_`{|}~]/g,
+     
+    punctREGEX2: /[\u2000-\u206F\u2E00-\u2E7F\\"\\/<>\[\]^`{|}]/g,
+    
+    simpleSort: (a, b) => a > b ? 1 : a < b ? -1 : 0,
 
     makeid: function (length) {
         const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";

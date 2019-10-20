@@ -1,6 +1,5 @@
 const service = require('../service/library.service');
-
-const punctREGEX2 = /[\u2000-\u206F\u2E00-\u2E7F\\"\\/<>\[\]^`{|}]/g;
+const { punctREGEX, punctREGEX2 } = require('../helper');
 
 module.exports = {
 

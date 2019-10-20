@@ -76,7 +76,7 @@ function createProject(el,event){
         +'&type=add';
     var xhr = new XMLHttpRequest();
 
-    xhr.open("POST", '/projects', true);
+    xhr.open("POST", '/projects/create', true);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xhr.onreadystatechange = function (){
         console.log(xhr);
@@ -123,7 +123,7 @@ function search(url){
     }
 }
   $(function(){
-    search('/projects');
+    search('/projects/search');
   });
 </script>
 </html>
