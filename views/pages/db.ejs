@@ -1,197 +1,184 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <% include ../partials/header.ejs %>
     <link rel="stylesheet" href="http://bootstrap-tagsinput.github.io/bootstrap-tagsinput/dist/bootstrap-tagsinput.css">
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script> -->
     <script src="http://bootstrap-tagsinput.github.io/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js"></script>
-  </head>
-  <body class='side-pad'>
+</head>
+
+<body class='side-pad'>
 
     <% include ../partials/topnav.ejs %>
     <% include ../partials/leftnav.ejs %>
-  
 
-    <section id="project-database"  class="col-md-offset-2 col-md-10">
-      <div class="col-md-10">
-        <div class="details-body">
+    <section id="project-database" class="col-md-offset-2 col-md-10">
+        <div class="col-md-10">
+            <div class="details-body">
 
-          <section>
+                <section>
 
-              <h1>Data Base</h1>
-          <% if(scope.dbhost) { %>
-              <p class="p-db_host input">
-                <span class="label-title">host</span>
-                <input type="text"  id='db_host-input' value="<%=scope.dbhost.host%>" >
-              </p>
-              <p class="p-db_port input">
-                <span class="label-title">port</span>
-            <% if(scope.dbhost.port){%>
-                <input type="text"  id='db_port-input' value="<%=scope.dbhost.port%>" >
-            <% }else{ %>
-                <input type="text"  id='db_port-input' value="" >
-            <% } %>
-              </p>
-              <p class="p-db_user input">
-                <span class="label-title">user</span>
-                <input type="text"  id='db_user-input' value="<%=scope.dbhost.user%>" >
-              </p>
-              <p class="p-db_password input">
-                <span class="label-title">password</span>
-                <input type="text"  id='db_pass-input' value="<%=scope.dbhost.password%>" >
-              </p>
-              <p class="p-db_name input">
-                <span class="label-title">db name</span>
-                <input type="text"  id='db_name-input' value="<%=scope.dbhost.name%>" >
-              </p>
-          <% }else{ %>
-              <p class="p-db_host input">
-                <span class="label-title">host</span>
-                <input type="text"  id='db_host-input' value="" >
-              </p>
-              <p class="p-db_port input">
-                <span class="label-title">port</span>
-                <input type="text"  id='db_port-input' value="" >
-              </p>
-              <p class="p-db_user input">
-                <span class="label-title">user</span>
-                <input type="text"  id='db_user-input' value="" >
-              </p>
-              <p class="p-db_password input">
-                <span class="label-title">password</span>
-                <input type="text"  id='db_pass-input' value="" >
-              </p>
-              <p class="p-db_name input">
-                <span class="label-title">db name</span>
-                <input type="text"  id='db_name-input' value="" >
-              </p>
-          <% } %>
-              <div id='p-host-body'>
-                <div>
-                  <input id='radio-p-db-loc' class='radio' name="db-host" type="radio" value="localhost">
-                  <label for='radio-p-db-loc' class='radio'>localhost</label>
-                </div>
-                <div style="pointer-events: none;color: #9f9f9f5e;">
-                  <input id='radio-p-db-for' class='radio' name="db-host" type="radio" value="foreignhost">
-                  <label for='radio-p-db-for' class='radio'>foreign host</label>
-                </div>
-              </div>
+                    <h1>Data Base</h1>
+                    <% if(scope.dbhost) { %>
+                        <p class="p-db_host input">
+                            <span class="label-title">host</span>
+                            <input type="text" id='db_host-input' value="<%=scope.dbhost.host%>">
+                        </p>
+                        <p class="p-db_port input">
+                            <span class="label-title">port</span>
+                            <% if(scope.dbhost.port){%>
+                            <input type="text" id='db_port-input' value="<%=scope.dbhost.port%>">
+                            <% }else{ %>
+                            <input type="text" id='db_port-input' value="">
+                            <% } %>
+                        </p>
+                        <p class="p-db_user input">
+                            <span class="label-title">user</span>
+                            <input type="text" id='db_user-input' value="<%=scope.dbhost.user%>">
+                        </p>
+                        <p class="p-db_password input">
+                            <span class="label-title">password</span>
+                            <input type="text" id='db_pass-input' value="<%=scope.dbhost.password%>">
+                        </p>
+                        <p class="p-db_name input">
+                            <span class="label-title">db name</span>
+                            <input type="text" id='db_name-input' value="<%=scope.dbhost.name%>">
+                        </p>
+                    <% } else { %>
+                        <p class="p-db_host input">
+                            <span class="label-title">host</span>
+                            <input type="text" id='db_host-input' value="">
+                        </p>
+                        <p class="p-db_port input">
+                            <span class="label-title">port</span>
+                            <input type="text" id='db_port-input' value="">
+                        </p>
+                        <p class="p-db_user input">
+                            <span class="label-title">user</span>
+                            <input type="text" id='db_user-input' value="">
+                        </p>
+                        <p class="p-db_password input">
+                            <span class="label-title">password</span>
+                            <input type="text" id='db_pass-input' value="">
+                        </p>
+                        <p class="p-db_name input">
+                            <span class="label-title">db name</span>
+                            <input type="text" id='db_name-input' value="">
+                        </p>
+                    <% } %>
+                    <div id='p-host-body'>
+                        <div>
+                            <input id='radio-p-db-loc' class='radio' name="db-host" type="radio" value="localhost">
+                            <label for='radio-p-db-loc' class='radio'>localhost</label>
+                        </div>
+                        <div style="pointer-events: none;color: #9f9f9f5e;">
+                            <input id='radio-p-db-for' class='radio' name="db-host" type="radio" value="foreignhost">
+                            <label for='radio-p-db-for' class='radio'>foreign host</label>
+                        </div>
+                    </div>
 
-              <div class='foreignhost-body' id='foreignhost'>
-                <p class="p-host_host input">
-                  <span class="label-title">host</span>
-                  <input type="text"  id='host_adr-input' value="" >
-                </p>
-                <p class="p-host_port input">
-                  <span class="label-title">port</span>
-                  <input type="text"  id='host_port-input' value="" >
-                </p>
-                <p class="p-host_user input">
-                  <span class="label-title">user</span>
-                  <input type="text"  id='host_user-input' value="" >
-                </p>
-                <p class="p-host_password input">
-                  <span class="label-title">password</span>
-                  <input type="text"  id='host_pass-input' value="" >
-                </p>
-              </div>
-              <div class="main-butt">
-                <input class="btn btn-success" type="submit" value="SAVE" onclick="save(this)">
-              </div>
-          </section>
+                    <div class='foreignhost-body' id='foreignhost'>
+                        <p class="p-host_host input">
+                            <span class="label-title">host</span>
+                            <input type="text" id='host_adr-input' value="">
+                        </p>
+                        <p class="p-host_port input">
+                            <span class="label-title">port</span>
+                            <input type="text" id='host_port-input' value="">
+                        </p>
+                        <p class="p-host_user input">
+                            <span class="label-title">user</span>
+                            <input type="text" id='host_user-input' value="">
+                        </p>
+                        <p class="p-host_password input">
+                            <span class="label-title">password</span>
+                            <input type="text" id='host_pass-input' value="">
+                        </p>
+                    </div>
+                    <div class="main-butt">
+                        <input class="btn btn-success" type="submit" value="SAVE" onclick="save(this)">
+                    </div>
+                </section>
 
+            </div>
         </div>
-      </div>
     </section>
     <script type="text/javascript">
 
-var project_id = <%=scope.project.id%>;
-var db,dbhost,ssh;
+        var project_id = <%=scope.project.id%>;
+        var dbhost;
 
-<% if(scope.db) { %>
-  db = <%-JSON.stringify(scope.db)%>;
-<% } %>
-<% if(scope.dbhost) { %>
-  dbhost = <%-JSON.stringify(scope.dbhost)%>;
-<% } %>
-<% if(scope.ssh) { %>
-  ssh = <%-JSON.stringify(scope.ssh)%>;
-<% } %>
+        <% if (scope.dbhost) { %>
+            dbhost = <%-JSON.stringify(scope.dbhost) %>;
+        <% } %>
+            $(function () {
+                if (!dbhost || dbhost.type == 'localhost') {
+                    $('#radio-p-db-loc').prop("checked", true);
+                    $('#foreignhost').addClass('off');
+                } else {
+                    $('#radio-p-db-for').prop("checked", true);
+                    $('#foreignhost').removeClass('off');
+                }
 
-      $(function(){
+                $('input:radio[name="db-host"]').change(function () {
+                    if ($(this).is(':checked') && $(this).val() == 'foreignhost') {
+                        $('#foreignhost').removeClass('off');
+                    } else {
+                        $('#foreignhost').addClass('off');
+                    }
+                });
 
-        if( !db || db.length == 0 || db.flag == 0 ){
-          $('#radio-p-db-loc').prop("checked", true);
-          $('#foreignhost').addClass('off');
-        }else{
-          $('#radio-p-db-for').prop("checked", true);
-          $('#foreignhost').removeClass('off');
+            });
 
+        function save(e) {
+            if (e.preventDefault) e.preventDefault();
+            console.log(e);
 
+            if (!confirm("Are u sure?")) return;
+            // var db_adr,
+            //     db_port,
+            //     db_usr,
+            //     db_pass,
+            //     db_name,
+            //     db_type,
+            //     host_adr,
+            //     host_port,
+            //     host_usr,
+            //     host_pass;
+            var pack = {};
+
+            pack.db_adr = document.getElementById('db_host-input').value;
+            pack.db_port = document.getElementById('db_port-input').value;
+            pack.db_usr = document.getElementById('db_user-input').value;
+            pack.db_pass = document.getElementById('db_pass-input').value;
+            pack.db_name = document.getElementById('db_name-input').value;
+
+            pack.db_type =
+                document.getElementById('radio-p-db-loc').checked
+                    ? 'localhost'
+                    : 'foreignhost'
+                ;
+
+            pack.host_adr = document.getElementById('host_adr-input').value;
+            pack.host_port = document.getElementById('host_port-input').value;
+            pack.host_usr = document.getElementById('host_user-input').value;
+            pack.host_pass = document.getElementById('host_pass-input').value;
+
+            console.log(pack);
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", '/project/' + project_id + "/database/", true);
+            xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+            xhr.onreadystatechange = function () {
+                console.log(xhr);
+                // if(xhr.readyState == 4)
+                //     window.location.replace(xhr.responseURL);
+            };
+            xhr.send(JSON.stringify({ pack: pack }));
+            return false;
         }
-        
-
-        $('input:radio[name="db-host"]').change( function(){
-          if ($(this).is(':checked') && $(this).val() == 'foreignhost') 
-            $('#foreignhost').removeClass('off');
-          else
-            $('#foreignhost').addClass('off');
-        });
-
-      });
-
-function save (e) {
-  if (e.preventDefault) e.preventDefault();
-  console.log(e);
-
-  if(!confirm("Are u sure?"))return;
-  // var db_adr,
-  //     db_port,
-  //     db_usr,
-  //     db_pass,
-  //     db_name,
-  //     db_type,
-  //     host_adr,
-  //     host_port,
-  //     host_usr,
-  //     host_pass;
-  var pack = {};
-
-  pack.db_adr = document.getElementById('db_host-input').value;
-  pack.db_port = document.getElementById('db_port-input').value;
-  pack.db_usr = document.getElementById('db_user-input').value;
-  pack.db_pass = document.getElementById('db_pass-input').value;
-  pack.db_name = document.getElementById('db_name-input').value;
-
-  pack.db_type = 
-    document.getElementById('radio-p-db-loc').checked
-      ? 'localhost'
-      : 'foreignhost'
-  ;
-
-  pack.host_adr = document.getElementById('host_adr-input').value;
-  pack.host_port = document.getElementById('host_port-input').value;
-  pack.host_usr = document.getElementById('host_user-input').value;
-  pack.host_pass = document.getElementById('host_pass-input').value;
-
-  console.log(pack);
-  // if(!tmpl_name )
-  //     return false;
-
-
-  // console.log(tmpl_name);  
-
-  var xhr = new XMLHttpRequest();
-  xhr.open("POST", '/project/'+project_id+"/database/", true);
-  xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-  xhr.onreadystatechange = function (){
-      console.log(xhr);
-      // if(xhr.readyState == 4)
-      //     window.location.replace(xhr.responseURL);
-  };
-  xhr.send(JSON.stringify({pack:pack}));
-  return false;
-}
     </script>
-  </body>
+</body>
+
 </html>

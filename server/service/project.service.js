@@ -192,10 +192,13 @@ module.exports = {
     },
 
     selectProjectDB: async (projectID) => {
-        return myquery(
+        const result = await myquery(
             `SELECT * FROM projectDB WHERE projectID = ?`, 
             [projectID]
         );
+        return result && result.length
+            ? result[0]
+            : null;
     },
 
     selectProjectUnmappedObjects: async (projectID, callback) => {
