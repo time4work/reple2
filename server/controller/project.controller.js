@@ -37,7 +37,7 @@ module.exports = {
 
 	getProject: async (request, response) => {
 		const project_id = request.params.id;
-
+		// TODO: REFACTOR
 		// const project = await ProjectService.selectProject(project_id);
 		await ProjectService.selectProject(project_id, async (result) => {
 			await ProjectService.selectProjectSize(project_id, async (result4) => {
@@ -64,7 +64,6 @@ module.exports = {
 		});
 	},
 
-	// !
 	saveProject: async (request, response) => {
 		const project_id = request.params.id;
 
@@ -92,7 +91,6 @@ module.exports = {
 
 	},
 
-	// !
 	showProjectScreensDir: async (request, response) => {
 		const project_id = request.params.id;
 
@@ -113,7 +111,6 @@ module.exports = {
 		});
 	},
 
-	//!
 	navigateProjectScreensDir: async (request, response) => {
 		const curpath = request.body.path;
 		const way = request.body.way;
@@ -128,7 +125,6 @@ module.exports = {
 		});
 	},
 
-	//!
 	saveProjectSceenDir: async (request, response) => {
 		const project_id = request.params.id;
 		const selectedpath = request.body.path;
@@ -153,84 +149,6 @@ module.exports = {
 				response.send({ redirect: '/projects/' });
 			});
 	},
-
-	// postProject: async (request, response) => {
-	// 	let project_id = request.params.id;
-
-	// 	switch (request.body.type) {
-	// 		case "project.showDir":
-	// 			await ProjectService.selectProjectDir(project_id, (select_dir_result) => {
-	// 				var fullpath;
-
-	// 				if (select_dir_result.length == 0)
-	// 					fullpath = path.resolve("./screens");
-	// 				else
-	// 					fullpath = select_dir_result[0].dir;
-
-	// 				selectDir(fullpath, (list) => {
-	// 					if (fullpath != '/')
-	// 						list.push('..');
-	// 					list.sort((a, b) => a > b ? 1 : a < b ? -1 : 0);
-	// 					response.send({ list: list, path: fullpath });
-	// 				});
-	// 			});
-	// 			break;
-	// 		case "project.navigate":
-	// 			let curpath = request.body.path;
-	// 			let way = request.body.way;
-	// 			var fullpath = path.join(curpath, way);
-
-	// 			await selectDir(fullpath, (list) => {
-	// 				if (fullpath != '/')
-	// 					list.push('..');
-
-	// 				list.sort((a, b) => a > b ? 1 : a < b ? -1 : 0);
-	// 				response.send({ list: list, path: fullpath });
-	// 			});
-	// 			break;
-	// 		case "project.dir.save":
-	// 			let selectedpath = request.body.path;
-
-	// 			await selectDir(selectedpath, async (list) => {
-	// 				if (list)
-	// 					await ProjectService.saveProjectDir(project_id, selectedpath, (r) => {
-	// 						if (r) response.send({ result: "ok" });
-	// 					});
-	// 			});
-	// 			break;
-	// 		case "project.save":
-	// 			let name = request.body.name.toLowerCase();
-	// 			let info = request.body.info;
-	// 			let d_tmpls = request.body.d_tmpls;
-	// 			let t_tmpls = request.body.t_tmpls;
-	// 			let db = request.body.db;
-	// 			let jsons = request.body.jsons;
-	// 			if (!name)
-	// 				return;
-
-	// 			await ProjectService.saveProjectChanges(
-	// 				project_id,
-	// 				name,
-	// 				info,
-	// 				t_tmpls,
-	// 				d_tmpls,
-	// 				jsons,
-	// 				db,
-	// 				() => {
-	// 					response.send({ result: 'saved' });
-	// 				}
-	// 			);
-	// 			break;
-	// 		case "project.delete":
-	// 			await ProjectService.deleteProject(project_id, () => {
-	// 				response.send({ redirect: '/projects/' });
-	// 			});
-	// 			break;
-	// 		default:
-	// 			console.log(" O O O P S . . . ");
-	// 			response.send({ err: 'o o o p s' });
-	// 	}
-	// },
 
 	getProjectObjects: async (request, response) => {
 		let project_id = request.params.id;
@@ -265,6 +183,8 @@ module.exports = {
 				});
 
 				break;
+			// TODO: generator-task
+
 			// case 'process.thumbs.terminate':
 			// 	result = await TM.stopProcess(project_id);
 			// 	response.send({ status: result });

@@ -24,8 +24,7 @@ module.exports = {
                 dir 
                 FROM projectDir 
                 WHERE projectID = ? 
-                `;
-
+            `;
             const result = await myquery(query, [projectID]);
 
             if (callback) await callback(result);
@@ -46,8 +45,7 @@ module.exports = {
                 INNER JOIN jsonFiles AS j 
                 ON r.jsonID = j.id 
                 WHERE r.projectID = ? 
-                `;
-
+            `;
             const result = await myquery(query, [projectID]);
 
             if (callback) await callback(result);
@@ -62,7 +60,6 @@ module.exports = {
     selectAllJsons: async (callback) => {
         try {
             const query = `SELECT * FROM jsonFiles`;
-
             const result = await myquery(query);
 
             if (callback) await callback(result);
@@ -84,34 +81,10 @@ module.exports = {
                 const project = {};
                 project.id = projects[i].id;
                 project.name = projects[i].name;
-                // project.tags = { assoc: [], stop: [] };
 
-                // const query2 = `SELECT count(*) FROM relationProjectObject WHERE projectID = ?`;
-                // const size = await myquery(query2, [projects[i].id]);
-                // project.size = size[0]['count(*)'];
+                // TODO: generator-task                
                 project.size = null;
 
-                // const query3 = `SELECT t.name, r.tagID, r.type FROM relationTagProject r, tag t WHERE projectID = ? AND t.id = r.tagID`;
-                // const tags = await myquery(query3, [projects[i].id]);
-
-                // for (var j = 0; j < tags.length; j++) {
-                //     switch (tags[j].type) {
-                //         case "negative":
-                //             project.tags.stop.push(tags[j].name);
-                //             break;
-                //         case "positive":
-                //             project.tags.assoc.push(tags[j].name);
-                //             break;
-                //         case "hidden":
-                //             //do nothing
-                //             break;
-                //         case "categories":
-                //             //do nothing
-                //             break;
-                //         default:
-                //             throw Error("-[!]- Bad relationTagProject type");
-                //     }
-                // }
                 result.push(project);
             }
 
@@ -203,6 +176,8 @@ module.exports = {
 
     selectProjectUnmappedObjects: async (projectID, callback) => {
         try {
+            // TODO: refactor - generator-task
+
             // const query = `
             //     SELECT * FROM object
             //     WHERE id in
@@ -228,6 +203,8 @@ module.exports = {
 
     selectProjectReadyObjects: async (objects, callback) => {
         const x = [];
+        // TODO: refactor - generator-task
+
         // for (var i = 0; i < objects.length; i++) {
         //     if (
         //         objects[i].DataLink2 &&
@@ -245,6 +222,8 @@ module.exports = {
 
     selectProjectReadyObjectLength: async (objects, callback) => {
         let x = 0;
+        // TODO: refactor - generator-task
+
         // for (let i = 0; i < objects.length; i++) {
         //     if (objects[i].DataLink2 && objects[i].DataLink3 && objects[i].DataLink4 && objects[i].DataText3)
         //         x++;
@@ -256,6 +235,8 @@ module.exports = {
 
     selectProjectObjects: async (projectID, callback) => {
         try {
+            // TODO: refactor - generator-task
+
             // const query = `
             //     SELECT * 
             //     FROM object 
@@ -292,6 +273,8 @@ module.exports = {
 
     selectProjectSize: async (id, callback) => {
         try {
+            // TODO: refactor - generator-task
+
             // const query = `SELECT count(*) FROM relationProjectObject WHERE projectID = ?`;
             // const size = await myquery(query, [id]);
             // const result = size[0]['count(*)'];
@@ -365,6 +348,8 @@ module.exports = {
 
     saveProjectChanges: async (id, name, info, t_tmpls, d_tmpls, jsons, db, callback) => {
         try {
+            // TODO: REFACTOR
+
             if (!name) return
 
             let query = `
@@ -492,7 +477,7 @@ module.exports = {
     },
 
     deleteProject: async (projectID) => {
-        // TODO            
+        //! TODO: delete-ptoject-task         
     },
 
 }
