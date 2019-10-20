@@ -47,13 +47,6 @@ module.exports = function(app) {
 	app.get('/template/:id', controller.template.getTemplate);
     app.post('/template/:id', controller.template.postTemplate); // TODO: refactor
     
-    // TAGS ROUT
-    app.get('/tags', controller.tag.getTagsPage);
-	app.post('/tags', controller.tag.postTags); // TODO: refactor
-
-	app.get('/tag/:id', controller.tag.getTagPage);
-	app.post('/tag/:id', controller.tag.postTag); // TODO: refactor
-
 	// JSON ROUT
 	app.get('/json', controller.json.getPage);
 	app.post('/json', controller.json.postJson); // TODO: refactor

@@ -102,18 +102,18 @@
 	          var val = $('#search').val();
 	          if( val.length > 0 ){
 	              $("#list-tbody").hide();
-	              ajax(url, {type:'search',name:val}, (tags)=>{
-	                  console.log(tags);
+	              ajax(url, {type:'search',name:val}, (data)=>{
+	                  console.log(data);
 	                  var html = '';
-	                  for(var i in tags){
-	                      console.log(tags[i]);
+	                  for(var i in data){
+	                      console.log(data[i]);
 	                      html += ''
 	                      + "<tr>"
 	                      + "<td class='number'>" 
-	                      + tags[i].id 
+	                      + data[i].id 
 	                      + "</td>"
-	                      + "<td><a href='tag/"+tags[i].id+"'>"
-	                      + tags[i].name
+	                      + "<td><a href='tag/"+data[i].id+"'>"
+	                      + data[i].name
 	                      + "</a></td>"
 	                      + "</tr>";
 	                  }  

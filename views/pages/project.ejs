@@ -213,18 +213,6 @@
       }
 
     $(function(){
-      // $('#stop-tag').tagsinput({
-      //   allowDuplicates: false,
-      //   itemValue: 'id',
-      //   itemText: 'label'
-      // });
-
-      // $('#assoc-tag').tagsinput({
-      //   allowDuplicates: false,
-      //   itemValue: 'id',
-      //   itemText: 'label'
-      // });
-
       $('#t-tmpls').tagsinput({
         allowDuplicates: false,
         itemValue: 'id',
@@ -249,26 +237,7 @@
         <%}%>
       <% }); %>
       
-      // $('div.tags button.add-more.assoc-tag').on('click', (e)=>{
-      //   // console.log('click');
-      //   var btn = e.target;
-      //   var neighbour = btn.previousElementSibling;
-      //   var tag_name = neighbour.options[neighbour.selectedIndex].value;
-      //   var tag_id = neighbour.options[neighbour.selectedIndex].getAttribute('tag-id');
-
-      //   $('#assoc-tag').tagsinput('add', {"id":tag_id, "label":tag_name} );
-      // });
-      
-      // $('div.tags button.add-more.stop-tag').on('click', (e)=>{
-      //   // console.log('click');
-      //   var btn = e.target;
-      //   var neighbour = btn.previousElementSibling;
-      //   var tag_name = neighbour.options[neighbour.selectedIndex].value;
-      //   var tag_id = neighbour.options[neighbour.selectedIndex].getAttribute('tag-id');
-      //   $('#stop-tag').tagsinput('add', {"id":tag_id, "label":tag_name} );
-      // });
       $('div.tmpls button.add-more.t-tmpls').on('click', (e)=>{
-        // console.log('click');
         var btn = e.target;
         var neighbour = btn.previousElementSibling;
         var tag_name = neighbour.options[neighbour.selectedIndex].value;
@@ -276,7 +245,6 @@
         $('#t-tmpls').tagsinput('add', {"id":tag_id, "label":tag_name} );
       });
       $('div.tmpls button.add-more.d-tmpls').on('click', (e)=>{
-        // console.log('click');
         var btn = e.target;
         var neighbour = btn.previousElementSibling;
         var tag_name = neighbour.options[neighbour.selectedIndex].value;
@@ -285,7 +253,6 @@
       });
 
       $('#thumb-navigator').on('click', e => {
-        // console.log('nav');
         if (e.preventDefault) e.preventDefault();
         $('#navigator').removeClass("hide");
         
@@ -324,7 +291,6 @@
             `;
             $('#navigator .wrapper .bot-bar').append(btn); 
 
-            // console.log(textStatus);            
           }else console.log("navigation() bar response");
 
         });

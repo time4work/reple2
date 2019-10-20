@@ -40,75 +40,75 @@ async function postmetaInsert(connection, postID, key, value, callback) {
     }
 }
 
-async function selectObjectTags(objectID, callback) {
-    try {
-        const query = ""
-            + "	Select r.id, r.tagID, r.objectID, res.name FROM "
-            + "	replecon.relationTagObject r"
-            + "	left join("
-            + "	select name, id from"
-            + "	replecon.tag"
-            + "	)as res on res.id = r.tagID"
-            + "	where objectID = ?"
-            + "	order by r.id "
+// async function selectObjectTags(objectID, callback) {
+//     try {
+//         const query = ""
+//             + "	Select r.id, r.tagID, r.objectID, res.name FROM "
+//             + "	replecon.relationTagObject r"
+//             + "	left join("
+//             + "	select name, id from"
+//             + "	replecon.tag"
+//             + "	)as res on res.id = r.tagID"
+//             + "	where objectID = ?"
+//             + "	order by r.id "
 
-        const result = await myquery(query, [objectID]);
+//         const result = await myquery(query, [objectID]);
 
-        if (callback) await callback(result);
-        return result;
+//         if (callback) await callback(result);
+//         return result;
 
-    } catch (e) {
-        console.log(e);
-        return 0;
-    }
-}
+//     } catch (e) {
+//         console.log(e);
+//         return 0;
+//     }
+// }
 
-async function selectProjectHiddenTags(projectID, callback) {
-    try {
-        const query = ""
-            + "	Select r.id, r.tagID, r.projectID, r.type, res.name FROM "
-            + "	relationTagProject r"
-            + "	left join("
-            + "	select name, id from"
-            + "	replecon.tag"
-            + "	)as res on res.id = r.tagID"
-            + "	where r.projectID = ?"
-            + "	AND type = 'hidden'"
-            + "	order by r.id ";
+// async function selectProjectHiddenTags(projectID, callback) {
+//     try {
+//         const query = ""
+//             + "	Select r.id, r.tagID, r.projectID, r.type, res.name FROM "
+//             + "	relationTagProject r"
+//             + "	left join("
+//             + "	select name, id from"
+//             + "	replecon.tag"
+//             + "	)as res on res.id = r.tagID"
+//             + "	where r.projectID = ?"
+//             + "	AND type = 'hidden'"
+//             + "	order by r.id ";
 
-        const result = await myquery(query, [projectID]);
+//         const result = await myquery(query, [projectID]);
 
-        if (callback) await callback(result);
-        return result;
+//         if (callback) await callback(result);
+//         return result;
 
-    } catch (e) {
-        console.log(e);
-        return 0;
-    }
-}
-async function selectProjectCategoriesTags(projectID, callback) {
-    try {
-        const query = ""
-            + "	Select r.id, r.tagID, r.projectID, r.type, res.name FROM "
-            + "	relationTagProject r"
-            + "	left join("
-            + "	select name, id from"
-            + "	replecon.tag"
-            + "	)as res on res.id = r.tagID"
-            + "	where r.projectID = ?"
-            + "	AND type = 'categories'"
-            + "	order by r.id ";
+//     } catch (e) {
+//         console.log(e);
+//         return 0;
+//     }
+// }
+// async function selectProjectCategoriesTags(projectID, callback) {
+//     try {
+//         const query = ""
+//             + "	Select r.id, r.tagID, r.projectID, r.type, res.name FROM "
+//             + "	relationTagProject r"
+//             + "	left join("
+//             + "	select name, id from"
+//             + "	replecon.tag"
+//             + "	)as res on res.id = r.tagID"
+//             + "	where r.projectID = ?"
+//             + "	AND type = 'categories'"
+//             + "	order by r.id ";
 
-        const result = await myquery(query, [projectID]);
+//         const result = await myquery(query, [projectID]);
 
-        if (callback) await callback(result);
-        return result;
+//         if (callback) await callback(result);
+//         return result;
 
-    } catch (e) {
-        console.log(e);
-        return 0;
-    }
-}
+//     } catch (e) {
+//         console.log(e);
+//         return 0;
+//     }
+// }
 
 module.exports = {
 
