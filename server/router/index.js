@@ -35,7 +35,8 @@ module.exports = function(app) {
 
 	// PORJECTS ROUT
     app.get('/projects', controller.project.getPage);
-	app.post('/projects', controller.project.postProjects); // TODO: refactor
+	app.post('/projects/search', controller.project.searchProjects);
+	app.post('/projects/create', controller.project.createProject);
 	
 	// PORJECT ROUT
 	app.use('/project', projectRouter);
