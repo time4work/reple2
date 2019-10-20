@@ -2,28 +2,23 @@
 console.log('script');
 ///////////////////////////////////////////////////////////
 window.onload = function() {
-    // var projs    = document.getElementById('projects-form');
     var proj    = document.getElementById('project-form');
     var newproj    = document.getElementById('new-project-form');
-    var tag     = document.getElementById('tag-info-form');
+    // var tag     = document.getElementById('tag-info-form');
     var key     = document.getElementById('key-form');
     var json    = document.getElementById('json-form');
     var rewrite = document.getElementById('rewrite-form');
     var rewriter = document.getElementById('rewriter-form');
     var query = document.getElementById('query-form');
     var tmpl = document.getElementById('template-form');
-    // var imprt = document.getElementById('template-import-form');
 
-    // if(projs) projs.addEventListener("submit", projsForm); else
     if(newproj) newproj.addEventListener("submit", newprojProjForm); else
     if(proj) proj.addEventListener("submit", projForm); else
-    if(tag) tag.addEventListener("submit", tagForm); else
-    // if(key) key.addEventListener("submit", keyForm); else
+    // if(tag) tag.addEventListener("submit", tagForm); else
     if(json) json.addEventListener("submit", jsonForm); else
     if(rewrite) rewrite.addEventListener("submit", rewriteForm); else
     if(rewriter) rewriter.addEventListener("submit", rewriterForm); else
     if(tmpl) tmpl.addEventListener("submit", tmplForm); else
-    // if(imprt) imprt.addEventListener("submit", importForm); else
     if(query) query.addEventListener("submit", queryForm);
 }
 ///////////////////////////////////////////////////////////
@@ -32,21 +27,12 @@ function projForm(e) {
     console.log(e);
 
     var project_id = e.target.getAttribute('proj-id');
-    // var select = e.target.getElementsByTagName("select")[0];
-    // var tag_id = select.options[select.selectedIndex].getAttribute('proj-id');
-
     var name = $('#name-input').val();
     var info = $('#description-textarea').val();
     var d_tmpls = $('#d-tmpls').val();
     var t_tmpls = $('#t-tmpls').val();
     var jsons = $('#jsons-input').val();
 
-    // var assocTags = $('#assoc-tag').val();
-    // var stopTags = $('#stop-tag').val();
-    // if( assocTags )
-    //     assocTags = assocTags.map((e)=>{ return parseInt(e, 10); });
-    // if( stopTags )
-    //     stopTags = stopTags.map((e)=>{ return parseInt(e, 10); });
     if( d_tmpls )
         d_tmpls = d_tmpls.map((e)=>{ return parseInt(e, 10); });
     if( t_tmpls )
@@ -57,8 +43,6 @@ function projForm(e) {
 
     data.name = name;
     data.info = info;
-    // data.assocTags = assocTags;
-    // data.stopTags = stopTags;
     data.d_tmpls = d_tmpls;
     data.t_tmpls = t_tmpls;
     data.jsons = jsons;
@@ -102,34 +86,30 @@ function tmplForm (e) {
     xhr.send(JSON.stringify(data));
     return false;
 }
-function tagForm(e) {    
-    if (e.preventDefault) e.preventDefault();
-    if ( !confirm("are you sure") )
-        return
-    // var name = document.getElementById("name-input");
-    var syns = $('#syns-tag').val()
-    var tag_id = document.getElementById('tag-details').getAttribute('tag-id');
-    var x = e.target.getElementsByTagName("input")[0];
-    var name = x.value;
-    var data = {name:name, syns:syns, type:'save'};
+// function tagForm(e) {    
+//     if (e.preventDefault) e.preventDefault();
+//     if ( !confirm("are you sure") )
+//         return
+//     var syns = $('#syns-tag').val()
+//     var tag_id = document.getElementById('tag-details').getAttribute('tag-id');
+//     var x = e.target.getElementsByTagName("input")[0];
+//     var name = x.value;
+//     var data = {name:name, syns:syns, type:'save'};
 
-    var body = 'name=' + encodeURIComponent(name)
-        // +"&syns=" + encodeURIComponent(syns)
-        +"&syns=" + syns
-        +'&type=save';
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", '/tag/'+tag_id, true);
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xhr.onreadystatechange = function (){
-        console.log(xhr);
-        if(xhr.readyState == 4)
-            window.location.replace(xhr.responseURL);
-    };
-    xhr.send(body);
-    // xhr.send(JSON.stringify({name:name, syns:syns, type:'save'}));
-    // xhr.send( JSON.stringify({name:name, syns:syns, type:'save'}) );
-    return false;
-}
+//     var body = 'name=' + encodeURIComponent(name)
+//         +"&syns=" + syns
+//         +'&type=save';
+//     var xhr = new XMLHttpRequest();
+//     xhr.open("POST", '/tag/'+tag_id, true);
+//     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+//     xhr.onreadystatechange = function (){
+//         console.log(xhr);
+//         if(xhr.readyState == 4)
+//             window.location.replace(xhr.responseURL);
+//     };
+//     xhr.send(body);
+//     return false;
+// }
 
 
 function onReaderLoad(e){
@@ -139,7 +119,6 @@ function onReaderLoad(e){
 }
 function jsonForm(e) {
     if (e.preventDefault) e.preventDefault();
-    // console.log(e);
     blockTheKraken("<span>loading . . .</span>");
 
     var file = e.target.getElementsByTagName("input")[0].files[0];
@@ -169,8 +148,6 @@ function jsonForm(e) {
                 }
                 xhr.onreadystatechange = function (){
                     console.log(xhr);
-                    // if(xhr.readyState == 4)
-                    //     window.location.replace(xhr.responseURL);
                 };
                 xhr.send(body); 
         };
@@ -180,7 +157,6 @@ function jsonForm(e) {
 
 function rewriteForm(e) {
     if (e.preventDefault) e.preventDefault();
-    // console.log(e);
 
     var y = e.target.getElementsByTagName("select")[0];
     var id = y.options[y.selectedIndex].getAttribute('proj-id');
@@ -275,10 +251,7 @@ function queryForm(e) {
     if(db_name) db.name = db_name;
     if(db_port) db.port = db_port;
 
-    var data = {
-        ssh:ssh
-        ,db:db
-    };
+    var data = { ssh, db };
     // var data = [ssh, db];
     console.log(data);  
 
@@ -358,7 +331,6 @@ function snackbox(text = 'oops', time = 2000){
 function throwJsonFile(json, name){
     var jsonse = JSON.stringify(json, null, 4);
     var blob = new Blob([jsonse], {type: "application/json"});
-    // var blob = new Blob([json], {type: "application/json"});
     var downloadLink = document.createElement("a");
     downloadLink.href = window.URL.createObjectURL(blob);
     downloadLink.download = `${name}.json`;

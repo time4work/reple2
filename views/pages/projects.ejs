@@ -51,22 +51,6 @@
                   <a href="/project/<%= proj.id %>/"> 
                     <%= proj.name %>
                   </a>
-                  <p class='assoc-tags proj-tags'>
-                    Asoc.tags
-                    <% proj.tags.assoc.forEach(function(tag, i) { %>
-                      <span>
-                      <%= " "+ tag +" "%>
-                      </span>
-                    <% }); %>
-                  </p>
-                  <p class='stop-tags proj-tags'>
-                    Stop.tags
-                    <% proj.tags.stop.forEach(function(tag, iter) { %>
-                      <span>
-                      <%= " "+ tag +" "%>
-                      </span>
-                    <% }); %>
-                  </p>
                 </td>
                 <td> <%= proj.size %> </td>
               </tr>
