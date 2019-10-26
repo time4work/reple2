@@ -5,6 +5,7 @@ const ProjectService = require('../service/project.service');
 // const ExportService = require('../service/export-data.service'); // TODO - export-task
 
 const TemplateService = require('../service/template.service');
+const ObjectMakerService = require('../service/object-maker.service');
 const { selectDir, simpleSort } = require('../helper');
 
 // let ExportProgress = false;  // TODO - export-task
@@ -166,21 +167,25 @@ module.exports = {
 
 	postProjectObjects: async (request, response) => {
 		const project_id = request.params.id;
-		let result;
+		// let result;
 		switch (request.body.type) {
 			case 'objects.thumbs.make':
-				await ProjectService.selectProjectDir(project_id, async (select_dir_result) => {
-					var fullpath;
-					if (select_dir_result.length == 0)
-						fullpath = path.resolve("./screens");
-					else
-						fullpath = select_dir_result[0].dir;
+				return ObjectMakerService.createProcess(project_id)
+					.thne(() => response.json({success: true}))
+					.catch(e => response.status(400).json({success: false, error: e}));
 
-					await ProjectService.selectProjectObjects(project_id, async (objects) => {
-						result = await TM.createProcess(project_id, fullpath, objects);
-						response.send({ status: result });
-					});
-				});
+				// await ProjectService.selectProjectDir(project_id, async (select_dir_result) => {
+				// 	var fullpath;
+				// 	if (select_dir_result.length == 0)
+				// 		fullpath = path.resolve("./screens");
+				// 	else
+				// 		fullpath = select_dir_result[0].dir;
+
+				// 	await ProjectService.selectProjectObjects(project_id, async (objects) => {
+				// 		result = await TM.createProcess(project_id, fullpath, objects);
+				// 		response.send({ status: result });
+				// 	});
+				// });
 
 				break;
 			// TODO: generator-task
