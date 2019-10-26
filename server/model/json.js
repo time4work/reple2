@@ -4,10 +4,10 @@ const projectRelationTable = 'relationProjectJson';
 
 module.exports = {
 
-    getJsonName: async function (id) {
+    geselectJsonName: async function (id) {
         const query = `
             SELECT name 
-            FROM ${tableName} 
+            FROM ${tableName}
             WHERE id = ?
         `;
         return myquery(query, [id])

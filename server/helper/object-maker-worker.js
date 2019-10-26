@@ -5,11 +5,11 @@ const Xvfb = require('xvfb');
 
 //================================================MODELS
 const { selectProjectJsonNames } = require('../model/json');
-const { getProjectDir } = require('../model/projectDir');
+const { selectProjectDir } = require('../model/project');
 const {
-    getObjectByLinkAndProject,
+    selectObjectByLinkAndProject,
     createObject,
-    saveObjectProp,
+    updateObjectProp,
 } = require('../model/object');
 const { selectProjectTemplates } = require('../model/template');
 const { selectLibrary } = require('../model/library');
@@ -21,7 +21,7 @@ const {
     makeBaseThumb,
     makeBigThumb,
     getDuration
-} = require('./thumb-maker');
+} = require('./ffmpeg');
 const { makeText, makeTemplate, makeLibrary } = require('./text-maker');
 const { getVideoLink } = require('./scrapper');
 
@@ -114,7 +114,7 @@ async function __startProcess(projectID) {
 async function __getObject(projectID, pageLink) {
     // create or modify object
     // check if link already exist
-    let object = await getObjectByLinkAndProject(projectID, pageLink)
+    let object = await selectObjectByLinkAndProject(projectID, pageLink)
     if (object.length) {
         object = object[0];
         console.log("[worker] - object exist", { object });
@@ -138,52 +138,60 @@ async function __updateObject(object) {
         !object.DataText3
     ) {
         // 3.1.4 скрапером - тянем линк видео 
-        const videoLink = await getVideoLink(object.DataLink1)
+        const videoLink = await getVideoLink(object.DataLink1, 'pornhub')
             .catch(e => {
                 // !
                 console.log("[scrapper] - error", { e });
                 process.exit();
 
-                // await saveObjectProp(object.id, {
+                // await updateObjectProp(object.id, {
                 //     DataFlag2: true,
                 //     DataFlag3: false,
                 // }).then(() => {});
             });
-        console.log("[scrapper] - got link", { object });
+        console.log("[scrapper] - got link", { videoLink });
 
         // get project thumb directory
-        const projectScreenDir = await getProjectDir(projectID) || SCREENS_DEFAULT_DIR;
+        let projectScreenDir = await selectProjectDir(projectID);
+        console.log("[worker] - projectScreenDir", { projectScreenDir });
+        if (projectScreenDir || !projectScreenDir.length) {
+            projectScreenDir = projectScreenDir[0].dir;
+        } else {
+            projectScreenDir = SCREENS_DEFAULT_DIR;
+        }
         console.log("[worker] - projectScreenDir", { projectScreenDir });
 
         // 3.1.5 ффмпегом - делаем скрины
         if (!object.DataLink2) { // TODO: project settings option, DataLink2 can be null
             const actionThumbs = await makeActionThumbs(videoLink, projectScreenDir);
-            await saveObjectProp(object.id, {
+            await updateObjectProp(object.id, {
                 DataLink2: actionThumbs.join(','),
             }).then(() => {
                 object.DataLink2 = actionThumbs;
             });
         }
+
         if (!object.DataLink3) {
             const baseThumb = await makeBaseThumb(videoLink, projectScreenDir);
-            await saveObjectProp(object.id, {
+            await updateObjectProp(object.id, {
                 DataLink3: baseThumb,
             }).then(() => {
                 object.DataLink3 = baseThumb;
             });
         }
+
         if (!object.DataLink4) {
             const bigThumb = await makeBigThumb(videoLink, projectScreenDir);
-            await saveObjectProp(object.id, {
+            await updateObjectProp(object.id, {
                 DataLink4: bigThumb,
             }).then(() => {
                 object.DataLink4 = bigThumb;
             });
         }
-        // 3.1.6 ффмпегом - тянем duration
+
         if (!object.DataText3) {
             const duration = await getDuration(videoLink);
-            await saveObjectProp(object.id, {
+            await updateObjectProp(object.id, {
                 DataText3: duration,
             }).then(() => {
                 object.DataText3 = duration;
@@ -206,7 +214,7 @@ async function __updateObject(object) {
             const tmpl = makeTemplate(projectTmpl);
             // !
             const title = makeText(tmpl, lib, 'talk');
-            await saveObjectProp(object.id, {
+            await updateObjectProp(object.id, {
                 DataTitle1: title,
             }).then(() => {
                 object.DataTitle1 = title;
@@ -219,7 +227,7 @@ async function __updateObject(object) {
             const projectTmpl = randItem(projectTmpls);
             const tmpl = makeTemplate(projectTmpl);
             const description = makeText(tmpl, lib, 'talk'); // TODO: 'talk' - make it dinamic
-            await saveObjectProp(object.id, {
+            await updateObjectProp(object.id, {
                 DataText1: description,
             }).then(() => {
                 object.DataText1 = description;
@@ -237,7 +245,7 @@ async function __updateObject(object) {
         object.DataText3 && // duration
         !object.DataFlag2 // and not broken link
     ) {
-        await saveObjectProp(object.id, {
+        await updateObjectProp(object.id, {
             DataFlag3: true, // active
         }).then(() => {
             object.DataFlag3 = true;

@@ -171,7 +171,7 @@ module.exports = {
 		switch (request.body.type) {
 			case 'objects.thumbs.make':
 				return ObjectMakerService.createProcess(project_id)
-					.thne(() => response.json({success: true}))
+					.then(() => response.json({success: true}))
 					.catch(e => response.status(400).json({success: false, error: e}));
 
 				// await ProjectService.selectProjectDir(project_id, async (select_dir_result) => {

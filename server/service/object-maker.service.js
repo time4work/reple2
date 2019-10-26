@@ -13,9 +13,9 @@ const processArr = {};
 
 module.exports = {
 
-    createProcess: projectID => {
+    createProcess: async projectID => {
         if (processArr.hasOwnProperty(projectID) ||
-            canMakeObjects(projectID)
+            await canMakeObjects(projectID)
         ) {
             return;
         }
@@ -28,7 +28,6 @@ module.exports = {
             node,
             step: 0,
         };
-        return node;
     },
 
     stopProcess: projectID => {
@@ -53,7 +52,7 @@ module.exports = {
 
 };
 
-function canMakeObjects(projectID) {
+async function canMakeObjects(projectID) {
     return selectProjectJsonSize(projectID) >= 1
         && selectProjectTitleTmplSize(projectID) >= 1
         && selectProjectDescriptionTmplSize(projectID) >= 1;

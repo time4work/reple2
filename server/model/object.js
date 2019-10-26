@@ -3,7 +3,7 @@ const tableName = 'object';
 
 module.exports = {
 
-    getObjectByLinkAndProject: async function (projectID, pageLink) {
+    selectObjectByLinkAndProject: async function (projectID, pageLink) {
         const query = `
             SELECT *
             FROM ${tableName}
@@ -22,7 +22,7 @@ module.exports = {
         return myquery(query, [projectID, pageLink]);
     },
 
-    saveObjectProp: async function (id, options) {
+    updateObjectProp: async function (id, options) {
         const keys = Object.keys(options);
         const values = [];
         
