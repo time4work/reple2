@@ -7,8 +7,7 @@ const {
 } = require('../model/relationTmplProject');
 
 
-const processFile = `${__basedir}/server/helper/object-maker.js`;
-// const processFile = `./server/helper/test.js`;
+const processFile = `${__basedir}/server/helper/object-maker-worker.js`;
 const processArr = {};
 
 
