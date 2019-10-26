@@ -49,16 +49,6 @@ const quereList = {
 		) ENGINE = InnoDB
 	`,
 
-	'template': `
-		CREATE TABLE 
-		IF NOT EXISTS replecon.template 
-		(
-			id INT AUTO_INCREMENT PRIMARY KEY,
-			name VARCHAR(255), 
-			UNIQUE(name)
-		) ENGINE = InnoDB
-	`,
-
 	'jsonFiles': `
 		CREATE TABLE 
 		IF NOT EXISTS replecon.jsonFiles 

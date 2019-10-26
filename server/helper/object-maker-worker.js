@@ -11,7 +11,7 @@ const {
     createObject,
     updateObjectProp,
 } = require('../model/object');
-const { selectProjectTemplates } = require('../model/template');
+const { selectProjectTemplates, selectTemplateById } = require('../model/template');
 const { selectLibrary } = require('../model/library');
 
 //================================================HELPERS
@@ -153,7 +153,6 @@ async function __updateObject(object) {
 
         // get project thumb directory
         let projectScreenDir = await selectProjectDir(projectID);
-        console.log("[worker] - projectScreenDir", { projectScreenDir });
         if (projectScreenDir || !projectScreenDir.length) {
             projectScreenDir = projectScreenDir[0].dir;
         } else {
@@ -163,6 +162,7 @@ async function __updateObject(object) {
 
         // 3.1.5 ффмпегом - делаем скрины
         if (!object.DataLink2) { // TODO: project settings option, DataLink2 can be null
+            console.log('!object.DataLink2');
             const actionThumbs = await makeActionThumbs(videoLink, projectScreenDir);
             await updateObjectProp(object.id, {
                 DataLink2: actionThumbs.join(','),
@@ -172,6 +172,7 @@ async function __updateObject(object) {
         }
 
         if (!object.DataLink3) {
+            console.log('!object.DataLink3');
             const baseThumb = await makeBaseThumb(videoLink, projectScreenDir);
             await updateObjectProp(object.id, {
                 DataLink3: baseThumb,
@@ -181,6 +182,7 @@ async function __updateObject(object) {
         }
 
         if (!object.DataLink4) {
+            console.log('!object.DataLink4');
             const bigThumb = await makeBigThumb(videoLink, projectScreenDir);
             await updateObjectProp(object.id, {
                 DataLink4: bigThumb,
@@ -190,6 +192,7 @@ async function __updateObject(object) {
         }
 
         if (!object.DataText3) {
+            console.log('!object.DataText3');
             const duration = await getDuration(videoLink);
             await updateObjectProp(object.id, {
                 DataText3: duration,
@@ -204,16 +207,28 @@ async function __updateObject(object) {
     if (!object.DataText1 || !object.DataTitle1) {
         // get text template library
         const tmplLibrary = await selectLibrary();
+        console.log("[worker] - selectLibrary", { tmplLibrary });
+
         const lib = makeLibrary(tmplLibrary);
+        console.log("[worker] - makeLibrary", { lib });
+        
         if (!object.DataTitle1) {
+            console.log('!object.DataTitle1');
             // generate project title tmpl
             const type = 'title';
-            const projectTmpls = await selectProjectTemplates(projectID, type);
-            const projectTmpl = randItem(projectTmpls);
-            // !
+            const projectTmpl = await __getProjectTmpl(projectID, type);
+            console.log("[worker] - ", { projectTmpl });
+
             const tmpl = makeTemplate(projectTmpl);
-            // !
+            console.log("[worker] - makeTemplate", { tmpl });
+            
             const title = makeText(tmpl, lib, 'talk');
+            if (!title) {
+                console.log("[text-maker] - null title");;
+                process.exit();
+            }
+            console.log("[worker] - makeText", { title });
+
             await updateObjectProp(object.id, {
                 DataTitle1: title,
             }).then(() => {
@@ -223,10 +238,16 @@ async function __updateObject(object) {
         if (!object.DataText1) {
             // generate project description tmpl
             const type = 'description';
-            const projectTmpls = await selectProjectTemplates(projectID, type);
-            const projectTmpl = randItem(projectTmpls);
+            const projectTmpl = await __getProjectTmpl(projectID, type);
+            console.log("[worker] - ", { projectTmpl });
+
             const tmpl = makeTemplate(projectTmpl);
             const description = makeText(tmpl, lib, 'talk'); // TODO: 'talk' - make it dinamic
+            if (!description) {
+                console.log("[text-maker] - null description");;
+                process.exit();
+            }
+
             await updateObjectProp(object.id, {
                 DataText1: description,
             }).then(() => {
@@ -252,3 +273,8 @@ async function __updateObject(object) {
         });
     }
 }
+
+async function __getProjectTmpl(projectID, type) {
+    return selectProjectTemplates(projectID, type)
+        .then(async tmpls => await selectTemplateById(randItem(tmpls).tmplID));
+} 

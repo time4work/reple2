@@ -1,4 +1,5 @@
 const { myquery } = require('../helper/mysql');
+const tableName = 'tmpl';
 const keyTableName = 'tmplKey';
 const valueTableName = 'tmplValue';
 const relationTableName = 'tmplRelation';
@@ -6,7 +7,7 @@ const projectRelationtable = 'relationTmplProject';
 
 module.exports = {
 
-    selectTemplate: async function (id) {
+    selectTemplateById: async function (id) {
         const query = `
             SELECT res.keyID, a.keyword, b.id, b.value AS 'val'
             FROM ${relationTableName} res 
@@ -21,7 +22,8 @@ module.exports = {
             WHERE res.tmplID = ?
             ORDER BY a.keyword
         `; 
-        return myquery(query, [id]);
+        const result = await myquery(query, [id]);
+        return result;
     },
 
     selectProjectTitleTmplSize: async function (projectID) {

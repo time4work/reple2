@@ -38,6 +38,6 @@ module.exports = {
         }
         query += 'WHERE id = ?';
 
-        return myquery(query, [values, id]);
+        return myquery(query, [...values, id]);
     }
 }

@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-module.exports = {
+const Helper = {
     punctREGEX: /[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_`{|}~]/g,
      
     punctREGEX2: /[\u2000-\u206F\u2E00-\u2E7F\\"\\/<>\[\]^`{|}]/g,
@@ -62,10 +62,12 @@ module.exports = {
     },
 
     randItem(items) {
-        return items[this.randIndex(items.length)];
+        const index = Helper.randIndex(items.length);
+        return items[index];
     },
 
     randIndex: function (range) {
         return ~~(Math.random() * range);
     },
-}
+};
+module.exports = Helper;

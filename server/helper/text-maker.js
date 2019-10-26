@@ -16,41 +16,25 @@ const TextMaker = {
 
     },
 
-    makeTemplate: function (json) {
-        const tmpl_arr = json.map((item) => {
-            return {
-                [item['keyword']]: [],
-            };
-        });
+    makeTemplate: function (arr) {
         const tmpl = {};
-        Array.prototype.forEach.call(tmpl_arr, function (elem) {
-            const keys = Object.keys(elem);
-            tmpl[keys[0]] = elem[keys[0]];
-        });
-        for (let i = 0; i < json.length; i++) {
-            const key = json[i]['keyword'];
-            const val = json[i]['val'];
-            tmpl[key].push(val);
+        for (item of arr) {
+            if (tmpl[item.keyword]) {
+                tmpl[item.keyword].push(item.val);
+            } else {
+                tmpl[item.keyword] = [item.val];
+            }
         }
         return tmpl;
     },
 
-    makeLibrary(json) {
-        const lib_arr = json.map((item) => {
-            return {
-                [item['key']]: [],
-            };
-        });
+    makeLibrary(arr) {
         const lib = {};
-        Array.prototype.forEach.call(lib_arr, function (elem) {
-            const keys = Object.keys(elem);
-            lib[keys[0]] = elem[keys[0]];
-        });
-        for (let i = 0; i < json.length; i++) {
-            const key = json[i]['key'];
-            const val_arr = json[i]['values'];
-            for (let j = 0; j < val_arr.length; j++) {
-                lib[key].push(val_arr[j].value);
+        for (item of arr) {
+            if (lib[item.key]) {
+                lib[item.key].push(item.value);
+            } else {
+                lib[item.key] = [item.val];
             }
         }
         return lib;
