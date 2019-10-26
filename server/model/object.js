@@ -8,22 +8,21 @@ module.exports = {
             SELECT *
             FROM ${tableName}
             WHERE FootPrint1 = ?
-            AND DataContext = ?
+            AND DataLink1 = ?
         `;
         return myquery(query, [projectID, pageLink]);
     },
 
     createObject: async function (projectID, pageLink) {
         const query = `
-            SELECT *
-            FROM ${tableName}
-            WHERE FootPrint1 = ?
-            AND DataContext = ?
+            INSERT INTO ${tableName} 
+            (FootPrint1, DataLink1) 
+            VALUES (?,?)
         `;
         return myquery(query, [projectID, pageLink]);
     },
 
-    updateObjectViaOptions: async function (id, options) {
+    saveObjectProp: async function (id, options) {
         const keys = Object.keys(options);
         const values = [];
         
@@ -39,6 +38,6 @@ module.exports = {
         }
         query += 'WHERE id = ?';
 
-        return myquery(query, values);
+        return myquery(query, [values, id]);
     }
 }
