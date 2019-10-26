@@ -232,17 +232,17 @@ const quereList = {
 	 * @properties :
 	 * DataTitle1 [VARCHAR(100)] - title
 	 * DataTitle2 [VARCHAR(200)]
-	 * DataFlag1 [BOOLEAN] - exported
-	 * DataFlag2 [BOOLEAN] - deleted
-	 * DataFlag3 [BOOLEAN]
+	 * DataFlag1 [BOOLEAN] - published
+	 * DataFlag2 [BOOLEAN] - broken link
+	 * DataFlag3 [BOOLEAN] - active
 	 * DataKey1 [INT(5)] - import log id
 	 * DataKey2 [INT(5)] - export log id
-	 * DataDate1 [DATETIME]
-	 * DataDate2 [DATETIME]
+	 * DataDate1 [DATETIME] - create data
+	 * DataDate2 [DATETIME] - 
 	 * DataDate3 [DATETIME]
 	 * DataDate4 [DATETIME]
 	 * DataLink1 [VARCHAR(500)] - video link
-	 * DataLink2 [VARCHAR(550)] - thumbs
+	 * DataLink2 [VARCHAR(550)] - action thumbs
 	 * DataLink3 [VARCHAR(500)] - baseThumb
 	 * DataLink4 [VARCHAR(500)] - bigThumb
 	 * DataContext [VARCHAR(500)]
@@ -251,7 +251,7 @@ const quereList = {
 	 * DataText3 [VARCHAR(500)] - duration
 	 * DataText4 [VARCHAR(500)]
 	 * FootPrint1 [INT(5)] - projectID
-	 * FootPrint2 [VARCHAR(100)] - donor link
+	 * FootPrint2 [VARCHAR(100)] - donor type
 	 */
 	'object': `
 		CREATE TABLE

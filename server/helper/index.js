@@ -55,5 +55,13 @@ module.exports = {
                 resolve(JSON.parse(data));
             });
         });
-    }
+    },
+
+    randItem(items) {
+        return items[this.randIndex(items.length)];
+    },
+
+    randIndex: function (range) {
+        return ~~(Math.random() * range);
+    },
 }
