@@ -57,6 +57,10 @@ module.exports = {
         });
     },
 
+    randNumber(from, to) {
+        return from + Math.floor(Math.random() * (to + 1 - from));
+    },
+
     randItem(items) {
         return items[this.randIndex(items.length)];
     },

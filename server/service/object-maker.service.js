@@ -1,10 +1,10 @@
 const cluster = require('cluster');
 
-const { selectProjectJsonSize } = require('../model/relationProjectJson');
+const { selectProjectJsonSize } = require('../model/json');
 const {
-    getProjectTitleTmplSize,
-    getProjectDescriptionTmplSize,
-} = require('../model/relationTmplProject');
+    selectProjectTitleTmplSize,
+    selectProjectDescriptionTmplSize,
+} = require('../model/template');
 
 
 const processFile = `${__basedir}/server/helper/object-maker-worker.js`;
@@ -55,8 +55,8 @@ module.exports = {
 
 function canMakeObjects(projectID) {
     return selectProjectJsonSize(projectID) >= 1
-        && getProjectTitleTmplSize(projectID) >= 1
-        && getProjectDescriptionTmplSize(projectID) >= 1;
+        && selectProjectTitleTmplSize(projectID) >= 1
+        && selectProjectDescriptionTmplSize(projectID) >= 1;
 }
 
 function initFork(projectID) {

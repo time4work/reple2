@@ -153,8 +153,8 @@ const quereList = {
 	`,
 
 	'tmpl-val': `		
-	CREATE TABLE IF NOT EXISTS 
-	replecon.tmplValue( 
+		CREATE TABLE IF NOT EXISTS 
+		replecon.tmplValue( 
 		id INT  AUTO_INCREMENT PRIMARY KEY, 
 		value VARCHAR(255)  NOT NULL,
 		keyID int(4) NOT NULL, 
