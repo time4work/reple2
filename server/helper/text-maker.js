@@ -1,9 +1,9 @@
 const { randNumber } = require('../helper');
 
 const DEFAULT_START_KEY = 'talk';
-const TEMPLATE_REGEX = /<\w*>/ig;
+const TEMPLATE_REGEX = /<\w*>/ig; // <...>
 const TEMPLATE_QMARK_REGEX = /[<>]*/g; // <>
-const LIBRARY_REGEX = /\[\w*\]/ig;
+const LIBRARY_REGEX = /\[\w*\]/ig; // [...]
 const LIBRARY_QMARK_REGEX = /[\[\]]*/g // []
 
 const TextMaker = {
@@ -97,9 +97,9 @@ function templateParse(e, obj) {
 
 function libraryKeyParse(e, lib) {
     if (Array.isArray(e)) {
-        if (e.length == 0)
+        if (e.length == 0) {
             return null;
-        else {
+        } else {
             let promis = null;
             do {
                 const rand = randNumber(0, e.length - 1);
@@ -110,9 +110,7 @@ function libraryKeyParse(e, lib) {
             if (!promis) return null;
             return promis;
         }
-    }
-
-    else {
+    } else {
         if (/\[\w*\]/i.test(e)) {
             let result = '';
             let last_pos = 0;
