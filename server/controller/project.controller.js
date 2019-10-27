@@ -5,6 +5,7 @@ const ProjectService = require('../service/project.service');
 // const ExportService = require('../service/export-data.service'); // TODO - export-task
 
 const TemplateService = require('../service/template.service');
+const ObjectMakerService = require('../service/object-maker.service');
 const { selectDir, simpleSort } = require('../helper');
 
 // let ExportProgress = false;  // TODO - export-task
@@ -13,7 +14,7 @@ module.exports = {
 
 	getPage: async (request, response) => {
 		return ProjectService.selectProjectsRelation(scope => {
-			response.render('pages/projects', {scope});
+			response.render('pages/projects', { scope });
 		});
 	},
 
@@ -152,35 +153,42 @@ module.exports = {
 
 	getProjectObjects: async (request, response) => {
 		let project_id = request.params.id;
-		response.render('pages/objects', {
-			scope: {
-				project: {
-					id: project_id
-				},
-				size: 0,
-				size2: 0,
-				objects: []
-			}
-		});
+		return ProjectService.getProjectObjects(project_id)
+			.then(scope => response.render('pages/objects', { scope }));
+		// const objects = await getProjectReadyObject(project_id);
+		// response.render('pages/objects', {
+		// 	scope: {
+		// 		project: {
+		// 			id: project_id
+		// 		},
+		// 		size: 0,
+		// 		size2: 0,
+		// 		objects: []
+		// 	}
+		// });
 	},
 
 	postProjectObjects: async (request, response) => {
 		const project_id = request.params.id;
-		let result;
+		// let result;
 		switch (request.body.type) {
 			case 'objects.thumbs.make':
-				await ProjectService.selectProjectDir(project_id, async (select_dir_result) => {
-					var fullpath;
-					if (select_dir_result.length == 0)
-						fullpath = path.resolve("./screens");
-					else
-						fullpath = select_dir_result[0].dir;
+				return ObjectMakerService.createProcess(project_id)
+					.then(() => response.json({ success: true }))
+					.catch(e => response.status(400).json({ success: false, error: e }));
 
-					await ProjectService.selectProjectObjects(project_id, async (objects) => {
-						result = await TM.createProcess(project_id, fullpath, objects);
-						response.send({ status: result });
-					});
-				});
+				// await ProjectService.selectProjectDir(project_id, async (select_dir_result) => {
+				// 	var fullpath;
+				// 	if (select_dir_result.length == 0)
+				// 		fullpath = path.resolve("./screens");
+				// 	else
+				// 		fullpath = select_dir_result[0].dir;
+
+				// 	await ProjectService.selectProjectObjects(project_id, async (objects) => {
+				// 		result = await TM.createProcess(project_id, fullpath, objects);
+				// 		response.send({ status: result });
+				// 	});
+				// });
 
 				break;
 			// TODO: generator-task
@@ -237,11 +245,11 @@ module.exports = {
 						response.send("ok");
 					});
 			case "foreignhost":
-				//// no need for now !
-				// return await ProjectService.saveProjectForeighDB(project_id, pack)
-				// 	.then(() => {
-				// 		response.send("ok");
-				// 	});
+			//// no need for now !
+			// return await ProjectService.saveProjectForeighDB(project_id, pack)
+			// 	.then(() => {
+			// 		response.send("ok");
+			// 	});
 			default:
 				response.send("oops");
 		}

@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-module.exports = {
+const Helper = {
     punctREGEX: /[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_`{|}~]/g,
      
     punctREGEX2: /[\u2000-\u206F\u2E00-\u2E7F\\"\\/<>\[\]^`{|}]/g,
@@ -37,4 +37,37 @@ module.exports = {
         }
     },
 
-}
+    isType: function(object, type) {
+        if (!object || !type) {
+            return false;
+        }
+        return object.constructor.name === type
+    },
+
+    getDataFromLocalJson: function (name, dir) {
+        return new Promise((resolve, reject) => {
+            const filePath = dir
+                ? `${dir}/'${name}`
+                : `${__basedir}/json/${name}`;
+
+            fs.readFile(filePath, (err, data) => {
+                if (err) reject(err);
+                resolve(JSON.parse(data));
+            });
+        });
+    },
+
+    randNumber(from, to) {
+        return from + Math.floor(Math.random() * (to + 1 - from));
+    },
+
+    randItem(items) {
+        const index = Helper.randIndex(items.length);
+        return items[index];
+    },
+
+    randIndex: function (range) {
+        return ~~(Math.random() * range);
+    },
+};
+module.exports = Helper;

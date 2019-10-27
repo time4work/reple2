@@ -1,1 +1,0 @@
-// TODO: move all mysql queries hear and divide them into separate files

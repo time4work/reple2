@@ -1,6 +1,17 @@
 const { myquery } = require('../helper/mysql');
+const { getProjectReadyObject } = require('../model/object');
 
 module.exports = {
+
+    getProjectObjects: async project_id => {
+        const objects = await getProjectReadyObject(project_id);
+        return {
+            project: {
+                id: project_id
+            },
+            objects,
+        };
+    },
 
     selectProject: async (id, callback) => {
         try {
@@ -273,12 +284,18 @@ module.exports = {
 
     selectProjectSize: async (id, callback) => {
         try {
-            // TODO: refactor - generator-task
-
+            const query = `
+                SELECT count(*) as size 
+                FROM object 
+                WHERE FootPrint1 = ? 
+                AND DataFlag3 = ?
+            `;
+            const queryResult = await myquery(query, [id, true]);
+            const result = queryResult[0].size;
             // const query = `SELECT count(*) FROM relationProjectObject WHERE projectID = ?`;
             // const size = await myquery(query, [id]);
             // const result = size[0]['count(*)'];
-            const result = 0;
+            // const result = 0;
 
             if (callback)
                 await callback(result);

@@ -49,16 +49,6 @@ const quereList = {
 		) ENGINE = InnoDB
 	`,
 
-	'template': `
-		CREATE TABLE 
-		IF NOT EXISTS replecon.template 
-		(
-			id INT AUTO_INCREMENT PRIMARY KEY,
-			name VARCHAR(255), 
-			UNIQUE(name)
-		) ENGINE = InnoDB
-	`,
-
 	'jsonFiles': `
 		CREATE TABLE 
 		IF NOT EXISTS replecon.jsonFiles 
@@ -153,8 +143,8 @@ const quereList = {
 	`,
 
 	'tmpl-val': `		
-	CREATE TABLE IF NOT EXISTS 
-	replecon.tmplValue( 
+		CREATE TABLE IF NOT EXISTS 
+		replecon.tmplValue( 
 		id INT  AUTO_INCREMENT PRIMARY KEY, 
 		value VARCHAR(255)  NOT NULL,
 		keyID int(4) NOT NULL, 
@@ -232,32 +222,33 @@ const quereList = {
 	 * @properties :
 	 * DataTitle1 [VARCHAR(100)] - title
 	 * DataTitle2 [VARCHAR(200)]
-	 * DataFlag1 [BOOLEAN] - exported
-	 * DataFlag2 [BOOLEAN] - deleted
-	 * DataFlag3 [BOOLEAN]
+	 * DataFlag1 [BOOLEAN] - published
+	 * DataFlag2 [BOOLEAN] - broken link
+	 * DataFlag3 [BOOLEAN] - active
 	 * DataKey1 [INT(5)] - import log id
 	 * DataKey2 [INT(5)] - export log id
-	 * DataDate1 [DATETIME]
-	 * DataDate2 [DATETIME]
+	 * DataDate1 [DATETIME] - create data
+	 * DataDate2 [DATETIME] - 
 	 * DataDate3 [DATETIME]
 	 * DataDate4 [DATETIME]
 	 * DataLink1 [VARCHAR(500)] - video link
-	 * DataLink2 [VARCHAR(550)] - thumbs
+	 * DataLink2 [VARCHAR(550)] - action thumbs
 	 * DataLink3 [VARCHAR(500)] - baseThumb
 	 * DataLink4 [VARCHAR(500)] - bigThumb
 	 * DataContext [VARCHAR(500)]
 	 * DataText1 [VARCHAR(1000)] - description
 	 * DataText2 [VARCHAR(2000)]
 	 * DataText3 [VARCHAR(500)] - duration
-	 * DataText4 [VARCHAR(500)]
+	 * DataText4 [VARCHAR(500)] - tags
 	 * FootPrint1 [INT(5)] - projectID
-	 * FootPrint2 [VARCHAR(100)] - donor link
+	 * FootPrint2 [VARCHAR(100)] - donor type
 	 */
 	'object': `
 		CREATE TABLE
 		IF NOT EXISTS replecon.object 
 		(
 			id INT AUTO_INCREMENT PRIMARY KEY,
+  			id_proj_link int(11) DEFAULT NULL,
 			DataTitle1 VARCHAR(100),
 			DataTitle2 VARCHAR(200),
 			DataTitle3 VARCHAR(300),
@@ -281,7 +272,7 @@ const quereList = {
 			DataText4 VARCHAR(500),
 			FootPrint1 INT(5),
 			FootPrint2 VARCHAR(100),
-			UNIQUE(FootPrint1)
+			UNIQUE KEY id_proj_link (FootPrint1, DataLink1)
 		) ENGINE = InnoDB
 	`,
 };
