@@ -14,16 +14,14 @@ module.exports = {
 
 	searchProjects: async (request, response) => {
 		const name = request.body.name.toLowerCase();
-
-		return ProjectService.searchProject(name)
+		return ProjectService.searchProjects(name)
 			.then(projects =>
-				response.send(projects)
+				response.json(projects)
 			);
 	},
 
 	createProject: async (request, response) => {
 		const name = request.body.name.toLowerCase();
-
 		return ProjectService.createProject(name)
 			.then(() =>
 				response.redirect('/projects')
@@ -32,7 +30,6 @@ module.exports = {
 
 	getProject: async (request, response) => {
 		const project_id = request.params.id;
-
 		return ProjectService.getProject(project_id)
 			.then(scope =>
 				response.render('pages/project', { scope })
@@ -42,7 +39,6 @@ module.exports = {
 	// TODO: refactoring
 	saveProject: async (request, response) => {
 		const project_id = request.params.id;
-
 		const name = request.body.name.toLowerCase();
 		const info = request.body.info;
 		const d_tmpls = request.body.d_tmpls;
@@ -69,7 +65,6 @@ module.exports = {
 
 	showProjectScreensDir: async (request, response) => {
 		const project_id = request.params.id;
-
 		return ProjectService.showProjectScreensDir(project_id)
 			.then(result => response.json(result));
 	},
@@ -86,7 +81,6 @@ module.exports = {
 	saveProjectSceenDir: async (request, response) => {
 		const project_id = request.params.id;
 		const selectedpath = request.body.path;
-
 		return ProjectService.saveProjectSceenDir(project_id, selectedpath)
 			.then(() => response.json({ success: true }));
 	},
@@ -94,7 +88,6 @@ module.exports = {
 	//! TODO: delete-ptoject-task
 	deleteProject: () => {
 		const project_id = request.params.id;
-
 		return ProjectService.deleteProject(project_id)
 			.then(() => {
 				response.send({ redirect: '/projects/' });
@@ -102,39 +95,21 @@ module.exports = {
 	},
 
 	getProjectObjects: async (request, response) => {
-		let project_id = request.params.id;
+		const project_id = request.params.id;
 		return ProjectService.getProjectObjects(project_id)
 			.then(scope => response.render('pages/objects', { scope }));
 	},
 
-	postProjectObjects: async (request, response) => {
+	createProjectObjects: async (request, response) => {
 		const project_id = request.params.id;
-		// let result;
-		switch (request.body.type) {
-			case 'objects.thumbs.make':
-				return ObjectMakerService.createProcess(project_id)
-					.then(() => response.json({ success: true }))
-					.catch(e => response.status(400).json({ success: false, error: e }));
-
-			// case 'process.thumbs.terminate':
-			// 	result = await TM.stopProcess(project_id);
-			// 	response.send({ status: result });
-			// 	break;
-			// case 'objects.thumbs.check':
-			// 	result = await TM.getStatus(project_id);
-
-			// 	if (!result.status)
-			// 		response.send({ msg: 'no process' });
-			// 	else
-			// 		response.send({
-			// 			status: result.status,
-			// 			step: result.step,
-			// 			time: result.time,
-			// 		});
-			// 	break;
-			// default:
-			// 	response.send({ err: "opps, wrong type " });
-		}
+		return ObjectMakerService.createProcess(project_id)
+			.then(() => response.json({ 
+				success: true 
+			}))
+			.catch(e => response.status(400).json({ 
+				success: false, 
+				error: e 
+			}));
 	},
 
 	// getExportPage: async (request, response) => {}, // TODO - export-task
@@ -146,17 +121,6 @@ module.exports = {
 
 		return ProjectService.getProjectDB(project_id)
 			.then(scope => response.render('pages/db', { scope }));
-		// return ProjectService.selectProjectDB(project_id)
-		// 	.then(db => {
-		// 		response.render('pages/db', {
-		// 			scope: {
-		// 				dbhost: db,
-		// 				project: {
-		// 					id: project_id,
-		// 				},
-		// 			}
-		// 		});
-		// 	});
 	},
 
 	saveProjectDB: async (request, response) => {
@@ -170,7 +134,7 @@ module.exports = {
 						response.send("ok");
 					});
 			case "foreignhost":
-			//// no need for now !
+			//// TODO: no need for now !
 			// return await ProjectService.saveProjectForeighDB(project_id, pack)
 			// 	.then(() => {
 			// 		response.send("ok");

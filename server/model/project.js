@@ -13,6 +13,14 @@ module.exports = {
         return myquery(query, [name]);
     },
     
+    searchProjectByName: async name => {
+        const query = `
+            SELECT * 
+            FROM project 
+            WHERE name like ?`;
+        return myquery(query, [`%${name}%`]);
+    },
+
     selectProjectById: async projectID => {
         const query = `
             SELECT * 

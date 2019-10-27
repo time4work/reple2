@@ -34,7 +34,7 @@ const TextMaker = {
             if (lib[item.key]) {
                 lib[item.key].push(item.value);
             } else {
-                lib[item.key] = [item.val];
+                lib[item.key] = [item.value];
             }
         }
         return lib;

@@ -110,7 +110,7 @@
     if( confirm("are you sure?") ){
       // blockTheKraken();
       $('.controller-row.thumb-maker').addClass('active'); 
-      ajax('/project/'+projectID+'/objects/', data, (result)=>{
+      ajax('/project/'+projectID+'/objects/create', data, (result)=>{
         console.log(result);
         // releaseTheKraken();
         // alert('finish');

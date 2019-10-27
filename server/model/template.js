@@ -29,8 +29,7 @@ module.exports = {
             WHERE res.tmplID = ?
             ORDER BY a.keyword
         `; 
-        return myquery(query, [id])
-            .then(result => result[0] || null);
+        return myquery(query, [id]);
     },
 
     selectProjectTitleTmplSize: async function (projectID) {
@@ -60,7 +59,7 @@ module.exports = {
         return myquery(query, [projectID, type]);
     },
 
-    selectProjectTemplates: async (projectID, callback) => {
+    selectProjectTemplates: async (projectID) => {
         const query = `
             SELECT 
             res.id, res.title, type 

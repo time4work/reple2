@@ -9,8 +9,9 @@ const {
     selectProjectDir,
     saveProjectDir,
     selectProjectDB,
+    searchProjectByName,
 } = require('../model/project');
-const { 
+const {
     selectTemplates,
     selectProjectTemplates,
 } = require('../model/template');
@@ -55,7 +56,7 @@ module.exports = {
         }
     },
 
-    showProjectScreensDir: async project_id => 
+    showProjectScreensDir: async project_id =>
         new Promise(async (resolve, reject) => {
             const select_dir_result = await selectProjectDir(project_id);
 
@@ -65,7 +66,7 @@ module.exports = {
                 fullpath = path.resolve(DEFAULT_SCREENS_PATH);
             else
                 fullpath = select_dir_result[0].dir;
-    
+
             const pathList = selectDir(fullpath);
             if (fullpath != '/') {
                 pathList.push('..');
@@ -74,7 +75,7 @@ module.exports = {
             resolve({ list: pathList, path: fullpath });
         }),
 
-    navigateProjectScreensDir: async options => 
+    navigateProjectScreensDir: async options =>
         new Promise((resolve, reject) => {
             const { curpath, way } = options;
             const fullpath = path.join(curpath, way);
@@ -87,7 +88,7 @@ module.exports = {
             resolve({ list: pathList, path: fullpath });
         }),
 
-    saveProjectSceenDir: async (project_id, path) => 
+    saveProjectSceenDir: async (project_id, path) =>
         new Promise(async (resolve, reject) => {
             // check path exist
             const list = selectDir(path);
@@ -97,60 +98,6 @@ module.exports = {
                 .then(() => resolve())
                 .catch(e => reject(e));
         }),
-
-    // selectProjectDir: async (projectID, callback) => {
-    //     try {
-    //         const query = `
-    //             SELECT 
-    //             dir 
-    //             FROM projectDir 
-    //             WHERE projectID = ? 
-    //         `;
-    //         const result = await myquery(query, [projectID]);
-
-    //         if (callback) await callback(result);
-    //         return result;
-
-    //     } catch (e) {
-    //         console.log(e);
-    //         return 0;
-    //     }
-    // },
-
-    // selectProjectJson: async (projectID, callback) => {
-    //     try {
-    //         const query = `
-    //             SELECT 
-    //             j.name 
-    //             FROM relationProjectJson AS r 
-    //             INNER JOIN jsonFiles AS j 
-    //             ON r.jsonID = j.id 
-    //             WHERE r.projectID = ? 
-    //         `;
-    //         const result = await myquery(query, [projectID]);
-
-    //         if (callback) await callback(result);
-    //         return result;
-
-    //     } catch (e) {
-    //         console.log(e);
-    //         return 0;
-    //     }
-    // },
-
-    // selectAllJsons: async (callback) => {
-    //     try {
-    //         const query = `SELECT * FROM jsonFiles`;
-    //         const result = await myquery(query);
-
-    //         if (callback) await callback(result);
-    //         return result;
-
-    //     } catch (e) {
-    //         console.log(e);
-    //         return 0;
-    //     }
-    // },
 
     selectProjectsRelation: async (callback) => {
         try {
@@ -178,20 +125,9 @@ module.exports = {
         }
     },
 
-    searchProject: async (name, callback) => {
-        try {
-            const query = `SELECT * FROM project WHERE name like ?`;
-            const result = await myquery(query, ['%' + name + '%']);
+    searchProjects: async name => searchProjectByName(name),
 
-            if (callback) await callback(result);
-            return result;
-
-        } catch (e) {
-            console.log(e);
-            return 0;
-        }
-    },
-
+    // TODO: REFACTOR
     saveProjectDB: async (projectID, pack) => {
         const options = [];
         const type = pack.db_type || 'localhost';
@@ -203,7 +139,7 @@ module.exports = {
         options.push(type, host, port, user, password, name);
 
         const projectDB = await myquery(
-            `SELECT * FROM projectDB WHERE projectID = ?`, 
+            `SELECT * FROM projectDB WHERE projectID = ?`,
             [projectID]
         );
 
@@ -231,16 +167,6 @@ module.exports = {
         }
     },
 
-    // selectProjectDB: async (projectID) => {
-    //     const result = await myquery(
-    //         `SELECT * FROM projectDB WHERE projectID = ?`, 
-    //         [projectID]
-    //     );
-    //     return result && result.length
-    //         ? result[0]
-    //         : null;
-    // },
-
     getProjectDB: async project_id => {
         return selectProjectDB(project_id)
             .then(db => {
@@ -253,187 +179,9 @@ module.exports = {
             });
     },
 
-    selectProjectUnmappedObjects: async (projectID, callback) => {
-        try {
-            // TODO: refactor - generator-task
-
-            // const query = `
-            //     SELECT * FROM object
-            //     WHERE id in
-            //     (
-            //         SELECT objectID
-            //         FROM relationProjectObject
-            //         WHERE projectID = ?
-            //     )
-            //     AND DataFlag1 IS NULL
-            //     AND DataFlag2 IS NULL
-            // `;
-            // const result = await myquery(query, [projectID]);
-            const result = [];
-
-            if (callback) await callback(result);
-            return result;
-
-        } catch (e) {
-            console.log(e);
-            return 0;
-        }
-    },
-
-    selectProjectReadyObjects: async (objects, callback) => {
-        const x = [];
-        // TODO: refactor - generator-task
-
-        // for (var i = 0; i < objects.length; i++) {
-        //     if (
-        //         objects[i].DataLink2 &&
-        //         objects[i].DataLink3 &&
-        //         objects[i].DataLink4 &&
-        //         objects[i].DataText3
-        //     ) {
-        //         x.push(objects[i]);
-        //     }
-        // }
-
-        if (callback) await callback(x);
-        return x;
-    },
-
-    selectProjectReadyObjectLength: async (objects, callback) => {
-        let x = 0;
-        // TODO: refactor - generator-task
-
-        // for (let i = 0; i < objects.length; i++) {
-        //     if (objects[i].DataLink2 && objects[i].DataLink3 && objects[i].DataLink4 && objects[i].DataText3)
-        //         x++;
-        // }
-
-        if (callback) await callback(x);
-        return x;
-    },
-
-    selectProjectObjects: async (projectID, callback) => {
-        try {
-            // TODO: refactor - generator-task
-
-            // const query = `
-            //     SELECT * 
-            //     FROM object 
-            //     WHERE id IN 
-            //     (SELECT objectID 
-            //     FROM relationProjectObject 
-            //     WHERE projectID = ?) 
-            //     `;
-            // const result = await myquery(query, [projectID]);
-            const result = [];
-
-            if (callback) await callback(result);
-            return result;
-
-        } catch (e) {
-            console.log(e);
-            return 0;
-        }
-    },
-
-    selectProjects: async (callback) => {
-        try {
-            const query = `SELECT * FROM project`;
-            const result = await myquery(query, []);
-
-            if (callback) await callback(result);
-            return result;
-
-        } catch (e) {
-            console.log(e);
-            return 0;
-        }
-    },
-
-    // selectProjectSize: async (id, callback) => {
-    //     try {
-    //         const query = `
-    //             SELECT count(*) as size 
-    //             FROM object 
-    //             WHERE FootPrint1 = ? 
-    //             AND DataFlag3 = ?
-    //         `;
-    //         const queryResult = await myquery(query, [id, true]);
-    //         const result = queryResult[0].size;
-    //         // const query = `SELECT count(*) FROM relationProjectObject WHERE projectID = ?`;
-    //         // const size = await myquery(query, [id]);
-    //         // const result = size[0]['count(*)'];
-    //         // const result = 0;
-
-    //         if (callback)
-    //             await callback(result);
-    //         return result;
-
-    //     } catch (e) {
-    //         console.log(e);
-    //         return 0;
-    //     }
-    // },
-
-    // saveProjectDir: async (projectID, dir, callback) => {
-    //     try {
-    //         let result;
-    //         let query = `
-    //             SELECT dir 
-    //             FROM projectDir 
-    //             WHERE projectID = ? 
-    //         `;
-    //         const existindDir = await myquery(query, [projectID]);
-
-    //         if (existindDir && existindDir.length > 0) {
-    //             query = `
-    //                 UPDATE projectDir 
-    //                 SET dir = ? 
-    //                 WHERE projectID = ? 
-    //             `;
-    //             result = await myquery(query, [dir, projectID]);
-    //         } else {
-    //             query = `
-    //                 INSERT INTO projectDir
-    //                 (dir, projectID) 
-    //                 VALUES (?,?) 
-    //             `;
-    //             result = await myquery(query, [dir, projectID]);
-    //         }
-
-    //         if (callback) callback(result);
-    //         return result;
-
-    //     } catch (e) {
-    //         console.log(e);
-    //         return 0;
-    //     }
-    // },
-
-    // selectProjectTmpls: async (projID, callback) => {
-    //     try {
-    //         const query = `
-    //             SELECT 
-    //             res.id, res.title, type 
-    //             FROM relationTmplProject 
-    //             LEFT JOIN (SELECT id, title FROM tmpl) AS res 
-    //             ON res.id = tmplID 
-    //             WHERE projectID = ? 
-    //         `;
-    //         const result = await myquery(query, [projID]);
-
-    //         if (callback) await callback(result);
-    //         return result;
-
-    //     } catch (e) {
-    //         console.log(e);
-    //         return 0;
-    //     }
-    // },
-
+    // TODO: REFACTOR
     saveProjectChanges: async (id, name, info, t_tmpls, d_tmpls, jsons, db, callback) => {
         try {
-            // TODO: REFACTOR
 
             if (!name) return
 
