@@ -16,7 +16,9 @@ router.route('/:id/delete')
 
 router.route('/:id/objects')
     .get(controller.getProjectObjects)
-    .post(controller.postProjectObjects);
+
+router.route('/:id/objects/create')
+    .post(controller.createProjectObjects);
 
 router.route('/:id/database')
     .get(controller.getProjectDB)

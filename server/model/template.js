@@ -7,6 +7,13 @@ const projectRelationtable = 'relationTmplProject';
 
 module.exports = {
 
+    selectTemplates: async (callback) => {
+        return myquery(`
+            SELECT * 
+            FROM tmpl
+        `, []);
+    },
+
     selectTemplateById: async function (id) {
         const query = `
             SELECT res.keyID, a.keyword, b.id, b.value AS 'val'
@@ -22,8 +29,7 @@ module.exports = {
             WHERE res.tmplID = ?
             ORDER BY a.keyword
         `; 
-        const result = await myquery(query, [id]);
-        return result;
+        return myquery(query, [id]);
     },
 
     selectProjectTitleTmplSize: async function (projectID) {
@@ -44,13 +50,25 @@ module.exports = {
         return myquery(query, [projectID]);
     },
 
-    selectProjectTemplates: async function (projectID, type) {
+    selectProjectTemplatesRelation: async function (projectID, type) {
         const query = `
 			SELECT *
 			FROM ${projectRelationtable}
             WHERE projectID = ? AND type = ?
         `;
         return myquery(query, [projectID, type]);
+    },
+
+    selectProjectTemplates: async (projectID) => {
+        const query = `
+            SELECT 
+            res.id, res.title, type 
+            FROM relationTmplProject 
+            LEFT JOIN (SELECT id, title FROM tmpl) AS res 
+            ON res.id = tmplID 
+            WHERE projectID = ? 
+        `;
+        return myquery(query, [projectID]);
     },
 
 }

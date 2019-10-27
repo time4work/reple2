@@ -4,16 +4,24 @@ const projectRelationTable = 'relationProjectJson';
 
 module.exports = {
 
-    geselectJsonName: async function (id) {
+    selectJsons: async function (id) {
+        const query = `
+            SELECT * 
+            FROM ${tableName}
+        `;
+        return myquery(query, []);
+    },
+
+    selectJsonName: async function (id) {
         const query = `
             SELECT name 
             FROM ${tableName}
             WHERE id = ?
         `;
-        return myquery(query, [id])
+        return myquery(query, [id]);
     },
 
-    selectProjectJsonNames: async function (projectID) {
+    selectProjectJsons: async function (projectID) {
         const query = `
             SELECT *
             FROM ${tableName}
@@ -24,7 +32,7 @@ module.exports = {
                 WHERE projectID = ?
             )
         `;
-        return myquery(query, [projectID])
+        return myquery(query, [projectID]);
     },
 
     selectProjectJsonSize: async function (projectID) {
@@ -38,7 +46,7 @@ module.exports = {
                 WHERE projectID = ?
             )
         `;
-        return myquery(query, [projectID])
+        return myquery(query, [projectID]);
     },
 
 }

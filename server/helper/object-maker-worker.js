@@ -4,14 +4,17 @@ global.__basedir = process.env.BASE_DIR;
 const Xvfb = require('xvfb');
 
 //================================================MODELS
-const { selectProjectJsonNames } = require('../model/json');
+const { selectProjectJsons } = require('../model/json');
 const { selectProjectDir } = require('../model/project');
 const {
     selectObjectByLinkAndProject,
     createObject,
     updateObjectProp,
 } = require('../model/object');
-const { selectProjectTemplates, selectTemplateById } = require('../model/template');
+const { 
+    selectProjectTemplatesRelation, 
+    selectTemplateById,
+} = require('../model/template');
 const { selectLibrary } = require('../model/library');
 
 //================================================HELPERS
@@ -69,7 +72,7 @@ xvfb.start(async function (err, xvfbProcess) {
 
 async function __startProcess(projectID) {
     // take project jsons
-    const jsonRecordList = await selectProjectJsonNames(projectID);
+    const jsonRecordList = await selectProjectJsons(projectID);
     if (!jsonRecordList.length) return;
     console.log("[worker] - jsonRecordList", { jsonRecordList });
 
@@ -291,6 +294,6 @@ async function __updateObject(object) {
 }
 
 async function __getProjectTmpl(projectID, type) {
-    return selectProjectTemplates(projectID, type)
+    return selectProjectTemplatesRelation(projectID, type)
         .then(async tmpls => await selectTemplateById(randItem(tmpls).tmplID));
 } 
