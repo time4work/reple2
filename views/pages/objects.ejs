@@ -11,8 +11,7 @@
     <div class="row">
             <div class='col-xs-4'>
         <h1>Object List Page</h1>
-        <h3>Data length: <%=scope.size%></h3>
-        <h3>Ready Objects: <%=scope.size2%></h3>
+        <h3>Ready Objects: <%=scope.objects.length%></h3>
       </div>
       <div class="col-xs-8 controllers">
         <hr>
@@ -24,7 +23,7 @@
             <button class='btn btn-secondary' onclick='stopMakeThumbs(event)'>stop</button>
           </div>
           <div class="c-status-bar">
-            <span class="c-iterator">0 / <%=scope.size%></span>
+            <span class="c-iterator">0 / <%=scope.objects.length%></span>
             <span class="c-timer">00:00:00</span>
             <span class="c-loader"></span>
           </div>
@@ -118,30 +117,31 @@
       });
     }
   }
-  function checkStatus(){
-    // console.log('checkMakeThumbs click');
-    data = {};
-    data.type = 'objects.thumbs.check';
 
-      ajax('/project/'+projectID+'/objects/', data, (result)=>{
-        // console.log(result);
-        if(!result.status){
-          $('.controller-row.thumb-maker').removeClass('active');
-        }
-        else{
-          var mseconds = -1*(result.time);
-          // console.log(mseconds);
-          var date = new Date(null);
-          date.setMilliseconds(mseconds);
-          var time = date.toISOString().substr(11, 8);
-          var step = result.step;
-          $('.controller-row.thumb-maker').addClass('active');
-          $('.controller-row.thumb-maker span.c-timer').text(time);
-          $('.controller-row.thumb-maker span.c-iterator').text(step+" / "+<%=scope.size%>);
+  // function checkStatus(){
+  //   // console.log('checkMakeThumbs click');
+  //   data = {};
+  //   data.type = 'objects.thumbs.check';
 
-        }
-      });
-  }
+  //     ajax('/project/'+projectID+'/objects/', data, (result)=>{
+  //       // console.log(result);
+  //       if(!result.status){
+  //         $('.controller-row.thumb-maker').removeClass('active');
+  //       }
+  //       else{
+  //         var mseconds = -1*(result.time);
+  //         // console.log(mseconds);
+  //         var date = new Date(null);
+  //         date.setMilliseconds(mseconds);
+  //         var time = date.toISOString().substr(11, 8);
+  //         var step = result.step;
+  //         $('.controller-row.thumb-maker').addClass('active');
+  //         $('.controller-row.thumb-maker span.c-timer').text(time);
+  //         $('.controller-row.thumb-maker span.c-iterator').text(step+" / "+<%=scope.size%>);
+
+  //       }
+  //     });
+  // }
   $(function(){
     console.log('start');
 
@@ -153,34 +153,34 @@
 </script>
 
 
-<script src="/socket.io/socket.io.js">
-  // <script src="/javascripts/socket.io/socket.io.js">
-  // https://github.com/socketio/socket.io-client/blob/master/dist/socket.io.js
-</script>
-<script>
-  // window.location
-  // http://localhost
-  const socket = io();
-  socket.on('connect', function(){
-    console.log('socket connect');
-    socket.emit('join', 'Hello World from client');
-  });
-  socket.on('event', function(data){
-    console.log('socket event');
-    console.log(data);
-  });
-  socket.on('notify', function(data){
-    console.log('socket notify');
-    console.log(data);
-    snackbox(`
-          <h4>${data.title}</h4>
-          <p>${data.messages}</p>
-      `);
-  });
-  socket.on('disconnect', function(){
-    console.log('socket disconnect');
-  });
-</script>
+// <script src="/socket.io/socket.io.js">
+//   // <script src="/javascripts/socket.io/socket.io.js">
+//   // https://github.com/socketio/socket.io-client/blob/master/dist/socket.io.js
+// </script>
+// <script>
+//   // window.location
+//   // http://localhost
+//   const socket = io();
+//   socket.on('connect', function(){
+//     console.log('socket connect');
+//     socket.emit('join', 'Hello World from client');
+//   });
+//   socket.on('event', function(data){
+//     console.log('socket event');
+//     console.log(data);
+//   });
+//   socket.on('notify', function(data){
+//     console.log('socket notify');
+//     console.log(data);
+//     snackbox(`
+//           <h4>${data.title}</h4>
+//           <p>${data.messages}</p>
+//       `);
+//   });
+//   socket.on('disconnect', function(){
+//     console.log('socket disconnect');
+//   });
+// </script>
 
 
 </html>

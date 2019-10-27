@@ -28,6 +28,7 @@ const { getVideoLink } = require('./scrapper');
 //================================================INIT_VARIABLES
 const SCREENS_DEFAULT_DIR = `./screens`;
 const JSON_VIDEO_ATTRIBUTE = process.env.VIDEO_ATT || 'video';
+const JSON_TAGS_ATTRIBUTE = process.env.TAGS_ATT || 'tags';
 
 
 const projectID = process.env.PROJECT_ID;
@@ -95,14 +96,25 @@ async function __startProcess(projectID) {
 
                 const object = await __getObject(projectID, pageLink);
 
+                // save tags
+                if (!object.DataText4) {
+                    const tags = jsonItem[JSON_TAGS_ATTRIBUTE].join(',');
+                    await updateObjectProp(object.id, {
+                        DataText4: tags,
+                    }).then(() => {
+                        object.DataText4 = tags;
+                    });
+                }
+
                 // прорабатываем обьект, пока он не будет готов или забраковон
+                let iter = 0;
                 do {
                     if (!inProcess) break;
+                    if (iter === 6) break; // TODO: mark object as unresolveble
+                    if (object.DataFlag2) break;
                     await __updateObject(object);
+                    iter++;
                 } while (!object.DataFlag3 || object.DataFlag2);
-
-                console.log("[worker] - Bingo !", { object });
-                process.exit();
             }
 
         } else {
@@ -139,17 +151,19 @@ async function __updateObject(object) {
     ) {
         // 3.1.4 скрапером - тянем линк видео 
         const videoLink = await getVideoLink(object.DataLink1, 'pornhub')
-            .catch(e => {
-                // !
-                console.log("[scrapper] - error", { e });
-                process.exit();
-
-                // await updateObjectProp(object.id, {
-                //     DataFlag2: true,
-                //     DataFlag3: false,
-                // }).then(() => {});
+            .catch(async error => {
+                console.log("[scrapper] - ", { error });
+                if (error === 'null-element') {
+                    await updateObjectProp(object.id, {
+                        DataFlag2: true,
+                    }).then(() => {
+                        object.DataFlag2 = true;
+                    });
+                }
+                return;
             });
         console.log("[scrapper] - got link", { videoLink });
+        if (!videoLink) return;
 
         // get project thumb directory
         let projectScreenDir = await selectProjectDir(projectID);
@@ -266,6 +280,8 @@ async function __updateObject(object) {
         object.DataText3 && // duration
         !object.DataFlag2 // and not broken link
     ) {
+        console.log('[!] save object - active');
+
         await updateObjectProp(object.id, {
             DataFlag3: true, // active
         }).then(() => {

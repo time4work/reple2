@@ -1,6 +1,17 @@
 const { myquery } = require('../helper/mysql');
+const { getProjectReadyObject } = require('../model/object');
 
 module.exports = {
+
+    getProjectObjects: async project_id => {
+        const objects = await getProjectReadyObject(project_id);
+        return {
+            project: {
+                id: project_id
+            },
+            objects,
+        };
+    },
 
     selectProject: async (id, callback) => {
         try {

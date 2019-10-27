@@ -39,5 +39,16 @@ module.exports = {
         query += 'WHERE id = ?';
 
         return myquery(query, [...values, id]);
+    },
+
+    getProjectReadyObject: async projectID => {
+        const query = `
+            SELECT *
+            FROM ${tableName}
+            WHERE FootPrint1 = ?
+            AND DataFlag3 = ?
+            AND DataLink1 <> ?
+        `;
+        return myquery(query, [projectID, 1, 1]);
     }
 }

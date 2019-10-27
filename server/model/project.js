@@ -4,13 +4,13 @@ const projectDirTable = 'projectDir';
 
 module.exports = {
     
-    selectProjectDir: async function (projectID) {
+    selectProjectDir: async projectID => {
         const query = `
             SELECT dir
             FROM ${projectDirTable}
             WHERE projectID = ?
         `;
-        return myquery(query, [projectID])
+        return myquery(query, [projectID]);
     },
 
 }

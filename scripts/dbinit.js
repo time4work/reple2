@@ -239,7 +239,7 @@ const quereList = {
 	 * DataText1 [VARCHAR(1000)] - description
 	 * DataText2 [VARCHAR(2000)]
 	 * DataText3 [VARCHAR(500)] - duration
-	 * DataText4 [VARCHAR(500)]
+	 * DataText4 [VARCHAR(500)] - tags
 	 * FootPrint1 [INT(5)] - projectID
 	 * FootPrint2 [VARCHAR(100)] - donor type
 	 */
@@ -248,6 +248,7 @@ const quereList = {
 		IF NOT EXISTS replecon.object 
 		(
 			id INT AUTO_INCREMENT PRIMARY KEY,
+  			id_proj_link int(11) DEFAULT NULL,
 			DataTitle1 VARCHAR(100),
 			DataTitle2 VARCHAR(200),
 			DataTitle3 VARCHAR(300),
@@ -271,7 +272,7 @@ const quereList = {
 			DataText4 VARCHAR(500),
 			FootPrint1 INT(5),
 			FootPrint2 VARCHAR(100),
-			UNIQUE(FootPrint1)
+			UNIQUE KEY id_proj_link (FootPrint1, DataLink1)
 		) ENGINE = InnoDB
 	`,
 };
