@@ -21,20 +21,13 @@ const Helper = {
     },
 
     selectDir: (dir, callback) => {
-        try {
-            const result = fs
-                .readdirSync(dir)
-                .filter(source =>
-                    fs.lstatSync(path.join(dir, source)).isDirectory()
-                );
+        const result = fs.readdirSync(dir)
+            .filter(source =>
+                fs.lstatSync(path.join(dir, source)).isDirectory()
+            );
 
-            if (callback) callback(result);
-            return result;
-
-        } catch (e) {
-            console.log(e);
-            return 0;
-        }
+        if (callback) callback(result);
+        return result;
     },
 
     isType: function(object, type) {
