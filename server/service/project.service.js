@@ -313,4 +313,41 @@ module.exports = {
         //! TODO: delete-ptoject-task         
     },
 
+    selectProjectReadyObjectsCount: async (projectId, callback) => {
+
+        const query = `
+        SELECT COUNT(*) AS count 
+        FROM object o 
+        INNER JOIN relationProjectObject r 
+        ON r.objectId = o.id 
+        WHERE r.projectID = ? 
+        AND o.DataFlag1 = 0 
+        `;
+
+        const res = await myquery(query, [projectId]);
+
+        if(callback)
+            callback(res[0].count);
+
+        return res[0].count;
+    },
+
+    selectProjectPublishedObjectsCount: async (projectId, callback) => {
+
+        const query = `
+        SELECT COUNT(*) AS count 
+        FROM object o 
+        INNER JOIN relationProjectObject r 
+        ON r.objectId = o.id 
+        WHERE r.projectID = ? 
+        AND o.DataFlag1 = 1 
+        `;
+
+        const res = await myquery(query, [projectId]);
+
+        if(callback)
+            callback(res[0].count);
+
+        return res[0].count;
+    }
 }

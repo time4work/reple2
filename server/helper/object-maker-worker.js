@@ -9,6 +9,7 @@ const { selectProjectDir } = require('../model/project');
 const {
     selectObjectByLinkAndProject,
     createObject,
+    createRelationProjectObject,
     updateObjectProp,
 } = require('../model/object');
 const { 
@@ -135,6 +136,7 @@ async function __getObject(projectID, pageLink) {
         console.log("[worker] - object exist", { object });
     } else {
         const createObjectResult = await createObject(projectID, pageLink);
+        await createRelationProjectObject(projectID, createObjectResult.insertId);
         object = {
             id: createObjectResult.insertId,
             DataLink1: pageLink,

@@ -84,6 +84,5 @@ module.exports = {
         `;
         return myquery(query, [projectID])
             .then(result => result[0] || null);
-    },
-
+    }
 }

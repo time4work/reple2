@@ -12,14 +12,15 @@
   	<hr>
   </div>
 
-  <% if( scope.db ){ %>
+  <% if( scope.dbhost ){ %>
   <section id="export-body" class='col-md-offset-1 col-md-10'>
   	<div class="action-board col-md-8">
 
   		<div class="export-field row">
         <div  class="col-md-6">
           <div>
-            <h4><span class='unmmaped objs'><%=scope.objs.length%></span> new objects </h4>
+            <h4><span class='maped objs'><%=publishedCount%></span> published objects </h4>
+            <h4><span class='unmmaped objs'><%=readyCount%></span> new objects </h4>
             <button class='btn btn-warning push' id='export-push'>push</button>
             
           </div>
@@ -44,34 +45,7 @@
   		</div>
 
   		<hr>
-  		<h3>Export history:</h3>
-  		<ul class='export-history'>
-  			<% scope.exportlogs.reverse().forEach(function(elog, iter) { %>
-  				<li>
-  					<a href="<%=elog.id%>/"> <%=elog.date%> </a>
-  				</li>
-  			<% }); %>
-  		</ul>
   	</div>
-
-  	<div class="info-table col-md-4">
-  		<h3>Time Line</h3>
-  		<div class="overflow-wrapper">
-	  		<table>
-	  			<tbody>
-	  				<% scope.logs.reverse().forEach(function(log, iter) { %>
-						<tr>
-							<td>
-								<h5><%=log.type%></h5>
-								<p class='items'><%=log.length%></p>
-								<p class='date'><%=log.date%></p>
-								<hr>
-							</td>
-						</tr>
-	  				<% }); %>
-	  			</tbody>
-	  		</table>
-  		</div>
 
   	</div>
   </section>
@@ -83,7 +57,7 @@
 </body>
 <script>
 var project_id = <%=scope.project.id%>;
-var unmmaped_objs_size = <%=scope.objs.length%>;
+var unmmaped_objs_size = <%=readyCount%>;
 var url = '/project/'+project_id+'/export/';
   function checkStatus(){
   // console.log('checkMakeThumbs click');
@@ -105,9 +79,6 @@ var url = '/project/'+project_id+'/export/';
   });
 
 	$(function(){
-    var timerId = setInterval(function() { 
-      checkStatus();
-    }, 1000);
 
 		$("#export-push").on('click', ()=>{
 			console.log("push click");
@@ -117,7 +88,7 @@ var url = '/project/'+project_id+'/export/';
 			}
 
       if( confirm("are you sure?") ){ 
-        var data = {type: "project.export.push"};
+        var data = {id: <%=scope.project.id%>};
 
         ajax(url, {
           type: "project.export.push"
