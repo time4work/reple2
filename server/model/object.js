@@ -22,16 +22,6 @@ module.exports = {
         return myquery(query, [projectID, pageLink]);
     },
 
-    createRelationProjectObject: async function (projectID, objectId) {
-        const query = `
-        INSERT INTO relationProjectObject 
-        (projectID, objectID) 
-        VALUES (?, ?) 
-        `;
-
-        return myquery(query, [projectID, objectId]);
-    },
-
     updateObjectProp: async function (id, options) {
         const keys = Object.keys(options);
         const values = [];

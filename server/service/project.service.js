@@ -10,6 +10,8 @@ const {
     saveProjectDir,
     selectProjectDB,
     searchProjectByName,
+    selectProjectReadyObjectsCount,
+    selectProjectPublishedObjectsCount
 } = require('../model/project');
 const {
     selectTemplates,
@@ -313,41 +315,33 @@ module.exports = {
         //! TODO: delete-ptoject-task         
     },
 
-    selectProjectReadyObjectsCount: async (projectId, callback) => {
+    getProjectExport: async (projectID) => {
 
-        const query = `
-        SELECT COUNT(*) AS count 
-        FROM object o 
-        INNER JOIN relationProjectObject r 
-        ON r.objectId = o.id 
-        WHERE r.projectID = ? 
-        AND o.DataFlag1 = 0 
-        `;
-
-        const res = await myquery(query, [projectId]);
-
-        if(callback)
-            callback(res[0].count);
-
-        return res[0].count;
+        return selectProjectDB(projectID)
+            .then(dbhost => selectProjectReadyObjectsCount(projectID)
+                .then(ready => selectProjectPublishedObjectsCount(projectID)
+                    .then(published => {
+                        return {
+                            dbhost,
+                            ready,
+                            published,
+                            project: {
+                                id: projectID,
+                            }
+                        };
+                    })
+                ));
     },
 
-    selectProjectPublishedObjectsCount: async (projectId, callback) => {
+    getExportData: async (projectID) => {
 
-        const query = `
-        SELECT COUNT(*) AS count 
-        FROM object o 
-        INNER JOIN relationProjectObject r 
-        ON r.objectId = o.id 
-        WHERE r.projectID = ? 
-        AND o.DataFlag1 = 1 
-        `;
-
-        const res = await myquery(query, [projectId]);
-
-        if(callback)
-            callback(res[0].count);
-
-        return res[0].count;
+        return selectProjectDB(projectID)
+            .then(dbhost => getProjectReadyObject(projectID)
+                .then(objects => {
+                    return {
+                        dbhost,
+                        objects
+                    }
+                }));
     }
 }

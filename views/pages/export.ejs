@@ -19,14 +19,14 @@
   		<div class="export-field row">
         <div  class="col-md-6">
           <div>
-            <h4><span class='maped objs'><%=publishedCount%></span> published objects </h4>
-            <h4><span class='unmmaped objs'><%=readyCount%></span> new objects </h4>
+            <h4><span class='maped objs'><%=scope.published%></span> published objects </h4>
+            <h4><span class='unmmaped objs'><%=scope.ready%></span> new objects </h4>
             <button class='btn btn-warning push' id='export-push'>push</button>
             
           </div>
         </div>
         <div  class="col-md-6">
-          <div id='sad-spinner'>
+          <div id='sad-spinner' class='hide'>
               <% include ../partials/spinner.ejs %>
           </div>
           <style>
@@ -57,7 +57,7 @@
 </body>
 <script>
 var project_id = <%=scope.project.id%>;
-var unmmaped_objs_size = <%=readyCount%>;
+var unmmaped_objs_size = <%=scope.ready%>;
 var url = '/project/'+project_id+'/export/';
   function checkStatus(){
   // console.log('checkMakeThumbs click');
