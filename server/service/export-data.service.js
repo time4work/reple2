@@ -40,6 +40,8 @@ async function postmetaInsert(connection, postID, key, value, callback) {
     }
 }
 
+const projectExportProcess = {};
+
 module.exports = {
 
     selectExportLogs: async (projectID, callback) => {
@@ -57,6 +59,12 @@ module.exports = {
     },
 
     exportObjects: async (projectID, db_params, objects, callback) => {
+        if (projectExportProcess[projectID]) {
+            return;
+        } else {
+            projectExportProcess[projectID] = true;
+        }
+
         try {
             const connection = await chilpool(db_params);
             var query = ""
@@ -168,6 +176,7 @@ module.exports = {
             }
             connection.end();
             result = '';
+            delete projectExportProcess[projectID];
 
             if (callback) await callback(result);
             return result;
