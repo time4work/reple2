@@ -56,7 +56,7 @@ module.exports = {
         const query = `
             SELECT COUNT(*) AS count 
             FROM ${tableName} 
-            WHERE FootPrint1 = 1
+            WHERE FootPrint1 = ?
             AND DataFlag3 = 1 
             AND (
                 DataFlag1 <> 1 OR DataFlag1 IS NULL
