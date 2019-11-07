@@ -14,11 +14,12 @@ const processArr = {};
 module.exports = {
 
     createProcess: async projectID => {
-        if (processArr.hasOwnProperty(projectID) ||
-            await canMakeObjects(projectID)
-        ) {
+        if (processArr.hasOwnProperty(projectID)) {
             return;
         }
+        const isValid = await canMakeObjects(projectID)
+        if (!isValid) return;
+
         // create new cluster node
         const node = initFork(projectID);
 
