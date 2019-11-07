@@ -154,6 +154,16 @@ module.exports = {
                 await postmetaInsert(connection, objResult[0].insertId, "_yoast_wpseo_title", title);
                 await postmetaInsert(connection, objResult[0].insertId, "_yoast_wpseo_metadesc", metadesc);
 
+                const tags = objects[i].DataText4.split(',');
+
+                for (var j = 0; j < tags.length; j++) {
+                    const tag = tags[j];
+
+                    await bindTheTagToObject(connection, tag, 'category', objResult[0].insertId);
+
+                    await mapTheTagToObject(connection, tag, 'post_tag', objResult[0].insertId);
+                }
+
                 await myquery(query2, [logID, objects[i].id]);
             }
             connection.end();
@@ -198,7 +208,7 @@ async function mapTheTagToObject(connection, tag, type, objectID) {
 
 
     let foreignTagId = await connection.query(tag_query, [
-        tag.name
+        tag
     ]);
 
     if (foreignTagId[0] != 0) { // we catched the foreign Tag
@@ -244,10 +254,9 @@ async function mapTheTagToObject(connection, tag, type, objectID) {
 
     } else {
         const res2 = await connection.query(new_tag_query, [
-            tag.name,
-            tag.name
+            tag,
+            tag
                 .toLowerCase()
-                .replace(punctREGEX, '')
                 .replace(/(^\s*)|(\s*)$/g, '')
                 .replace(/\s+/g, '_')
         ]);
