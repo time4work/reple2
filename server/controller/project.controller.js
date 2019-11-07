@@ -1,9 +1,5 @@
 const ProjectService = require('../service/project.service');
-const ExportService = require('../service/export-data.service');
 const ObjectMakerService = require('../service/object-maker.service');
-
-// const ExportService = require('../service/export-data.service'); // TODO - export-task
-
 
 module.exports = {
 
@@ -113,10 +109,6 @@ module.exports = {
 			}));
 	},
 
-	// getExportPage: async (request, response) => {}, // TODO - export-task
-
-	// startExport: async (request, response) => {}, // TODO - export-task
-
 	getProjectDB: async (request, response) => {
 		const project_id = request.params.id;
 
@@ -149,9 +141,12 @@ module.exports = {
 		const projectId = request.params.id;
 
 		return ProjectService.getProjectExport(projectId)
-			.then(scope => response.render('pages/export', {
-				scope
-			}))
+			.then(scope => {
+				console.log({scope})
+				response.render('pages/export', {
+					scope
+				});
+			})
 			.catch(e => response.status(400).json({
 				success: false,
 				error: e
@@ -161,11 +156,10 @@ module.exports = {
 	pushProjectExport: async (request, response) => {
 		const projectID = request.params.id;
 
-		return ProjectService.getExportData(projectID)
-			.then(exportData => ExportService.exportObjects(projectID, exportData.dbhost, exportData.objects)
-				.then(res => {
-					response.send(res);
-				}))
+		return ProjectService.pushProjectExport(projectID)
+			.then(res => {
+				response.send(res);
+			})
 			.catch(e => response.status(400).json({
 				success: false,
 				error: e
