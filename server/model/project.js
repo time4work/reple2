@@ -1,9 +1,18 @@
 const { myquery } = require('../helper/mysql');
 const tableName = 'project';
 const projectDirTable = 'projectDir';
+const projectDBTable = 'projectDB';
 
 module.exports = {
     
+    selectProjects: async () => {
+        const query = `
+            SELECT * 
+            FROM ${tableName} 
+        `;
+        return myquery(query, [name]);
+    },
+
     createProject: async name => {
         const query = `
             INSERT INTO ${tableName} 
@@ -16,7 +25,7 @@ module.exports = {
     searchProjectByName: async name => {
         const query = `
             SELECT * 
-            FROM project 
+            FROM ${tableName} 
             WHERE name like ?`;
         return myquery(query, [`%${name}%`]);
     },
@@ -54,21 +63,21 @@ module.exports = {
     saveProjectDir: async (projectID, path) => {
         let query = `
             SELECT dir 
-            FROM projectDir 
+            FROM ${projectDirTable}
             WHERE projectID = ? 
         `;
         const existindDir = await myquery(query, [projectID]);
 
         if (existindDir && existindDir.length > 0) {
             query = `
-                UPDATE projectDir 
+                UPDATE ${projectDirTable} 
                 SET dir = ? 
                 WHERE projectID = ? 
             `;
             return myquery(query, [path, projectID]);
         } else {
             query = `
-                INSERT INTO projectDir
+                INSERT INTO ${projectDirTable}
                 (dir, projectID) 
                 VALUES (?,?) 
             `;
@@ -79,11 +88,34 @@ module.exports = {
     selectProjectDB: async projectID => {
         const query = `
             SELECT * 
-            FROM projectDB 
+            FROM ${projectDBTable} 
             WHERE projectID = ?
         `;
         return myquery(query, [projectID])
             .then(result => result[0] || null);
+    },
+
+    saveProjectDB: async ({projectID, type, host, port, user, password, name}) => {
+        const query = `
+            INSERT INTO projectDB 
+            (projectID, type, host, port, user, password, name) 
+            VALUES (?,?,?,?,?,?,?)
+        `;
+        return myquery(query, [projectID, type, host, port, user, password, name]);
+    },
+
+    updateProjectDB: async ({projectID, type, host, port, user, password, name}) => {
+        const query = `
+            UPDATE projectDB SET
+            type = ?,
+            host = ?,
+            port = ?,
+            user = ?,
+            password = ?,
+            name = ?
+            WHERE projectID = ?
+        `;
+        return myquery(query, [type, host, port, user, password, name, projectID]);
     },
 
 }

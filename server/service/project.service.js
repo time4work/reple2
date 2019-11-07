@@ -1,8 +1,14 @@
 const path = require('path');
 const { myquery } = require('../helper/mysql');
+const ExportService = require('../service/export-data.service');
 const { selectDir, simpleSort } = require('../helper');
-const { getProjectReadyObject } = require('../model/object');
+const { 
+    getProjectReadyObject,
+    selectProjectReadyObjectsCount,
+    selectProjectPublishedObjectsCount,
+} = require('../model/object');
 const {
+    selectProjects,
     createProject,
     selectProjectById,
     selectProjectSize,
@@ -102,15 +108,14 @@ module.exports = {
     selectProjectsRelation: async (callback) => {
         try {
             const result = [];
-            const query = `SELECT * FROM project`;
-            const projects = await myquery(query, []);
+            const projects = await selectProjects();
 
             for (var i = 0; i < projects.length; i++) {
                 const project = {};
                 project.id = projects[i].id;
                 project.name = projects[i].name;
 
-                // TODO: generator-task                
+                // TODO: generator-task
                 project.size = null;
 
                 result.push(project);
@@ -138,32 +143,16 @@ module.exports = {
         const name = pack.db_name || null;
         options.push(type, host, port, user, password, name);
 
-        const projectDB = await myquery(
-            `SELECT * FROM projectDB WHERE projectID = ?`,
-            [projectID]
-        );
+        const projectDB = await selectProjectDB(projectID);
 
         if (!projectDB || !projectDB.length) {
             // create new 
             options.unshift(projectID);
-            return myquery(`
-                INSERT INTO projectDB 
-                (projectID, type, host, port, user, password, name) 
-                VALUES (?,?,?,?,?,?,?)
-            `, options);
+            return saveProjectDB(options);
         } else {
             // update existing one
             options.push(projectID);
-            return myquery(`
-                UPDATE projectDB SET
-                type = ?,
-                host = ?,
-                port = ?,
-                user = ?,
-                password = ?,
-                name = ?
-                WHERE projectID = ?
-            `, options);
+            return updateProjectDB(options);
         }
     },
 
@@ -313,4 +302,26 @@ module.exports = {
         //! TODO: delete-ptoject-task         
     },
 
+    getProjectExport: async projectID => {
+        const dbhost = await selectProjectDB(projectID);
+        const readyObjs = await selectProjectReadyObjectsCount(projectID);
+        const publishedObjs = await selectProjectPublishedObjectsCount(projectID);
+
+        return {
+            dbhost,
+            ready: readyObjs,
+            published: publishedObjs,
+            project: {
+                id: projectID,
+            }
+
+        };
+    },
+
+    pushProjectExport: async projectID => {
+        const dbhost = await selectProjectDB(projectID);
+        const objects = await getProjectReadyObject(projectID);
+
+        return ExportService.exportObjects(projectID, dbhost, objects);
+    }
 }

@@ -50,5 +50,35 @@ module.exports = {
             AND DataLink1 <> ?
         `;
         return myquery(query, [projectID, 1, 1]);
-    }
+    },
+
+    selectProjectReadyObjectsCount: async projectId => {
+        const query = `
+            SELECT COUNT(*) AS count 
+            FROM ${tableName} 
+            WHERE FootPrint1 = 1
+            AND DataFlag3 = 1 
+            AND (
+                DataFlag1 <> 1 OR DataFlag1 IS NULL
+            )
+            AND (
+                DataFlag2 <> 1 OR DataFlag2 IS NULL
+            )
+        `;
+        return myquery(query, [projectId])
+            .then(res => res[0].count);
+    },
+
+    selectProjectPublishedObjectsCount: async projectId => {
+
+        const query = `
+            SELECT COUNT(*) AS count 
+            FROM ${tableName} 
+            WHERE FootPrint1 = ? 
+            AND DataFlag1 = 1 
+        `;
+        return await myquery(query, [projectId])
+            .then(res => res[0].count);
+    },
+
 }

@@ -40,76 +40,6 @@ async function postmetaInsert(connection, postID, key, value, callback) {
     }
 }
 
-// async function selectObjectTags(objectID, callback) {
-//     try {
-//         const query = ""
-//             + "	Select r.id, r.tagID, r.objectID, res.name FROM "
-//             + "	replecon.relationTagObject r"
-//             + "	left join("
-//             + "	select name, id from"
-//             + "	replecon.tag"
-//             + "	)as res on res.id = r.tagID"
-//             + "	where objectID = ?"
-//             + "	order by r.id "
-
-//         const result = await myquery(query, [objectID]);
-
-//         if (callback) await callback(result);
-//         return result;
-
-//     } catch (e) {
-//         console.log(e);
-//         return 0;
-//     }
-// }
-
-// async function selectProjectHiddenTags(projectID, callback) {
-//     try {
-//         const query = ""
-//             + "	Select r.id, r.tagID, r.projectID, r.type, res.name FROM "
-//             + "	relationTagProject r"
-//             + "	left join("
-//             + "	select name, id from"
-//             + "	replecon.tag"
-//             + "	)as res on res.id = r.tagID"
-//             + "	where r.projectID = ?"
-//             + "	AND type = 'hidden'"
-//             + "	order by r.id ";
-
-//         const result = await myquery(query, [projectID]);
-
-//         if (callback) await callback(result);
-//         return result;
-
-//     } catch (e) {
-//         console.log(e);
-//         return 0;
-//     }
-// }
-// async function selectProjectCategoriesTags(projectID, callback) {
-//     try {
-//         const query = ""
-//             + "	Select r.id, r.tagID, r.projectID, r.type, res.name FROM "
-//             + "	relationTagProject r"
-//             + "	left join("
-//             + "	select name, id from"
-//             + "	replecon.tag"
-//             + "	)as res on res.id = r.tagID"
-//             + "	where r.projectID = ?"
-//             + "	AND type = 'categories'"
-//             + "	order by r.id ";
-
-//         const result = await myquery(query, [projectID]);
-
-//         if (callback) await callback(result);
-//         return result;
-
-//     } catch (e) {
-//         console.log(e);
-//         return 0;
-//     }
-// }
-
 module.exports = {
 
     selectExportLogs: async (projectID, callback) => {
@@ -129,7 +59,6 @@ module.exports = {
     exportObjects: async (projectID, db_params, objects, callback) => {
         try {
             const connection = await chilpool(db_params);
-
             var query = ""
                 + " INSERT INTO wp_posts("
 
@@ -225,35 +154,16 @@ module.exports = {
                 await postmetaInsert(connection, objResult[0].insertId, "_yoast_wpseo_title", title);
                 await postmetaInsert(connection, objResult[0].insertId, "_yoast_wpseo_metadesc", metadesc);
 
-                const tags = await selectObjectTags(objects[i].id);
-                const hidden_tags = await selectProjectHiddenTags(projectID);
-                const categories = await selectProjectCategoriesTags(projectID);
-
-                for (var j = 0; j < categories.length; j++) {
-                    const tag = categories[j];
-                    await mapTheTagToObject(connection, tag, 'category');
-                }
+                const tags = objects[i].DataText4.split(',');
 
                 for (var j = 0; j < tags.length; j++) {
                     const tag = tags[j];
 
-                    for (var f = 0; f < categories.length; f++) {
-                        if (tag.tagID == categories[f].tagID)
-                            await bindTheTagToObject(connection, tag, 'category', objResult[0].insertId);
-                    }
+                    await bindTheTagToObject(connection, tag, 'category', objResult[0].insertId);
 
-                    // hide hidden tags
-                    let flag = false;
-                    for (var t = 0; t < hidden_tags.length; t++) {
-                        if (tag.tagID == hidden_tags[t].tagID) {
-                            flag = true;
-                            break;
-                        }
-                    }
-                    if (flag) continue;
                     await mapTheTagToObject(connection, tag, 'post_tag', objResult[0].insertId);
                 }
-                // const mapTheObjRes = 
+
                 await myquery(query2, [logID, objects[i].id]);
             }
             connection.end();
@@ -298,7 +208,7 @@ async function mapTheTagToObject(connection, tag, type, objectID) {
 
 
     let foreignTagId = await connection.query(tag_query, [
-        tag.name
+        tag
     ]);
 
     if (foreignTagId[0] != 0) { // we catched the foreign Tag
@@ -344,10 +254,9 @@ async function mapTheTagToObject(connection, tag, type, objectID) {
 
     } else {
         const res2 = await connection.query(new_tag_query, [
-            tag.name,
-            tag.name
+            tag,
+            tag
                 .toLowerCase()
-                .replace(punctREGEX, '')
                 .replace(/(^\s*)|(\s*)$/g, '')
                 .replace(/\s+/g, '_')
         ]);

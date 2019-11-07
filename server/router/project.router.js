@@ -24,4 +24,8 @@ router.route('/:id/database')
     .get(controller.getProjectDB)
     .post(controller.saveProjectDB);
 
+router.route('/:id/export')
+    .get(controller.getProjectExport)
+    .post(controller.pushProjectExport);
+
 module.exports = router;

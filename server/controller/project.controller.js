@@ -1,9 +1,6 @@
 const ProjectService = require('../service/project.service');
 const ObjectMakerService = require('../service/object-maker.service');
 
-// const ExportService = require('../service/export-data.service'); // TODO - export-task
-
-
 module.exports = {
 
 	getPage: async (request, response) => {
@@ -103,18 +100,14 @@ module.exports = {
 	createProjectObjects: async (request, response) => {
 		const project_id = request.params.id;
 		return ObjectMakerService.createProcess(project_id)
-			.then(() => response.json({ 
-				success: true 
+			.then(() => response.json({
+				success: true
 			}))
-			.catch(e => response.status(400).json({ 
-				success: false, 
-				error: e 
+			.catch(e => response.status(400).json({
+				success: false,
+				error: e
 			}));
 	},
-
-	// getExportPage: async (request, response) => {}, // TODO - export-task
-
-	// startExport: async (request, response) => {}, // TODO - export-task
 
 	getProjectDB: async (request, response) => {
 		const project_id = request.params.id;
@@ -143,4 +136,33 @@ module.exports = {
 				response.send("oops");
 		}
 	},
+
+	getProjectExport: async (request, response) => {
+		const projectId = request.params.id;
+
+		return ProjectService.getProjectExport(projectId)
+			.then(scope => {
+				console.log({scope})
+				response.render('pages/export', {
+					scope
+				});
+			})
+			.catch(e => response.status(400).json({
+				success: false,
+				error: e
+			}));
+	},
+
+	pushProjectExport: async (request, response) => {
+		const projectID = request.params.id;
+
+		return ProjectService.pushProjectExport(projectID)
+			.then(res => {
+				response.send(res);
+			})
+			.catch(e => response.status(400).json({
+				success: false,
+				error: e
+			}));
+	}
 }
