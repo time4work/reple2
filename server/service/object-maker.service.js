@@ -18,6 +18,7 @@ module.exports = {
             return;
         }
         const isValid = await canMakeObjects(projectID)
+        console.log(isValid);
         if (!isValid) return;
 
         // create new cluster node
@@ -54,9 +55,10 @@ module.exports = {
 };
 
 async function canMakeObjects(projectID) {
-    return selectProjectJsonSize(projectID) >= 1
-        && selectProjectTitleTmplSize(projectID) >= 1
-        && selectProjectDescriptionTmplSize(projectID) >= 1;
+    return true;
+    return selectProjectJsonSize(projectID) >= 1 &&
+        selectProjectTitleTmplSize(projectID) >= 1 &&
+        selectProjectDescriptionTmplSize(projectID) >= 1;
 }
 
 function initFork(projectID) {

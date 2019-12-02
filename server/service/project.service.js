@@ -2,7 +2,7 @@ const path = require('path');
 const { myquery } = require('../helper/mysql');
 const ExportService = require('../service/export-data.service');
 const { selectDir, simpleSort } = require('../helper');
-const { 
+const {
     getProjectReadyObject,
     selectProjectReadyObjectsCount,
     selectProjectPublishedObjectsCount,
@@ -16,6 +16,7 @@ const {
     saveProjectDir,
     selectProjectDB,
     searchProjectByName,
+    saveProjectDB
 } = require('../model/project');
 const {
     selectTemplates,
@@ -30,7 +31,7 @@ const DEFAULT_SCREENS_PATH = './screens';
 
 module.exports = {
 
-    createProject: async (name) => {
+    createProject: async(name) => {
         return createProject(name);
     },
 
@@ -63,7 +64,7 @@ module.exports = {
     },
 
     showProjectScreensDir: async project_id =>
-        new Promise(async (resolve, reject) => {
+        new Promise(async(resolve, reject) => {
             const select_dir_result = await selectProjectDir(project_id);
 
             let fullpath;
@@ -94,8 +95,8 @@ module.exports = {
             resolve({ list: pathList, path: fullpath });
         }),
 
-    saveProjectSceenDir: async (project_id, path) =>
-        new Promise(async (resolve, reject) => {
+    saveProjectSceenDir: async(project_id, path) =>
+        new Promise(async(resolve, reject) => {
             // check path exist
             const list = selectDir(path);
             if (!list) reject('wrong PATH');
@@ -105,7 +106,7 @@ module.exports = {
                 .catch(e => reject(e));
         }),
 
-    selectProjectsRelation: async (callback) => {
+    selectProjectsRelation: async(callback) => {
         try {
             const result = [];
             const projects = await selectProjects();
@@ -133,7 +134,7 @@ module.exports = {
     searchProjects: async name => searchProjectByName(name),
 
     // TODO: REFACTOR
-    saveProjectDB: async (projectID, pack) => {
+    saveProjectDB: async(projectID, pack) => {
         const options = [];
         const type = pack.db_type || 'localhost';
         const host = pack.db_adr || null;
@@ -169,7 +170,7 @@ module.exports = {
     },
 
     // TODO: REFACTOR
-    saveProjectChanges: async (id, name, info, t_tmpls, d_tmpls, jsons, db, callback) => {
+    saveProjectChanges: async(id, name, info, t_tmpls, d_tmpls, jsons, db, callback) => {
         try {
 
             if (!name) return
@@ -298,7 +299,7 @@ module.exports = {
         }
     },
 
-    deleteProject: async (projectID) => {
+    deleteProject: async(projectID) => {
         //! TODO: delete-ptoject-task         
     },
 

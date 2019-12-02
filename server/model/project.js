@@ -4,13 +4,13 @@ const projectDirTable = 'projectDir';
 const projectDBTable = 'projectDB';
 
 module.exports = {
-    
-    selectProjects: async () => {
+
+    selectProjects: async() => {
         const query = `
             SELECT * 
             FROM ${tableName} 
         `;
-        return myquery(query, [name]);
+        return myquery(query);
     },
 
     createProject: async name => {
@@ -21,7 +21,7 @@ module.exports = {
         `;
         return myquery(query, [name]);
     },
-    
+
     searchProjectByName: async name => {
         const query = `
             SELECT * 
@@ -60,7 +60,7 @@ module.exports = {
         return myquery(query, [projectID]);
     },
 
-    saveProjectDir: async (projectID, path) => {
+    saveProjectDir: async(projectID, path) => {
         let query = `
             SELECT dir 
             FROM ${projectDirTable}
@@ -95,16 +95,16 @@ module.exports = {
             .then(result => result[0] || null);
     },
 
-    saveProjectDB: async ({projectID, type, host, port, user, password, name}) => {
+    saveProjectDB: async(options) => {
         const query = `
             INSERT INTO projectDB 
             (projectID, type, host, port, user, password, name) 
             VALUES (?,?,?,?,?,?,?)
         `;
-        return myquery(query, [projectID, type, host, port, user, password, name]);
+        return myquery(query, options);
     },
 
-    updateProjectDB: async ({projectID, type, host, port, user, password, name}) => {
+    updateProjectDB: async({ projectID, type, host, port, user, password, name }) => {
         const query = `
             UPDATE projectDB SET
             type = ?,
